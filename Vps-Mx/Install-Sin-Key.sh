@@ -242,7 +242,7 @@ install_oficial() {
   clear && clear
   mkdir /etc/VPS-MX >/dev/null 2>&1
   cd /etc
-  wget https://raw.githubusercontent.com/NetVPS/VPS-MX_Oficial/master/SCRIPT-v8.4g%20Oficial/VPS-MX.tar.xz >/dev/null 2>&1
+  wget https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Vps-Mx/VPS-MX_8.5.tar.xz >/dev/null 2>&1
   tar -xf VPS-MX.tar.xz >/dev/null 2>&1
   chmod +x VPS-MX.tar.xz >/dev/null 2>&1
   rm -rf VPS-MX.tar.xz
@@ -323,7 +323,7 @@ install_mod() {
   clear && clear
   mkdir /etc/VPS-MX >/dev/null 2>&1
   cd /etc
-  wget https://raw.githubusercontent.com/NetVPS/VPS-MX_Oficial/master/SCRIPT-v8.5x%20Mod/VPS-MX.tar.xz >/dev/null 2>&1
+  wget https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Vps-Mx/VPS-MX_8.6.tar.xz >/dev/null 2>&1
   tar -xf VPS-MX.tar.xz >/dev/null 2>&1
   chmod +x VPS-MX.tar.xz >/dev/null 2>&1
   rm -rf VPS-MX.tar.xz
