@@ -1,11 +1,10 @@
-#By @ChumoGH|Plus - MOD BY JAOK04
+#By @ChumoGH|Plus - MOD BY JAOK04 (FIXED PATHS)
 [[ -z ${IiP} ]] && IiP=$(cat < /usr/bin/vendor_code)
 rm -rf /tmp/* &>/dev/null
 BS=$(basename "$0") &>/dev/null
 rm -f $(pwd)/${BS} &>/dev/null
 
 # --- MODIFICACION: BYPASS DE VERIFICACION ---
-# Simulamos respuesta positiva del servidor para no depender de internet
 _double="VERIFICADO_JAOK04_BYPASS"
 echo "$_double" > /file
 # --------------------------------------------
@@ -330,20 +329,29 @@ pk_mayus=$(echo "$pk" | tr '[:lower:]' '[:upper:]')
 if [[ ${pk} = "userMOD" ]]; then
   # Detectar arquitectura normalizada
   arch="$(uname -m 2>/dev/null)"
+  
+  # --- MODIFICACION: URLs Y RUTAS CORRECTAS ---
   case "$arch" in
-    x86_64)   platform="x86_64" ;;
-    aarch64|arm64) platform="aarch64" ;;
-    *)        platform="x86_64" ;;
-    # valor por defecto
+    x86_64)   
+        platform="x86_64" 
+        url="https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
+        ;;
+    aarch64|arm64) 
+        platform="aarch64" 
+        url="http://localhost/null" 
+        ;;
+    *)        
+        platform="x86_64" 
+        url="https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
+        ;;
   esac
-
-  # --- MODIFICACION: URL falsa para forzar uso de archivo local ---
-  url="http://localhost/null" 
-  # -----------------------------------------------------------------
+  
+  # RUTA LOCAL CORREGIDA: buscamos donde realmente descomprimió el instalador
+  local_src="/etc/adm-lite/${platform}/add_new_user.bin"
+  # ---------------------------------------------
   
   dst="/etc/ADMcgh/bin/useradd"
-  local_src="/etc/ADMcgh/bin/${platform}/add_new_user.bin"
-
+  
   # Asegura directorios
   mkdir -p "/etc/ADMcgh/bin/${platform}"
 
