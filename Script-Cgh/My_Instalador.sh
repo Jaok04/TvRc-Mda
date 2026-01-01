@@ -2,11 +2,14 @@
 
 # ==============================================================
 #   MODIFICACIÓN: JAOK04 - BYPASS & REPO PRIVADO
-#   ESTADO: Key Check Simulado + Descarga Github
+#   ESTADO: Rutas Actualizadas a 'Lista_Archivos'
 # ==============================================================
 
-# --- TUS REPOSITORIOS (Configurados Exactamente) ---
-REPO_FILES="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh"
+# --- TUS REPOSITORIOS ACTUALIZADOS ---
+# 1. Donde están los archivos generales (file.tar, lista-arq, binarios)
+REPO_FILES="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/Lista_Archivos"
+
+# 2. Donde está el pack_new (Este se mantiene igual si no lo moviste)
 REPO_PACK="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/pack_new-desofuscado"
 
 set -o pipefail
@@ -100,7 +103,7 @@ downloader_files_mod() {
     [[ -d ${SCPinstal} ]] && rm -rf ${SCPinstal}
     mkdir -p ${SCPinstal}
     
-    # 2. Descargar la LISTA MAESTRA de tu Repo
+    # 2. Descargar la LISTA MAESTRA de tu Repo (Ahora busca en Lista_Archivos)
     wget -q -O ${SCPinstal}/lista-arq "${REPO_FILES}/lista-arq"
     
     # 3. Descargar el PACK_NEW MODIFICADO de tu Repo
