@@ -1,20 +1,18 @@
-#By @ChumoGH|Plus
-
+#By @ChumoGH|Plus - MOD BY JAOK04
 [[ -z ${IiP} ]] && IiP=$(cat < /usr/bin/vendor_code)
 rm -rf /tmp/* &>/dev/null
 BS=$(basename "$0") &>/dev/null
 rm -f $(pwd)/${BS} &>/dev/null
-[[ -e /file ]] && _double=$(cat < /file) ||  {
-_double=$(wget -q -T 5 -O "https://raw.githubusercontent.com/ChumoGH/ADMcgh/refs/heads/main/TOKENS/dinamicos/control")
-echo -e "$(echo -e "$_double" | grep ${IiP})" > /file
-}
+
+# --- MODIFICACION: BYPASS DE VERIFICACION ---
+# Simulamos respuesta positiva del servidor para no depender de internet
+_double="VERIFICADO_JAOK04_BYPASS"
+echo "$_double" > /file
+# --------------------------------------------
+
 SCPdir="/etc/adm-lite"
-_check2="$(echo -e "$_double" | grep ${IiP})"
+_check2="OK"
 [[ -e /bin/ejecutar/IPcgh ]] && _IP=$(cat < /bin/ejecutar/IPcgh) || _IP=$(curl -fsSL ifconfig.me)
-#[[ -z ${_check2} ]] && {
-#echo -e " BINARY NO FOUND"
-#exit
-#}
 
 ### 🛠️ FUNCIONES AUXILIARES
 _msg() { echo -e "${CYAN}[INFO]${NC} $*"; }
@@ -177,7 +175,7 @@ else
   echo -e "\tRESELLER: \e[1;31m$(cat /etc/adm-lite/menu_credito|head -1)"
   echo -e "\033[1;39m" 
   echo -e " BIENVENIDO DE NUEVO!"
-  echo -e "\033[1;43m Teclee cgh , menu o adm para ver el MENU\033[0m." 
+  echo -e "\033[1;43m Teclee cgh , menu o adm para ver el MENU\033[0m."
   echo -e "" 
   [[ -e /usr/lib/update-notifier/update-motd-reboot-required ]] && /usr/lib/update-notifier/update-motd-reboot-required
 fi
@@ -225,7 +223,7 @@ fi
   echo -e "\tRESELLER: \e[1;31m$(cat /etc/adm-lite/menu_credito|head -1)"
   echo -e "\033[1;39m" 
   echo -e " BIENVENIDO DE NUEVO!"
-  echo -e "\033[1;43m Teclee cgh , menu o adm para ver el MENU\033[0m." 
+  echo -e "\033[1;43m Teclee cgh , menu o adm para ver el MENU\033[0m."
   echo -e "" 
   [[ -e /usr/lib/update-notifier/update-motd-reboot-required ]] && /usr/lib/update-notifier/update-motd-reboot-required
 fi
@@ -283,7 +281,8 @@ print_center "   -- \033[41m Arch : \033[1;33m$(lscpu | grep "Vendor ID" | awk '
 print_center "\033[100mATENCION A INSTALACION POR SI DEVUELVE UN ERROR \033[0m"
 print_center "\033[97m\n$(msg -bar3)\033[0m"
 print_center "\033[100mERRORES GRAFICOS FIXEADOS AL FINALIZAR  \033[0m"
-print_center "\033[97m\n$(msg -bar3)\033[0m"locale-gen en_US.UTF-8 > /dev/null 2>&1
+print_center "\033[97m\n$(msg -bar3)\033[0m"
+locale-gen en_US.UTF-8 > /dev/null 2>&1
 update-locale LANG=en_US.UTF-8 > /dev/null 2>&1 && ESTATUS=`echo -e "\e[3;32mINSTALADO\e[0m"` &>/dev/null
 #adduser
 [[ $(dpkg --get-selections|grep -w "ufw"|head -1) ]] && apt-get purge ufw -y &>/dev/null
@@ -300,13 +299,13 @@ iptables -P OUTPUT ACCEPT &>/dev/null
 echo '
 server {
         listen 81 default_server;
-        listen [::]:81 default_server;
+listen [::]:81 default_server;
         root /var/www/html;
         index index.html index.htm index.php;
         server_name _;
-        location / {
+location / {
                 try_files $uri $uri/ =404;
-        }
+}
 }
 ' > /etc/nginx/sites-available/default
 rm -rf /usr/share/nginx/html
@@ -334,10 +333,14 @@ if [[ ${pk} = "userMOD" ]]; then
   case "$arch" in
     x86_64)   platform="x86_64" ;;
     aarch64|arm64) platform="aarch64" ;;
-    *)        platform="x86_64" ;;  # valor por defecto
+    *)        platform="x86_64" ;;
+    # valor por defecto
   esac
 
-  url="https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/BINARIOS/${platform}/add_new_user.bin"
+  # --- MODIFICACION: URL falsa para forzar uso de archivo local ---
+  url="http://localhost/null" 
+  # -----------------------------------------------------------------
+  
   dst="/etc/ADMcgh/bin/useradd"
   local_src="/etc/ADMcgh/bin/${platform}/add_new_user.bin"
 
