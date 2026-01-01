@@ -1,4 +1,4 @@
-#By @ChumoGH|Plus - MOD BY JAOK04 (FIXED PATHS)
+#By @ChumoGH|Plus - MOD BY JAOK04 (FIXED PATHS & URLS)
 [[ -z ${IiP} ]] && IiP=$(cat < /usr/bin/vendor_code)
 rm -rf /tmp/* &>/dev/null
 BS=$(basename "$0") &>/dev/null
@@ -334,7 +334,8 @@ if [[ ${pk} = "userMOD" ]]; then
   case "$arch" in
     x86_64)   
         platform="x86_64" 
-        url="https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
+        # Enlace directo a TU archivo amd64_user.bin (usando main estandar)
+        url="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
         ;;
     aarch64|arm64) 
         platform="aarch64" 
@@ -342,7 +343,7 @@ if [[ ${pk} = "userMOD" ]]; then
         ;;
     *)        
         platform="x86_64" 
-        url="https://github.com/Jaok04/TvRc-Mda/raw/refs/heads/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
+        url="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/main/Script-Cgh/Lista_Archivos/amd64_user.bin"
         ;;
   esac
   
