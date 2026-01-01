@@ -1,68 +1,50 @@
 #!/bin/bash
 # ==============================================================
-#   MODIFICACIÓN: JAOK04 - PACK_NEW (VERSIÓN SEGURA)
-#   PROCESO: VALIDACIÓN POR IP Y RUTAS FIXEADAS
+#   PACK_NEW - PERSONALIZACIÓN DE MARCA JAOK04 (PROFESIONAL)
 # ==============================================================
 
-# --- VERIFICACIÓN DE INTEGRIDAD JAOK04 ---
-# Verificamos que el instalador haya pasado la IP validada mediante export
+# --- VERIFICACIÓN DE SEGURIDAD ---
+# Si no existe la IP, significa que no pasó por el instalador oficial
 if [[ -z "$IiP" ]]; then
-    echo -e "\n\033[1;31m [!] ACCESO NO AUTORIZADO \033[0m"
-    echo -e " El script debe ejecutarse a través del Instalador Oficial de JAOK04."
+    echo -e "\n\033[1;31m [!] ACCESO DENEGADO: Use el instalador oficial. \033[0m"
     exit 1
 fi
 
-# Creamos el directorio de ejecución si no existe
+# --- CONFIGURACIÓN DE MARCA ---
+# Usamos el vendedor que envió el instalador o @Jaok04 por defecto
+[[ -z "$BY_USER" ]] && BY_USER="@Jaok04"
+
+# Creamos la carpeta de ejecución y el archivo de éxito para el menú
 [[ ! -d /bin/ejecutar ]] && mkdir -p /bin/ejecutar
+echo "😎 By $BY_USER 💥" > /bin/ejecutar/exito
 
-# Registramos la validación exitosa para el menú
-echo "VERIFICADO_POR_IP_$IiP" > /bin/ejecutar/exito
-
-# Variables de entorno y limpieza
-rm -rf /tmp/* &>/dev/null
-export DEBIAN_FRONTEND=noninteractive
+# Variables de entorno
 SCPdir="/etc/adm-lite"
-_IP=$(curl -fsSL ifconfig.me)
+rm -rf /tmp/* &>/dev/null
 
-# --- FUNCIONES VISUALES (Sincronizadas con msg del instalador) ---
-source ${SCPdir}/msg &>/dev/null || {
-    # Fallback si el archivo msg aún no está en su sitio
-    _msg() { echo -e "\033[1;34m[INFO]\033[0m $*"; }
-}
-
-# --- CONFIGURACIÓN DE BINARIOS (USERMOD) ---
+# --- FUNCIÓN DE BINARIOS (USERMOD) ---
 install_pack_usermod(){
     arch="$(uname -m 2>/dev/null)"
     case "$arch" in
-        x86_64)   platform="x86_64"; bin_file="amd64_user.bin" ;;
-        aarch64|arm64) platform="aarch64"; bin_file="arm64_user.bin" ;;
-        *) platform="x86_64"; bin_file="amd64_user.bin" ;;
+        x86_64)   bin_file="amd64_user.bin" ;;
+        aarch64|arm64) bin_file="arm64_user.bin" ;;
+        *) bin_file="amd64_user.bin" ;;
     esac
 
     dst="/etc/ADMcgh/bin/useradd"
     mkdir -p "/etc/ADMcgh/bin"
     
-    # Buscamos el binario que descargó el My_Instalador.sh en /etc/adm-lite/
     if [[ -s "${SCPdir}/${bin_file}" ]]; then
         cp -f "${SCPdir}/${bin_file}" "$dst"
         chmod +x "$dst"
         ln -sf "$dst" /bin/add_new_user
-        echo -e "\033[1;32m [OK] Binario $bin_file configurado.\033[0m"
-    else
-        echo -e "\033[1;31m [!] Error: No se encontró el binario en ${SCPdir}/${bin_file}\033[0m"
     fi
-}
-
-# --- CONFIGURACIÓN DE CRON Y SERVICIOS ---
-setup_cron() {
-    systemctl enable --now cron &>/dev/null || service cron restart &>/dev/null
-    echo -e "\033[1;32m [OK] Servicio Cron Activo.\033[0m"
 }
 
 # --- INSTALACIÓN DE DEPENDENCIAS ---
 install_dependencies() {
-    echo -e "\033[1;33m Instalando paquetes necesarios...\033[0m"
-    paquetes=(bsdmainutils sudo cron screen nginx nload htop python3 python3-pip nodejs npm lsof psmisc socat bc netcat net-tools cowsay nmap jq iptables)
+    echo -e "\033[1;33m [⚙️] Instalando dependencias del sistema...\033[0m"
+    paquetes=(bsdmainutils sudo cron screen nginx nload htop python3 python3-pip nodejs npm lsof psmisc socat bc netcat net-tools jq iptables)
     apt-get update -y &>/dev/null
     for pk in "${paquetes[@]}"; do
         apt-get install -y "$pk" &>/dev/null
@@ -70,43 +52,43 @@ install_dependencies() {
     install_pack_usermod
 }
 
-# --- CONFIGURACIÓN FINAL DEL SISTEMA (Startup) ---
+# --- CONFIGURACIÓN DEL BANNER Y COMANDOS ---
 install_fim () {
-    local fecha=$(date +"%d-%m-%Y")
-    
-    # Configurar el comando 'menu', 'cgh' y 'adm'
+    # Crear comandos de acceso rápido
     echo -e "#!/bin/bash\ncd ${SCPdir} && ./menu" > /bin/menu && chmod +x /bin/menu
     echo -e "#!/bin/bash\ncd ${SCPdir} && ./menu" > /bin/cgh && chmod +x /bin/cgh
     echo -e "#!/bin/bash\ncd ${SCPdir} && ./menu \$1" > /bin/adm && chmod +x /bin/adm
 
-    # Crear el banner de bienvenida (bash.bashrc)
+    # Personalización del Banner de entrada SSH
     cat <<EOF > /etc/ADMcgh/bashrc
 if [ \$(id -u) -eq 0 ]; then
     clear
-    figlet -f slant "JAOK04" | lolcat
-    echo -e " \033[1;32mSERVIDOR VALIDADO CORRECTAMENTE\033[0m"
-    echo -e " 📅 INSTALADO: $fecha"
-    echo -e " 🖥️ IP: \$(curl -s ifconfig.me)"
-    echo -e " ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e " Use los comandos: \033[1;43m menu \033[0m , \033[1;43m cgh \033[0m o \033[1;43m adm \033[0m"
-    echo -e " ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e " \033[1;32m🚀 ACCESO AUTORIZADO POR $BY_USER 🚀\033[0m"
+    echo -e " ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e " 👤 Cliente IP: \$(curl -s ifconfig.me)"
+    echo -e " 📅 Fecha: \$(date +'%d/%m/%Y')"
+    echo -e " ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e " Escriba: \033[1;43m menu \033[0m para gestionar su servidor."
+    echo -e " ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 fi
 EOF
-    # Evitar duplicados en bash.bashrc
+    # Activar el banner en el sistema
     sed -i "/ADMcgh\/bashrc/d" /etc/bash.bashrc
     echo "source /etc/ADMcgh/bashrc" >> /etc/bash.bashrc
 
-    setup_cron
-    echo -e "\033[1;32m [✔] Configuración de inicio completada.\033[0m"
+    # Reiniciar servicios críticos
+    systemctl enable --now cron &>/dev/null
+    service cron restart &>/dev/null
 }
 
-# --- EJECUCIÓN ---
+# --- PROCESO FINAL ---
 clear
-echo -e "\033[1;33m Finalizando configuración del ADMcgh (Mod JAOK04)...\033[0m"
+echo -e "\033[1;33m Finalizando configuración de su Script...\033[0m"
 install_dependencies
 install_fim
 
-msg -bar3
-echo -e "\033[1;32m   INSTALACIÓN COMPLETADA CON ÉXITO\033[0m"
-echo -e "   Escriba \033[1;33mmenu\033[0m para empezar."
-msg -bar3
+echo -e "\033[1;33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e "\033[1;32m   INSTALACIÓN COMPLETADA EXITOSAMENTE\033[0m"
+echo -e "   CRÉDITOS: \033[1;36m$BY_USER\033[0m"
+echo -e "\033[1;33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e " Escriba \033[1;32mmenu\033[0m para iniciar."
