@@ -62,6 +62,8 @@ print_center() {
 
 update_pak () {
     clear&&clear
+    apt-get update -y -qq
+    add-apt-repository universe -y
     msg -bar3
     [[ $(dpkg --get-selections|grep -w "pv"|head -1) ]] || apt install pv -y &> /dev/null
     [[ $(dpkg --get-selections|grep -w "bzip2"|head -1) ]] || apt install bzip2 -y &> /dev/null
