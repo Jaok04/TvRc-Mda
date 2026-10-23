@@ -1656,6 +1656,94 @@ ws_epro_choose_unit() {
     return 0
 }
 
+# Elimina una instancia WS-Epro concreta sin tocar otras unidades ni el binario compartido.
+ws_epro_delete_unit() {
+    local unit config execstart port confirm unit_file
+
+    if ! ws_epro_choose_unit; then
+        return 0
+    fi
+    unit="$WS_EPRO_SELECTED_UNIT"
+
+    # Aceptar únicamente el formato de unidad por puerto usado por este administrador.
+    if [[ "$unit" =~ ^python\.([0-9]+)\.service$ ]]; then
+        port="${BASH_REMATCH[1]}"
+    else
+        echo "ERROR: la unidad '$unit' no tiene el formato esperado python.PUERTO.service."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    unit_file="/etc/systemd/system/$unit"
+    execstart=$(systemctl show -p ExecStart --value "$unit" 2>/dev/null)
+    config=$(printf '%s\n' "$execstart" | sed -n 's/.*-f \([^ ;}]*\).*/\1/p')
+
+    # Protección contra unidades ajenas o rutas inesperadas.
+    if [[ "$execstart" != *WS-Epro* || "$execstart" != *"/bin/WS-Epro"* ]]; then
+        echo "ERROR: ExecStart no identifica el ejecutable WS-Epro esperado; no se modificó nada."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    if [[ "$config" != "/etc/ADMcgh/PDirect_${port}" ]]; then
+        echo "ERROR: configuración inesperada para $unit: ${config:-no detectada}."
+        echo "Se esperaba: /etc/ADMcgh/PDirect_${port}"
+        echo "No se modificó nada."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    if [[ ! -f "$unit_file" ]]; then
+        echo "ERROR: no existe el archivo de unidad esperado: $unit_file"
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+
+    echo
+    echo "Se eliminará únicamente esta instancia WS-Epro:"
+    echo "  Unidad:        $unit_file"
+    echo "  Configuración: $config"
+    echo "  Puerto:        $port"
+    echo "El ejecutable compartido /bin/WS-Epro y las demás instancias se conservarán."
+    read -r -p "¿Confirmas la eliminación definitiva? [s/N] " confirm
+    [[ "$confirm" =~ ^[sS]$ ]] || { echo "Cancelado; no se modificó nada."; read -r -p "Enter para continuar..." _; return 0; }
+
+    if ! systemctl stop "$unit"; then
+        echo "ERROR: no se pudo detener $unit; se cancela la eliminación."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    if ! systemctl disable "$unit"; then
+        echo "ERROR: no se pudo deshabilitar $unit; los archivos se conservarán."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    if ! rm -f -- "$unit_file"; then
+        echo "ERROR: no se pudo eliminar $unit_file."
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+    if ! rm -f -- "$config"; then
+        echo "ERROR: se eliminó la unidad, pero no se pudo eliminar $config."
+        systemctl daemon-reload
+        read -r -p "Enter para continuar..." _
+        return 1
+    fi
+
+    systemctl daemon-reload || {
+        echo "ADVERTENCIA: los archivos se eliminaron, pero systemctl daemon-reload devolvió error."
+        read -r -p "Enter para continuar..." _
+        return 1
+    }
+    systemctl reset-failed "$unit" >/dev/null 2>&1 || true
+
+    if [[ ! -e "$unit_file" && ! -e "$config" ]] && ! systemctl list-unit-files --no-legend "$unit" 2>/dev/null | grep -Fq "$unit"; then
+        echo "ÉXITO: $unit fue eliminado."
+    else
+        echo "ADVERTENCIA: revisa manualmente el estado de $unit; la verificación no fue concluyente."
+    fi
+    echo "Verificación de la otra instancia (si existe):"
+    systemctl is-active python.8080.service 2>/dev/null || true
+    read -r -p "Enter para continuar..." _
+}
+
 ws_epro_admin() {
     local opt unit config
     while true; do
@@ -1670,6 +1758,7 @@ ws_epro_admin() {
         echo " [5] Reiniciar servicio"
         echo " [6] Estado y errores"
         echo " [7] Listar servicios"
+        echo " [8] Eliminar servicio"
         echo " [0] Volver"
         msg -bar3
         read -r -p "Opción: " opt
@@ -1700,6 +1789,7 @@ ws_epro_admin() {
                read -r -p "Enter para continuar..." _
              fi ;;
           7) ws_epro_inventory; read -r -p "Enter para continuar..." _ ;;
+          8) ws_epro_delete_unit ;;
           0) return ;;
           *) echo "Opción inválida"; sleep 1 ;;
         esac
