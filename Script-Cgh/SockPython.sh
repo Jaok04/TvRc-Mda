@@ -1856,7 +1856,7 @@ ws_epro_entry() {
 }
 # -------- FIN ADMINISTRACION WS-Epro --------
 
-iniciarsocks () {
+iiniciarsocks () {
 
 msg -bar3
 local _ps="$(ps x)"
@@ -1875,22 +1875,17 @@ echo -e "\e[91m\e[43m  ==== SCRIPT MOD ChumoGH|EDICION ====  \033[0m \033[0;33m[
 [[ ${_PT} ]] && {
 msg -bar3
     unset portas
-    # Usar arrays para almacenar los resultados
     declare -A portas
     local portas_var=$(lsof -V -i tcp -P -n | awk '/LISTEN/ && (/python/ || /WS-Epro/) {print $1, $9}')
 	local n=1
     while read -r line; do
         local var1=$(echo "$line" | awk '{print $1}')
         local var2=$(echo "$line" | awk '{split($2, a, ":"); print a[2]}')
-
-        # Usar un array asociativo para evitar duplicados
         portas["$var1 $var2"]=1
     done <<< "$portas_var"
 
-    # Imprimir las claves del array asociativo filtrando solo 'python' y 'WS-Epro'
     for key in "${!portas[@]}"; do
         if [[ $key == python* || $key == WS-Epro* ]]; then
-            # Extraer el puerto de la clave
             port=$(echo $key | awk '{print $2}')
             process=$(echo $key | awk '{print $1}')
 			echo -e "\033[0;35m [\033[0;36m${n}\033[0;35m]\033[0;33m ${flech} ${cor[3]}$process : \033[0;32m$port \033[0;35m [ \033[0;36mWORKING \033[0;35m]"
@@ -1899,27 +1894,28 @@ msg -bar3
     done
 }
 msg -bar3
-echo -ne "$(msg -verd " [1]") $(msg -verm2 ">") " && msg -azu "Socks Python SIMPLE      $P1"
-echo -ne "$(msg -verd " [2]") $(msg -verm2 ">") " && msg -azu "Socks Python SEGURO      $P2"
-echo -ne "$(msg -verd " [3]") $(msg -verm2 ">") " && msg -azu "Socks Python DIRETO (WS) $P3"
-echo -ne "$(msg -verd " [4]") $(msg -verm2 ">") " && msg -azu "Socks Python OPENVPN     $P4"
-echo -ne "$(msg -verd " [5]") $(msg -verm2 ">") " && msg -azu "Socks Python GETTUNEL    $P5"
-echo -ne "$(msg -verd " [6]") $(msg -verm2 ">") " && msg -azu "Socks Python TCP BYPASS  $P6"
-msg -bar3
 
-py=7
+# AQUI SE APLICA EL DISEÑO VISUAL USANDO ECHO ESTRUCTURADO (Simulando menu_item)
+echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SIMPLE      $P1"
+echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SEGURO      $P2"
+echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python DIRETO (WS) $P3"
+echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python OPENVPN     $P4"
+echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python GETTUNEL    $P5"
+echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python TCP BYPASS  $P6"
+
 var_p="$(echo -e "$_PT"|grep "WS-Epro"| wc -l) "
 var_w="$(echo -e "$_PT"|grep "python"|wc -l)"
 var_check=$(( ${var_p} + ${var_w} ))
 if [[ ${var_check} -ge "2" ]]; then
-    echo -e "$(msg -verd " [7]") $(msg -verm2 ">") $(msg -azu "ANULAR TODOS") $(msg -verd " [8]") $(msg -verm2 ">") $(msg -azu "ELIMINAR UN PUERTO")"
+    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ANULAR TODOS\033[0;35m       [\033[0;36m8\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR UN PUERTO"
     py=8
 else
-    echo -e "$(msg -verd "  [7]") $(msg -verm2 ">") $(msg -azu "ELIMINAR TODOS")"
+    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR TODOS"
+    py=7
 fi
 
 msg -bar3
-echo -ne "$(msg -verd "  [0]") $(msg -verm2 ">") " && msg -bra "   \033[1;41m VOLVER \033[0m"
+echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
 msg -bar3
 selection=$(selection_fun ${py})
 case ${selection} in
@@ -1935,6 +1931,7 @@ case ${selection} in
 esac
 return 1
 }
+
 #selecPython
 #[[ ! -e /etc/chekKEY ]] && chekKEY &>/dev/null
 iniciarsocks
