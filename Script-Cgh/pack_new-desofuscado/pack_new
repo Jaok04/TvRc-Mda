@@ -1,5 +1,5 @@
 #By @ChumoGH|Plus - MOD BY JAOK04 (FIXED PATHS & URLS)
-[[ -z ${IiP} ]] && IiP=$(cat < /usr/bin/vendor_code)
+#[[ -z ${IiP} ]] && IiP=$(cat < /usr/bin/vendor_code)
 rm -rf /tmp/* &>/dev/null
 BS=$(basename "$0") &>/dev/null
 rm -f $(pwd)/${BS} &>/dev/null
