@@ -2,7 +2,7 @@
 
 # menu maker (opciones 1, 2, 3,.....)
 
-flech='➮' cOlM='⁙' && TOP='‣' && TTini='=====>>►► 🐲' && cG='/c' && TTfin='🐲 ◄◄<<=====' && TTcent='💥' && RRini='【  ★' && RRfin='★  】' && CHeko='✅' && ScT='🛡️' && FlT='⚔️' && BoLCC='🪦' && ceLL='🧬' && aLerT='⚠️' && _kl1='ghkey' && lLaM='🔥' && pPIniT='∘' && bOTg='🤖' && kL10='tc' && rAy='⚡' && tTfIn='】' && TtfIn='【' tTfLe='►' && am1='/e' && rUlq='🔰' && h0nG='🍄' && lLav3='🗝️' && m3ssg='📩' && pUn5A='⚜' && p1t0='•' nib="${am1}${kL10}" && t0gSl='•'
+flech='➮' cOlM='⁙' && TOP='‣' && TTini='=====>>►► 🐲' && cG='/c' && TTfin='🐲 ◄◄<<=====' && TTcent='💥' && RRini='【  ★' && RRfin='★  】' && CHeko='✅' && ScT='🛡️' && FlT='⚔️' && BoLCC='🪦' && ceLL='🧬' && aLerT='⚠️' && _kl1='ghkey' && lLaM='🔥' && pPIniT='∘' && bOTg='🤖' && kL10='tc' && rAy='⚡' && tTfIn='】' && TtfIn='【' tTfLe='►' && am1='/e' && rUlq='🔰' && h0nG='🍄' && lLav3='🗝️' && m3ssg='📩' && pUn5A='⚜' && p1t0='•' nib="${am1}${kL10}" && t0gSl='•' tRadm='👨‍💻'
 cOpyRig='©' && mbar2=' •••••••••••••••••••••••'
 
 _check1=$5
@@ -154,6 +154,7 @@ COLOR[5]='\e[35m' #MAGENTA='\e[35m'
 COLOR[6]='\033[1;97m' #MAG='\033[1;36m'
 COLOR[7]='\033[1;49;95m'
 COLOR[8]='\033[1;49;96m'
+COLOR[9]='\033[38;5;208m' # Naranja fuerte TvRc
 else
 local COL=0
 for number in $(cat $colors); do
@@ -195,7 +196,7 @@ SEMCOR='\e[0m'
   #-bar)ccor="${COLOR[1]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar)ccor="${COLOR[1]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar2)ccor="${COLOR[1]}=====================================================" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
-  -bar3)ccor="${COLOR[3]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
+  -bar3)ccor="${COLOR[9]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -blue)ccor="${COLOR[6]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar4)ccor="${COLOR[5]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -br)ccor="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${ccor}";;
@@ -246,8 +247,18 @@ else
 fi
 
 
-hash_remoto=$(curl -sSL "$archivo_remoto" | md5sum | awk '{print $1}')
-hash_local=$(md5sum "$archivo_local" 2>/dev/null | awk '{print $1}')
+if [[ -n "$archivo_remoto" ]]; then
+	hash_remoto=$(wget -q -T 5 -O - "$archivo_remoto" 2>/dev/null | md5sum | awk '{print $1}')
+else
+    hash_remoto="null"
+fi
+
+if [[ -n "$archivo_local" ]]; then
+    hash_local=$(md5sum "$archivo_local" 2>/dev/null | awk '{print $1}')
+else
+    hash_local="null"
+fi
+
 
 if [ "$hash_local" != "$hash_remoto" ]; then
     echo -e "=== LOCAL ${hash_local} ==== \n === ONLINE ${hash_remoto} ==== \n ========================\n" >> /root/stilos.log
@@ -271,3 +282,4 @@ export -f print_center
 export -f in_opcion
 export -f del
 export -f menu_item
+export flech cOlM TOP TTini cG TTfin TTcent RRini RRfin CHeko ScT FlT BoLCC ceLL aLerT _kl1 lLaM pPIniT bOTg kL10 rAy tTfIn TtfIn tTfLe am1 rUlq h0nG lLav3 m3ssg pUn5A p1t0 nib t0gSl tRadm cOpyRig mbar2
