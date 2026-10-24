@@ -62,14 +62,27 @@ print_center() {
 
 update_pak () {
     clear&&clear
-    apt-get update -y -qq
-    add-apt-repository universe -y
+    paste <(figlet "TvRc  " | lolcat -f -p $((RANDOM % 10 + 1))) <(figlet "Admin" | lolcat -f -p $((RANDOM % 10 + 1)))
+    echo -ne "Actualizando repositorios "
+    
+    # Ejecuta apt-get en segundo plano y silencia la salida
+    (apt-get update -y && add-apt-repository universe -y) &> /dev/null &
+    PID=$!
+    
+    # Imprime una barra de carga mientras el proceso anterior siga activo
+    while kill -0 $PID 2> /dev/null; do
+        echo -ne "█"
+        sleep 0.5
+    done
+    
+    echo -e " [OK]"
     msg -bar3
     [[ $(dpkg --get-selections|grep -w "pv"|head -1) ]] || apt install pv -y &> /dev/null
     [[ $(dpkg --get-selections|grep -w "bzip2"|head -1) ]] || apt install bzip2 -y &> /dev/null
     system=$(cat -n /etc/issue |grep 1 |cut -d ' ' -f6,7,8 |sed 's/1//' |sed 's/      //')
     distro=$(echo "$system"|awk '{print $1}')
     print_center "		[ ! ]  ESPERE UN MOMENTO  [ ! ]"
+    [[ $(dpkg --get-selections|grep -w "boxes"|head -1) ]] || apt-get -qq install boxes -y &>/dev/null
     [[ $(dpkg --get-selections|grep -w "lolcat"|head -1) ]] || apt-get -qq install lolcat -y &>/dev/null
     [[ $(dpkg --get-selections|grep -w "figlet"|head -1) ]] || apt-get -qq install figlet -y &>/dev/null
     [[ $(dpkg --get-selections|grep -w "curl"|head -1) ]] || apt-get -qq install curl -y &>/dev/null
@@ -94,16 +107,17 @@ downloader_files_mod() {
     [[ -d ${SCPinstal} ]] && rm -rf ${SCPinstal}
     mkdir -p ${SCPinstal}
     
-    echo -e " \033[1;33m[DEBUG] Iniciando descarga de archivos...\033[0m"
+    echo " Descargando Archivos..." | lolcat
 
-    # Descargar el PACK_NEW de tu Repo
-    # Quitamos -q para ver errores si los hay
-    wget -O /root/pack_new "${REPO_PACK}/pack_new"
+    # Se ejecuta wget guardando la salida estándar y de errores en una variable
+    LOG_WGET=$(wget -O /root/pack_new "${REPO_PACK}/pack_new" 2>&1)
+    
     if [[ ! -s /root/pack_new ]]; then
-        echo -e "\033[1;31m[ERROR] Falló la descarga de pack_new. Verifica la URL:\033[0m"
-        echo "${REPO_PACK}/pack_new"
+        echo -e "\033[1;31m[ERROR] Falló la descarga. Detalles del error:\033[0m"
+        echo "$LOG_WGET"
         exit 1
     fi
+
     chmod +x /root/pack_new
 
     # Descargar archivos usando la LISTA INTERNA
@@ -121,6 +135,9 @@ downloader_files_mod() {
         fi
     done
     
+    # --- ENLACE SIMBÓLICO PARA MSG ---
+    mkdir -p /bin/ejecutar && ln -sf /etc/adm-lite/msg /bin/ejecutar/msg
+    
     # Descomprimir file.tar (CRÍTICO)
     if [[ -s ${SCPdir}/file.tar ]]; then
          echo -e " -> Descomprimiendo binarios..."
@@ -136,7 +153,7 @@ funkey () {
     msg -bar3
     echo -e "   \033[41m- SISTEMA : \033[100m${_sys}\033[41m -\033[0m"
     msg -bar3
-    print_center "$(curl -fsSL ifconfig.me)"
+    print_center "$(curl -4 -fsSL ifconfig.me)"
     msg -bar3
     figlet ' . ADMcgh . ' | boxes -d stone -p a0v0 | lolcat
     echo "           INSTALADOR JAOK04 (BLINDADO) " | lolcat
