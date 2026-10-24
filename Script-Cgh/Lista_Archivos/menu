@@ -316,8 +316,8 @@ clear
 dir_user="./userDIR"
 dir="/etc/adm-lite"
 
-_on="\033[0;31m[\033[0;32mON\033[0;31m]"
-_off="\033[0;31m [OFF]"
+_on="${c_on}[ON]\033[0m"
+_off="${c_off}[OFF]\033[0m"
 #SISTEMADEMODULOS
 unset OPENVPN
 unset limiter_on
@@ -5012,166 +5012,6 @@ sleep 0.5s
 bash ${DEST}/ClashForAndroidGLOBAL.sh
 }
 
-  # Función interna para mostrar paleta y capturar color
-  elegir_color() {
-    clear
-    msg -bar3
-    echo -e "               \033[1;37;48;5;54m 🎨 ELIJA UN COLOR 🎨 \033[0m"
-    msg -bar3
-    echo -e " [1] \033[1;31mRojo            (████)\033[0m"
-    echo -e " [2] \033[1;32mVerde           (████)\033[0m"
-    echo -e " [3] \033[1;33mAmarillo        (████)\033[0m"
-    echo -e " [4] \033[1;34mAzul            (████)\033[0m"
-    echo -e " [5] \033[1;35mMagenta         (████)\033[0m"
-    echo -e " [6] \033[1;36mCeleste         (████)\033[0m"
-    echo -e " [7] \033[1;37mBlanco          (████)\033[0m"
-    echo -e " [8] \033[38;5;208mNaranja Fuerte  (████)\033[0m"
-    echo -e " [9] \033[38;5;54mMorado Oscuro   (████)\033[0m"
-    msg -bar3
-    echo -e " [0] \033[1;41m[ CANCELAR ]\033[0m"
-    msg -bar3
-    read -p " ► Seleccione el tono : " opt_col
-
-    case $opt_col in
-      1) color_ansi="\033[1;31m" ;;
-      2) color_ansi="\033[1;32m" ;;
-      3) color_ansi="\033[1;33m" ;;
-      4) color_ansi="\033[1;34m" ;;
-      5) color_ansi="\033[1;35m" ;;
-      6) color_ansi="\033[1;36m" ;;
-      7) color_ansi="\033[1;37m" ;;
-      8) color_ansi="\033[38;5;208m" ;;
-      9) color_ansi="\033[38;5;54m" ;;
-      *) color_ansi="" ;;
-    esac
-  }
-
-  while true; do
-    source "$theme_file" # Recargar variables para reflejar cambios en tiempo real
-    clear
-    msg -bar3
-    echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;37m 🎨 PERSONALIZAR TEMA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-    msg -bar3
-    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Elementos Base (Líneas, Textos...)"
-    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
-    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Diseño de Títulos (Fondos y Bordes)"
-    msg -bar3
-    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m \033[1;41m[ REGRESAR ]\033[0m"
-    msg -bar3
-    read -p " ► Opcion : " main_opt
-
-    case $main_opt in
-      0) break ;;
-      
-      1) # SUBMENÚ ELEMENTOS BASE
-        while true; do
-          clear
-          msg -bar3
-          echo -e "               \033[1;37;48;5;54m 🎨 ELEMENTOS BASE 🎨 \033[0m"
-          msg -bar3
-          echo -e " [1] Textos       [4] Números (01, 02)"
-          echo -e " [2] Líneas       [5] Flechas Color"
-          echo -e " [3] Corchetes    [6] Flechas Símbolo"
-          msg -bar3
-          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
-          msg -bar3
-          read -p " ► Seleccione opción : " sub_opt
-          [[ "$sub_opt" == "0" ]] && break
-
-          if [[ "$sub_opt" =~ ^[1-5]$ ]]; then
-            elegir_color
-            [[ -z "$color_ansi" ]] && continue
-            case $sub_opt in
-              1) sed -i '/c_texto=/d' $theme_file; echo "c_texto=\"$color_ansi\"" >> $theme_file ;;
-              2) sed -i '/c_linea=/d' $theme_file; echo "c_linea=\"$color_ansi\"" >> $theme_file ;;
-              3) sed -i '/c_corch=/d' $theme_file; echo "c_corch=\"$color_ansi\"" >> $theme_file ;;
-              4) sed -i '/c_num=/d' $theme_file; echo "c_num=\"$color_ansi\"" >> $theme_file ;;
-              5) sed -i '/c_flech=/d' $theme_file; echo "c_flech=\"$color_ansi\"" >> $theme_file ;;
-            esac
-          elif [[ "$sub_opt" == "6" ]]; then
-            read -p " ► Escriba o pegue el nuevo símbolo (Ej: ➜, ◆, 👉) : " nuevo_simbolo
-            [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' $theme_file; echo "s_flech=\"$nuevo_simbolo\"" >> $theme_file; }
-          fi
-        done
-      ;;
-
-      2) # SUBMENÚ ETIQUETAS
-        while true; do
-          clear
-          msg -bar3
-          echo -e "             \033[1;37;48;5;54m 🎨 ETIQUETAS DE ESTADO 🎨 \033[0m"
-          msg -bar3
-          echo -e " [1] Modificar ${c_on}[ON]\033[0m"
-          echo -e " [2] Modificar ${c_off}[OFF]\033[0m"
-          echo -e " [3] Modificar ${c_work}[WORKING]\033[0m"
-          echo -e " [4] Modificar ${c_beta}[BETA]\033[0m"
-          msg -bar3
-          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
-          msg -bar3
-          read -p " ► Seleccione etiqueta : " sub_etiq
-          [[ "$sub_etiq" == "0" ]] && break
-          [[ ! "$sub_etiq" =~ ^[1-4]$ ]] && continue
-
-          elegir_color
-          [[ -z "$color_ansi" ]] && continue
-
-          case $sub_etiq in
-            1) sed -i '/c_on=/d' $theme_file; echo "c_on=\"$color_ansi\"" >> $theme_file ;;
-            2) sed -i '/c_off=/d' $theme_file; echo "c_off=\"$color_ansi\"" >> $theme_file ;;
-            3) sed -i '/c_work=/d' $theme_file; echo "c_work=\"$color_ansi\"" >> $theme_file ;;
-            4) sed -i '/c_beta=/d' $theme_file; echo "c_beta=\"$color_ansi\"" >> $theme_file ;;
-          esac
-        done
-      ;;
-
-      3) # SUBMENÚ FONDOS DE TÍTULOS
-        while true; do
-          clear
-          msg -bar3
-          echo -e "             \033[1;37;48;5;54m 🎨 FONDOS DE TÍTULOS 🎨 \033[0m"
-          msg -bar3
-          echo -e " [1] Cambiar Color de Fondo"
-          echo -e " [2] Cambiar Forma de los Extremos"
-          msg -bar3
-          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
-          msg -bar3
-          read -p " ► Seleccione opción : " opt_tit
-          [[ "$opt_tit" == "0" ]] && break
-
-          if [[ "$opt_tit" == "1" ]]; then
-            echo -e " [1] \033[48;5;54m Morado Oscuro \033[0m"
-            echo -e " [2] \033[44m Azul Clásico \033[0m"
-            echo -e " [3] \033[41m Rojo Intenso \033[0m"
-            read -p " ► Elija color de fondo : " c_fondo
-            case $c_fondo in
-              1) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
-                 echo -e "tit_bg=\"\033[48;5;54m\"\ntit_edge_col=\"\033[38;5;54m\"" >> $theme_file ;;
-              2) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
-                 echo -e "tit_bg=\"\033[44m\"\ntit_edge_col=\"\033[34m\"" >> $theme_file ;;
-              3) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
-                 echo -e "tit_bg=\"\033[41m\"\ntit_edge_col=\"\033[31m\"" >> $theme_file ;;
-            esac
-          elif [[ "$opt_tit" == "2" ]]; then
-            echo -e " [1] Redondeados  ( TITULO )"
-            echo -e " [2] Rectos       ( █TITULO█ )"
-            echo -e " [3] Angulares    ( TITULO )"
-            echo -e " [4] Corchetes    ( 【TITULO】 )"
-            read -p " ► Elija forma : " c_forma
-            case $c_forma in
-              1) f_L="" ; f_R="" ;;
-              2) f_L=" " ; f_R=" " ;;
-              3) f_L="" ; f_R="" ;;
-              4) f_L="【" ; f_R="】" ;;
-            esac
-            [[ "$c_forma" =~ ^[1-4]$ ]] && { sed -i '/tit_forma_L=/d; /tit_forma_R=/d' $theme_file; echo -e "tit_forma_L=\"$f_L\"\ntit_forma_R=\"$f_R\"" >> $theme_file; }
-          fi
-        done
-      ;;
-    esac
-  done
-}
-
-
 iniciarsocks () {
 source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/SockPython.sh)
 }
@@ -7817,6 +7657,7 @@ ps aux | grep  budp.sh| grep -v grep | awk '{print $2}' | xargs kill -9 &>/dev/n
 return
 }
 
+
 while true; do	
 unset squid
 unset dropbear
@@ -7885,30 +7726,30 @@ IFS=$'\n' read -r -d '' country region state <<< $(curl -sSL ipinfo.io | grep -E
 clear&&clear
 msg -bar3
 #tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2
-echo -e "${cor[5]} ${h0nG} INSTALACION DE PROTOCOLOS ( ${country}) ${h0nG} "
+echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALACION DE PROTOCOLOS ( ${country} ) ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 msg -bar3 #SHADOWSOCKS   $user_t
-echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;33m${flech} ${cor[3]}OpenSSH       $pSSH  \033[0;35m [\033[0;36m11\033[0;35m]\033[0;33m${flech} ${cor[3]}PSIPHON SERVER $pps"
-echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;33m${flech} ${cor[3]}DROPBEAR      $dropb \033[0;35m [\033[0;36m12\033[0;35m]\033[0;33m${flech} ${cor[3]}TCP DNS        \033[0;33m(#BETA)"
-echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;33m${flech} ${cor[3]}OPENVPN       $openvpn \033[0;35m [\033[0;36m13\033[0;35m]\033[0;33m${flech} ${cor[3]}WEBMIN         $webminn"
-echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;33m${flech} ${cor[3]}SSL/TLS       $stunel \033[0;35m [\033[0;36m14\033[0;35m]\033[0;33m${flech} ${cor[3]}SlowDNS        $P1"
-echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;33m${flech} ${cor[3]}SHADOWSOCKS-R $shadow \033[0;35m [\033[0;36m15\033[0;35m]\033[0;33m${flech} ${cor[3]}SSL->PYTHON    ${socksA}" #\033[0;33m(#BETA)"
-echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;33m${flech} ${cor[3]}SQUID         $squid \033[0;35m [\033[0;36m16\033[0;35m]\033[0;33m${flech} ${cor[3]}SSLH Multiplex $sslh"
-echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m${flech} ${cor[3]}PROXY PYTHON  $socks \033[0;35m [\033[0;36m17\033[0;35m]\033[0;33m${flech} ${cor[3]}OVER WEBSOCKET \033[0;33m(#BETA)"
-echo -e "\033[0;35m [\033[0;36m8\033[0;35m]\033[0;33m${flech} ${cor[3]}V2RAY SWITCH  $v2ray \033[0;35m [\033[0;36m18\033[0;35m]\033[0;33m${flech} ${cor[3]}SOCKS5         \033[0;33m(#BETA)"
-echo -e "\033[0;35m [\033[0;36m9\033[0;35m]\033[0;33m${flech} ${cor[3]}CFA ( CLASH ) $xclash\033[0;35m  [\033[0;36m19\033[0;35m]\033[0;33m${flech} ${cor[3]}Protocolos UDP  $_pidUDP"
-echo -e "\033[0;35m [\033[0;36m10\033[0;35m]\033[0;33m${flech} ${cor[3]}TROJAN-GO    $pTROJ \033[0;35m [\033[0;36m20\033[0;35m]\033[0;33m${flech} ${cor[5]}FUNCIONES EN DISEÑO!"
+echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OpenSSH       $pSSH  ${c_corch} [${c_num}11${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}PSIPHON SERVER $pps"
+echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DROPBEAR      $dropb ${c_corch} [${c_num}12${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TCP DNS        ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OPENVPN       $openvpn ${c_corch} [${c_num}13${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}WEBMIN         $webminn"
+echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSL/TLS       $stunel ${c_corch} [${c_num}14${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SlowDNS        $P1"
+echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SHADOWSOCKS-R $shadow ${c_corch} [${c_num}15${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSL->PYTHON    ${socksA}"
+echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SQUID         $squid ${c_corch} [${c_num}16${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSLH Multiplex $sslh"
+echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}PROXY PYTHON  $socks ${c_corch} [${c_num}17${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OVER WEBSOCKET ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}8${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}V2RAY SWITCH  $v2ray ${c_corch} [${c_num}18${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SOCKS5         ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}9${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CFA ( CLASH ) $xclash  ${c_corch} [${c_num}19${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Protocolos UDP  $_pidUDP"
+echo -e "${c_corch} [${c_num}10${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TROJAN-GO    $pTROJ ${c_corch} [${c_num}20${c_corch}] ${c_flech}${s_flech}\033[0m ${c_beta}FUNCIONES EN DISEÑO!"
 msg -bar3 
-echo -e "${cor[5]} ${h0nG}  INSTALACION DE HERRAMIENTAS Y SERVICIOS ${h0nG} "
+echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALACION DE HERRAMIENTAS Y SERVICIOS ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 msg -bar3
-echo -e "\033[0;35m [\033[0;36m21\033[0;35m]\033[0;33m ${flech} ${cor[3]}BLOCK TORRENT        \033[0;35m [\033[0;36m22\033[0;35m]\033[0;33m ${flech} ${cor[3]}BadVPN   $_badvpn"
-echo -e "\033[0;35m [\033[0;36m23\033[0;35m]\033[0;33m ${flech} ${cor[3]}TCP (BBR|Plus) $_tcpd \033[0;35m [\033[0;36m24\033[0;35m]\033[0;33m ${flech} ${cor[3]}FAILBAN  $fail_b"
-echo -e "\033[0;35m [\033[0;36m25\033[0;35m]\033[0;33m ${flech} ${cor[3]}ARCHIVO ONLINE \033[0;31m[\033[0;32m${portFTP}\033[0;31m]  \033[0;35m [\033[0;36m26\033[0;35m]\033[0;33m ${flech} ${cor[3]}UP|DOWN SpeedTest " #\033[0;35m [\033[0;36m0\033[0;35m]\033[0;33m ⇦ $(msg -bra "\e[3;33m[ SALIR ]\e[0m")"
-echo -e "\033[0;35m [\033[0;36m27\033[0;35m]\033[0;33m ${flech} ${cor[3]}DETALLES DEL VPS     \033[0;35m [\033[0;36m28\033[0;35m]\033[0;33m ${flech} ${cor[3]}Block ADS $_ADS" #\033[0;35m [\033[0;36m0\033[0;35m]\033[0;33m ⇦ $(msg -bra "\e[3;33m[ SALIR ]\e[0m")"
-echo -e "\033[0;35m [\033[0;36m29\033[0;35m]\033[0;33m ${flech} ${cor[3]}DNS CUSTOM (NETFLIX) \033[0;35m [\033[0;36m30\033[0;35m]\033[0;33m ${flech} ${cor[3]}HERRAMIENTAS EXTRAS" #\033[0;35m [\033[0;36m0\033[0;35m]\033[0;33m ⇦ $(msg -bra "\e[3;33m[ SALIR ]\e[0m")"
-echo -e "\033[0;35m [\033[0;36m31\033[0;35m]\033[0;33m ${flech} ${cor[3]}REINICIAR SERVICIOS  \033[0;35m [\033[0;36m32\033[0;35m]\033[0;33m ${flech} ${cor[3]}Brook Server $_ADS"
-echo -e "\033[0;35m [\033[0;36m33\033[0;35m]\033[0;33m ${flech} ${cor[3]}FIREWALL (IPTABLES)  \033[0;35m [\033[0;36m34\033[0;35m]\033[0;31m ${flech} ${cor[3]}Enable/Change PASSWD ROOT"
-echo -e "\033[0;35m [\033[0;36m35\033[0;35m]\033[0;33m ${flech} ${cor[3]}AToken [APP's Mods]  \033[0;35m [\033[0;36m36\033[0;35m]\033[0;31m ${flech} ${cor[3]} BHTTP [APP's Mods] $_bttp" #\033[0;35m [\033[0;36m0\033[0;35m]\033[0;31m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
-echo -e "\033[0;35m [\033[0;36m37\033[0;35m]\033[0;33m ${flech} ${cor[3]}HCR [HTTP Custom] $_hcr  \033[0;35m [\033[0;36m0\033[0;35m]\033[0;31m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
+echo -e "${c_corch} [${c_num}21${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}BLOCK TORRENT        ${c_corch} [${c_num}22${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}BadVPN   $_badvpn"
+echo -e "${c_corch} [${c_num}23${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TCP (BBR|Plus) $_tcpd ${c_corch} [${c_num}24${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}FAILBAN  $fail_b"
+echo -e "${c_corch} [${c_num}25${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ARCHIVO ONLINE \033[0;31m[\033[0;32m${portFTP}\033[0;31m]  ${c_corch} [${c_num}26${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}UP|DOWN SpeedTest "
+echo -e "${c_corch} [${c_num}27${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DETALLES DEL VPS     ${c_corch} [${c_num}28${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Block ADS $_ADS"
+echo -e "${c_corch} [${c_num}29${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DNS CUSTOM (NETFLIX) ${c_corch} [${c_num}30${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HERRAMIENTAS EXTRAS"
+echo -e "${c_corch} [${c_num}31${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}REINICIAR SERVICIOS  ${c_corch} [${c_num}32${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Brook Server $_ADS"
+echo -e "${c_corch} [${c_num}33${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}FIREWALL (IPTABLES)  ${c_corch} [${c_num}34${c_corch}] ${c_flech}${s_flech}\033[0m ${c_off}Enable/Change PASSWD ROOT"
+echo -e "${c_corch} [${c_num}35${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}AToken [APP's Mods]  ${c_corch} [${c_num}36${c_corch}] ${c_flech}${s_flech}\033[0m ${c_off}BHTTP [APP's Mods] $_bttp"
+echo -e "${c_corch} [${c_num}37${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HCR [HTTP Custom] $_hcr  ${c_corch} [${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
 msg -bar3 
 selection=$(selection_fun 37)
 case ${selection} in
@@ -8117,11 +7958,11 @@ fi
 
 }
 
-# Gestor de temas TvRc Sábado 24/Oct/2026
+###### Gestor de temas TvRc####
 gestor_temas() {
   local theme_file="/etc/adm-lite/theme.conf"
   
-  # 1. Crear el archivo base si no existe
+  # 1. Crear el archivo base si no existe o si faltan variables nuevas
   if [[ ! -f "$theme_file" ]]; then
     mkdir -p /etc/adm-lite
     cat <<EOF > "$theme_file"
@@ -8139,8 +7980,176 @@ tit_bg="\033[48;5;54m"
 tit_edge_col="\033[38;5;54m"
 tit_forma_L=""
 tit_forma_R=""
+tit_text="\033[1;37m"
 EOF
+  else
+    # Inyectar tit_text si es un theme.conf antiguo que no la tiene
+    grep -q "tit_text" "$theme_file" || echo "tit_text=\"\033[1;37m\"" >> "$theme_file"
   fi
+
+  # Función interna para mostrar paleta y capturar color
+  elegir_color() {
+    clear
+    msg -bar3
+    echo -e "               \033[1;37;48;5;54m 🎨 ELIJA UN COLOR 🎨 \033[0m"
+    msg -bar3
+    echo -e " [1] \033[1;31mRojo            (████)\033[0m"
+    echo -e " [2] \033[1;32mVerde           (████)\033[0m"
+    echo -e " [3] \033[1;33mAmarillo        (████)\033[0m"
+    echo -e " [4] \033[1;34mAzul            (████)\033[0m"
+    echo -e " [5] \033[1;35mMagenta         (████)\033[0m"
+    echo -e " [6] \033[1;36mCeleste         (████)\033[0m"
+    echo -e " [7] \033[1;37mBlanco          (████)\033[0m"
+    echo -e " [8] \033[38;5;208mNaranja Fuerte  (████)\033[0m"
+    echo -e " [9] \033[38;5;54mMorado Oscuro   (████)\033[0m"
+    msg -bar3
+    echo -e " [0] \033[1;41m[ CANCELAR ]\033[0m"
+    msg -bar3
+    read -p " ► Seleccione el tono : " opt_col
+
+    case $opt_col in
+      1) color_ansi="\033[1;31m" ;;
+      2) color_ansi="\033[1;32m" ;;
+      3) color_ansi="\033[1;33m" ;;
+      4) color_ansi="\033[1;34m" ;;
+      5) color_ansi="\033[1;35m" ;;
+      6) color_ansi="\033[1;36m" ;;
+      7) color_ansi="\033[1;37m" ;;
+      8) color_ansi="\033[38;5;208m" ;;
+      9) color_ansi="\033[38;5;54m" ;;
+      *) color_ansi="" ;;
+    esac
+  }
+
+  while true; do
+    source "$theme_file" # Recargar variables
+    clear
+    msg -bar3
+    echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PERSONALIZAR TEMA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Elementos Base (Líneas, Textos...)"
+    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
+    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Diseño de Títulos (Fondos, Textos y Bordes)"
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m \033[1;41m[ REGRESAR ]\033[0m"
+    msg -bar3
+    read -p " ► Opcion : " main_opt
+
+    case $main_opt in
+      0) break ;;
+      
+      1) # SUBMENÚ ELEMENTOS BASE
+        while true; do
+          clear
+          msg -bar3
+          echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 ELEMENTOS BASE 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Textos       ${c_corch}[${c_num}4${c_corch}] ${c_texto}Números (01, 02)"
+          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Líneas       ${c_corch}[${c_num}5${c_corch}] ${c_texto}Flechas Color"
+          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Corchetes    ${c_corch}[${c_num}6${c_corch}] ${c_texto}Flechas Símbolo"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione opción : " sub_opt
+          [[ "$sub_opt" == "0" ]] && break
+
+          if [[ "$sub_opt" =~ ^[1-5]$ ]]; then
+            elegir_color
+            [[ -z "$color_ansi" ]] && continue
+            case $sub_opt in
+              1) sed -i '/c_texto=/d' $theme_file; echo "c_texto=\"$color_ansi\"" >> $theme_file ;;
+              2) sed -i '/c_linea=/d' $theme_file; echo "c_linea=\"$color_ansi\"" >> $theme_file ;;
+              3) sed -i '/c_corch=/d' $theme_file; echo "c_corch=\"$color_ansi\"" >> $theme_file ;;
+              4) sed -i '/c_num=/d' $theme_file; echo "c_num=\"$color_ansi\"" >> $theme_file ;;
+              5) sed -i '/c_flech=/d' $theme_file; echo "c_flech=\"$color_ansi\"" >> $theme_file ;;
+            esac
+          elif [[ "$sub_opt" == "6" ]]; then
+            read -p " ► Escriba o pegue el nuevo símbolo (Ej: ➜, ◆, 👉) : " nuevo_simbolo
+            [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' $theme_file; echo "s_flech=\"$nuevo_simbolo\"" >> $theme_file; }
+          fi
+        done
+      ;;
+
+      2) # SUBMENÚ ETIQUETAS
+        while true; do
+          clear
+          msg -bar3
+          echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 ETIQUETAS DE ESTADO 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Modificar ${c_on}[ON]\033[0m"
+          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Modificar ${c_off}[OFF]\033[0m"
+          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Modificar ${c_work}[WORKING]\033[0m"
+          echo -e " ${c_corch}[${c_num}4${c_corch}] ${c_texto}Modificar ${c_beta}[BETA]\033[0m"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione etiqueta : " sub_etiq
+          [[ "$sub_etiq" == "0" ]] && break
+          [[ ! "$sub_etiq" =~ ^[1-4]$ ]] && continue
+
+          elegir_color
+          [[ -z "$color_ansi" ]] && continue
+
+          case $sub_etiq in
+            1) sed -i '/c_on=/d' $theme_file; echo "c_on=\"$color_ansi\"" >> $theme_file ;;
+            2) sed -i '/c_off=/d' $theme_file; echo "c_off=\"$color_ansi\"" >> $theme_file ;;
+            3) sed -i '/c_work=/d' $theme_file; echo "c_work=\"$color_ansi\"" >> $theme_file ;;
+            4) sed -i '/c_beta=/d' $theme_file; echo "c_beta=\"$color_ansi\"" >> $theme_file ;;
+          esac
+        done
+      ;;
+
+      3) # SUBMENÚ FONDOS DE TÍTULOS
+        while true; do
+          clear
+          msg -bar3
+          echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 FONDOS DE TÍTULOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Cambiar Color de Fondo"
+          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Cambiar Forma de los Extremos"
+          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Cambiar Color del Texto"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione opción : " opt_tit
+          [[ "$opt_tit" == "0" ]] && break
+
+          if [[ "$opt_tit" == "1" ]]; then
+            echo -e " [1] \033[48;5;54m Morado Oscuro \033[0m"
+            echo -e " [2] \033[44m Azul Clásico \033[0m"
+            echo -e " [3] \033[41m Rojo Intenso \033[0m"
+            read -p " ► Elija color de fondo : " c_fondo
+            case $c_fondo in
+              1) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[48;5;54m\"\ntit_edge_col=\"\033[38;5;54m\"" >> $theme_file ;;
+              2) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[44m\"\ntit_edge_col=\"\033[34m\"" >> $theme_file ;;
+              3) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[41m\"\ntit_edge_col=\"\033[31m\"" >> $theme_file ;;
+            esac
+          elif [[ "$opt_tit" == "2" ]]; then
+            echo -e " [1] Redondeados  ( TITULO )"
+            echo -e " [2] Rectos       ( █TITULO█ )"
+            echo -e " [3] Angulares    ( TITULO )"
+            echo -e " [4] Corchetes    ( 【TITULO】 )"
+            read -p " ► Elija forma : " c_forma
+            case $c_forma in
+              1) f_L="" ; f_R="" ;;
+              2) f_L=" " ; f_R=" " ;;
+              3) f_L="" ; f_R="" ;;
+              4) f_L="【" ; f_R="】" ;;
+            esac
+            [[ "$c_forma" =~ ^[1-4]$ ]] && { sed -i '/tit_forma_L=/d; /tit_forma_R=/d' $theme_file; echo -e "tit_forma_L=\"$f_L\"\ntit_forma_R=\"$f_R\"" >> $theme_file; }
+          elif [[ "$opt_tit" == "3" ]]; then
+            elegir_color
+            [[ -n "$color_ansi" ]] && { sed -i '/tit_text=/d' $theme_file; echo "tit_text=\"$color_ansi\"" >> $theme_file; }
+          fi
+        done
+      ;;
+    esac
+  done
+}
+
 
 start_menu () {
 while :
