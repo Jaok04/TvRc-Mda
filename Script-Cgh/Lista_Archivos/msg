@@ -14,6 +14,29 @@ _check5=$9
 archivo_local="/bin/ejecutar/msg"
 archivo_remoto="https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp"
 
+# --- GESTOR DE TEMAS DINÁMICO ---
+theme_file="/etc/adm-lite/theme.conf"
+if [[ -f "$theme_file" ]]; then
+    source "$theme_file"
+else
+    # Valores por defecto para instalaciones nuevas
+    c_texto="\033[1;37m"         # Blanco
+    c_linea="\033[1;33m"         # Amarillo
+    c_corch="\033[0;35m"         # Magenta
+    c_num="\033[0;36m"           # Celeste
+    c_flech="\033[0;33m"         # Amarillo
+    s_flech="➮"                  # Símbolo flecha
+    c_on="\033[1;32m"            # Verde
+    c_off="\033[1;31m"           # Rojo
+    c_work="\033[1;36m"          # Celeste
+    c_beta="\033[1;33m"          # Amarillo
+    tit_bg="\033[48;5;54m"       # Fondo Morado Oscuro
+    tit_edge_col="\033[38;5;54m" # Borde Morado Oscuro
+    tit_forma_L=""              # Borde Redondo Izq
+    tit_forma_R=""              # Borde Redondo Der
+fi
+
+
 show_quit(){
 
 local option="$1"
@@ -60,7 +83,7 @@ tittle () {
 [[ -z $1 ]] && rt='adm-lite' || rt='ADMcgh'
     clear&&clear
     msg -bar3
-    echo -e "\033[1;44;44m   \033[1;33m=====>>►► 🐲 ChumoGH 💥 Plus 🐲 ◄◄<<=====\033[0m \033[0;33m[$(less /etc/${rt}/v-local.log)]"
+    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;37m =====>>►► 🐲 ChumoGH 💥 Plus 🐲 ◄◄<<===== \033[0m${tit_edge_col}${tit_forma_R}\033[0m \033[0;33m[$(less /etc/${rt}/v-local.log)]"
     msg -bar3
 }
 in_opcion(){
@@ -133,11 +156,11 @@ menu_item(){
   msg -bar3
   #echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;43m[ REGRESAR ]\e[0m")"
   for item in "${opciones[@]}"; do
-    echo -e "\033[0;35m [\033[0;36m${i}\033[0;35m]\033[0;33m ${flech} ${cor[3]}${item}"
+   echo -e " ${c_corch}[${c_num}${i}${c_corch}] ${c_flech}${s_flech} \033[0m${c_texto}${item}\033[0m"
     ((i++))
   done
   msg -bar3
-  echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
+    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
   msg -bar3
 }
 
@@ -196,7 +219,7 @@ SEMCOR='\e[0m'
   #-bar)ccor="${COLOR[1]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar)ccor="${COLOR[1]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar2)ccor="${COLOR[1]}=====================================================" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
-  -bar3)ccor="${COLOR[9]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
+  -bar3)ccor="${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -blue)ccor="${COLOR[6]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar4)ccor="${COLOR[5]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -br)ccor="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${ccor}";;
