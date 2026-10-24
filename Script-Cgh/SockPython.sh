@@ -1614,25 +1614,28 @@ ws_epro_units() {
       | awk '$1 ~ /\.service$/ {print $1}' | sort -Vu)
 }
 
-# Colores locales para el panel WS-Epro; no dependen de variables globales.
-ws_epro_ui() {
-    case "$1" in
-        bar) printf '\033[1;33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m\n' ;;
-        title) printf '\033[1;35m◆\033[1;36m %s \033[1;35m◆\033[0m\n' "$2" ;;
-        item) printf ' \033[1;35m[%s]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m\n' "$2" "$3" ;;
-        ok) printf ' \033[1;32m✔ %s\033[0m\n' "$2" ;;
-        warn) printf ' \033[1;33m⚠ %s\033[0m\n' "$2" ;;
-        error) printf ' \033[1;31m✖ %s\033[0m\n' "$2" ;;
-        info) printf ' \033[1;36m›\033[0m %s\n' "$2" ;;
+# Presentación local con la misma convención visual del menú de protocolos:
+# separador msg -bar3, título centrado y opciones [n] + flecha dorada.
+ws_epro_ui_item() {
+    local number="$1" label="$2"
+    printf '\033[1;35m[%s]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m\n' "$number" "$label"
+}
+
+ws_epro_ui_state() {
+    local state="$1"
+    case "$state" in
+        active)   printf '\033[1;32m%s\033[0m' "$state" ;;
+        inactive|failed) printf '\033[1;31m%s\033[0m' "$state" ;;
+        activating|deactivating|reloading) printf '\033[1;33m%s\033[0m' "$state" ;;
+        *)        printf '\033[1;33m%s\033[0m' "${state:-unknown}" ;;
     esac
 }
 
 ws_epro_inventory() {
-    local unit state config ports state_color
-    local found=0
-    ws_epro_ui bar
-    ws_epro_ui title "INVENTARIO DE SERVICIOS WS-Epro"
-    ws_epro_ui bar
+    local unit state config ports found=0
+    msg -bar3
+    print_center -azu "INVENTARIO DE SERVICIOS WS-Epro"
+    msg -bar3
     while IFS= read -r unit; do
         [[ -z "$unit" ]] && continue
         found=1
@@ -1644,46 +1647,45 @@ ws_epro_inventory() {
             ports=$(awk '/listen_port:/ {printf "%s%s", sep, $2; sep=","}' "$config")
         fi
         [[ -z "$ports" ]] && ports="(no detectados en YAML)"
-        case "$state" in
-            active) state_color="\033[1;32m${state}\033[0m" ;;
-            inactive) state_color="\033[1;31m${state}\033[0m" ;;
-            *) state_color="\033[1;33m${state:-unknown}\033[0m" ;;
-        esac
-        printf '\033[1;35m◆\033[0m \033[1;37m%s\033[0m\n' "$unit"
-        printf '   Estado: %b\n' "$state_color"
-        printf '   Puerto(s): \033[1;36m%s\033[0m\n' "$ports"
-        printf '   Config: \033[0;37m%s\033[0m\n' "$config"
-        ws_epro_ui bar
+        printf '\n\033[1;35m◆\033[0m \033[1;37m%s\033[0m\n' "$unit"
+        printf '  Estado:   %s\n' "$(ws_epro_ui_state "${state:-unknown}")"
+        printf '  Puerto(s): \033[1;36m%s\033[0m\n' "$ports"
+        printf '  Config:   \033[0;37m%s\033[0m\n' "$config"
+        msg -bar3
     done < <(ws_epro_units)
-    [[ $found -eq 0 ]] && ws_epro_ui warn "No se encontraron unidades de servicio WS-Epro instaladas"
-    ws_epro_ui bar
+    if [[ $found -eq 0 ]]; then
+        print_center -ama "No se encontraron unidades de servicio WS-Epro instaladas"
+        msg -bar3
+    fi
 }
 
 ws_epro_choose_unit() {
     local units=() unit n=1 choice state
     while IFS= read -r unit; do [[ -n "$unit" ]] && units+=("$unit"); done < <(ws_epro_units)
     if [[ ${#units[@]} -eq 0 ]]; then
-        ws_epro_ui warn "No hay servicios WS-Epro registrados en systemd"
+        msg -bar3
+        print_center -azu "SELECCIONE UNA INSTANCIA"
+        msg -bar3
+        print_center -ama "No hay servicios WS-Epro registrados en systemd"
+        msg -bar3
         return 1
     fi
-    ws_epro_ui bar
-    ws_epro_ui title "SELECCIONE UNA INSTANCIA"
-    ws_epro_ui bar
+    msg -bar3
+    print_center -azu "SELECCIONE UNA INSTANCIA"
+    msg -bar3
     for unit in "${units[@]}"; do
         state=$(systemctl is-active "$unit" 2>/dev/null || true)
-        if [[ "$state" == "active" ]]; then
-            printf ' \033[1;35m[%d]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m (\033[1;32m%s\033[0m)\n' "$n" "$unit" "$state"
-        else
-            printf ' \033[1;35m[%d]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m (\033[1;31m%s\033[0m)\n' "$n" "$unit" "${state:-unknown}"
-        fi
+        printf '\033[1;35m[%d]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m (' "$n" "$unit"
+        printf '%s' "$(ws_epro_ui_state "${state:-unknown}")"
+        printf ')\n'
         n=$((n+1))
     done
-    ws_epro_ui item 0 "Volver"
-    ws_epro_ui bar
-    read -r -p $'\033[1;36m➜ Opción: \033[0m' choice
-    [[ "$choice" =~ ^[0-9]+$ ]] || { ws_epro_ui error "Opción inválida"; return 1; }
+    ws_epro_ui_item 0 "Volver"
+    msg -bar3
+    read -r -p "$(printf '\033[1;36m➜ Opción: \033[0m')" choice
+    [[ "$choice" =~ ^[0-9]+$ ]] || return 1
     [[ "$choice" -eq 0 ]] && return 1
-    [[ "$choice" -le ${#units[@]} ]] || { ws_epro_ui error "Selección fuera de rango"; return 1; }
+    [[ "$choice" -le ${#units[@]} ]] || return 1
     WS_EPRO_SELECTED_UNIT="${units[$((choice-1))]}"
     return 0
 }
@@ -1701,7 +1703,10 @@ ws_epro_delete_unit() {
     if [[ "$unit" =~ ^python\.([0-9]+)\.service$ ]]; then
         port="${BASH_REMATCH[1]}"
     else
-        echo "ERROR: la unidad '$unit' no tiene el formato esperado python.PUERTO.service."
+        msg -bar3
+        print_center -verm "ERROR: formato de unidad no esperado"
+        print_center -azu "$unit"
+        msg -bar3
         read -r -p "Enter para continuar..." _
         return 1
     fi
@@ -1711,14 +1716,21 @@ ws_epro_delete_unit() {
 
     # Protección contra unidades ajenas o rutas inesperadas.
     if [[ "$execstart" != *WS-Epro* || "$execstart" != *"/bin/WS-Epro"* ]]; then
-        echo "ERROR: ExecStart no identifica el ejecutable WS-Epro esperado; no se modificó nada."
+        msg -bar3
+        print_center -verm "ERROR: ejecutable WS-Epro no verificado"
+        print_center -azu "No se modificó nada."
+        msg -bar3
         read -r -p "Enter para continuar..." _
         return 1
     fi
     if [[ "$config" != "/etc/ADMcgh/PDirect_${port}" ]]; then
-        echo "ERROR: configuración inesperada para $unit: ${config:-no detectada}."
-        echo "Se esperaba: /etc/ADMcgh/PDirect_${port}"
-        echo "No se modificó nada."
+        msg -bar3
+        print_center -verm "ERROR: configuración inesperada"
+        print_center -azu "$unit"
+        print_center -bra "Detectada: ${config:-no detectada}"
+        print_center -bra "Esperada: /etc/ADMcgh/PDirect_${port}"
+        print_center -ama "No se modificó nada."
+        msg -bar3
         read -r -p "Enter para continuar..." _
         return 1
     fi
@@ -1728,52 +1740,54 @@ ws_epro_delete_unit() {
         return 1
     fi
 
-    ws_epro_ui bar
-    ws_epro_ui title "CONFIRMAR ELIMINACIÓN"
-    ws_epro_ui bar
-    ws_epro_ui info "Unidad: $unit_file"
-    ws_epro_ui info "Configuración: $config"
-    ws_epro_ui info "Puerto: $port"
-    ws_epro_ui warn "Solo se eliminará esta instancia."
-    ws_epro_ui ok "El binario /bin/WS-Epro y las demás instancias se conservarán."
-    read -r -p $'\033[1;31m¿Confirmas la eliminación definitiva? [s/N] \033[0m' confirm
+    msg -bar3
+    print_center -verm "CONFIRMAR ELIMINACIÓN DE WS-Epro"
+    msg -bar3
+    printf '\033[1;35m◆\033[0m Unidad:        \033[1;37m%s\033[0m\n' "$unit_file"
+    printf '\033[1;35m◆\033[0m Configuración: \033[0;37m%s\033[0m\n' "$config"
+    printf '\033[1;35m◆\033[0m Puerto:        \033[1;36m%s\033[0m\n' "$port"
+    print_center -ama "El binario compartido y las demás instancias se conservarán."
+    msg -bar3
+    read -r -p "¿Confirmas la eliminación definitiva? [s/N] " confirm
     [[ "$confirm" =~ ^[sS]$ ]] || { echo "Cancelado; no se modificó nada."; read -r -p "Enter para continuar..." _; return 0; }
 
     if ! systemctl stop "$unit"; then
-        echo "ERROR: no se pudo detener $unit; se cancela la eliminación."
+        print_center -verm "ERROR: no se pudo detener $unit; eliminación cancelada."
         read -r -p "Enter para continuar..." _
         return 1
     fi
     if ! systemctl disable "$unit"; then
-        echo "ERROR: no se pudo deshabilitar $unit; los archivos se conservarán."
+        print_center -verm "ERROR: no se pudo deshabilitar $unit; archivos conservados."
         read -r -p "Enter para continuar..." _
         return 1
     fi
     if ! rm -f -- "$unit_file"; then
-        echo "ERROR: no se pudo eliminar $unit_file."
+        print_center -verm "ERROR: no se pudo eliminar el archivo de unidad."
         read -r -p "Enter para continuar..." _
         return 1
     fi
     if ! rm -f -- "$config"; then
-        echo "ERROR: se eliminó la unidad, pero no se pudo eliminar $config."
+        print_center -verm "ERROR: unidad eliminada, pero falló el borrado de configuración."
         systemctl daemon-reload
         read -r -p "Enter para continuar..." _
         return 1
     fi
 
     systemctl daemon-reload || {
-        echo "ADVERTENCIA: los archivos se eliminaron, pero systemctl daemon-reload devolvió error."
+        print_center -ama "ADVERTENCIA: daemon-reload devolvió error."
         read -r -p "Enter para continuar..." _
         return 1
     }
     systemctl reset-failed "$unit" >/dev/null 2>&1 || true
 
     if [[ ! -e "$unit_file" && ! -e "$config" ]] && ! systemctl list-unit-files --no-legend "$unit" 2>/dev/null | grep -Fq "$unit"; then
-        echo "ÉXITO: $unit fue eliminado."
+        msg -bar3
+        print_center -verd "ÉXITO: $unit fue eliminado."
+        msg -bar3
     else
-        echo "ADVERTENCIA: revisa manualmente el estado de $unit; la verificación no fue concluyente."
+        print_center -ama "ADVERTENCIA: verificación no concluyente para $unit."
     fi
-    echo "Verificación de la otra instancia (si existe):"
+    print_center -azu "Verificación de otra instancia (si existe)"
     systemctl is-active python.8080.service 2>/dev/null || true
     read -r -p "Enter para continuar..." _
 }
@@ -1782,20 +1796,20 @@ ws_epro_admin() {
     local opt unit config
     while true; do
         clear
-        ws_epro_ui bar
-        ws_epro_ui title "Admin de WS-Epro"
-        ws_epro_ui bar
-        ws_epro_ui item 1 "Crear servicio"
-        ws_epro_ui item 2 "Editar configuración (abrir editor)"
-        ws_epro_ui item 3 "Iniciar servicio"
-        ws_epro_ui item 4 "Detener servicio"
-        ws_epro_ui item 5 "Reiniciar servicio"
-        ws_epro_ui item 6 "Estado y errores"
-        ws_epro_ui item 7 "Listar servicios"
-        ws_epro_ui item 8 "Eliminar servicio"
-        ws_epro_ui item 0 "Volver"
-        ws_epro_ui bar
-        read -r -p $'\033[1;36m➜ Opción: \033[0m' opt
+        msg -bar3
+        print_center -azu "◆ Admin de WS-Epro ◆"
+        msg -bar3
+        ws_epro_ui_item 1 "Crear servicio"
+        ws_epro_ui_item 2 "Editar configuración (abrir editor)"
+        ws_epro_ui_item 3 "Iniciar servicio"
+        ws_epro_ui_item 4 "Detener servicio"
+        ws_epro_ui_item 5 "Reiniciar servicio"
+        ws_epro_ui_item 6 "Estado y errores"
+        ws_epro_ui_item 7 "Listar servicios"
+        ws_epro_ui_item 8 "Eliminar servicio"
+        ws_epro_ui_item 0 "Volver"
+        msg -bar3
+        read -r -p "$(printf '\033[1;36m➜ Opción: \033[0m')" opt
         case "$opt" in
           1) colector PDirect; return ;;
           2)
@@ -1803,11 +1817,11 @@ ws_epro_admin() {
                unit="$WS_EPRO_SELECTED_UNIT"
                config=$(systemctl show -p ExecStart --value "$unit" 2>/dev/null | sed -n 's/.*-f \([^ ;}]*\).*/\1/p')
                if [[ -n "$config" && -f "$config" ]]; then
-                 ws_epro_ui info "Archivo: $config"
-                 ws_epro_ui info "Se abrirá el editor disponible; guarda y sal para terminar."
+                 echo "Archivo: $config"
+                 echo "Se abrirá el editor disponible; guarda y sal para terminar."
                  "${EDITOR:-nano}" "$config"
-                 ws_epro_ui warn "Los cambios no se aplican hasta reiniciar explícitamente el servicio."
-               else ws_epro_ui error "No se pudo identificar un archivo YAML para $unit"; fi
+                 echo "Los cambios no se aplican hasta reiniciar explícitamente el servicio."
+               else echo "No se pudo identificar un archivo YAML para $unit"; fi
                read -r -p "Enter para continuar..." _
              fi ;;
           3|4|5|6)
@@ -1825,7 +1839,7 @@ ws_epro_admin() {
           7) ws_epro_inventory; read -r -p "Enter para continuar..." _ ;;
           8) ws_epro_delete_unit ;;
           0) return ;;
-          *) ws_epro_ui error "Opción inválida"; sleep 1 ;;
+          *) echo "Opción inválida"; sleep 1 ;;
         esac
     done
 }
