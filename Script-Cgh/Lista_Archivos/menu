@@ -5013,7 +5013,7 @@ bash ${DEST}/ClashForAndroidGLOBAL.sh
 }
 
 iniciarsocks () {
-source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/SockPython.sh)
+source <(curl -sSL -4 https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/SockPython.sh)
 }
 
 ssrmenu() {
