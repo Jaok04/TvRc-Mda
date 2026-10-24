@@ -154,6 +154,7 @@ COLOR[5]='\e[35m' #MAGENTA='\e[35m'
 COLOR[6]='\033[1;97m' #MAG='\033[1;36m'
 COLOR[7]='\033[1;49;95m'
 COLOR[8]='\033[1;49;96m'
+COLOR[9]='\033[38;5;208m' # Naranja fuerte TvRc
 else
 local COL=0
 for number in $(cat $colors); do
@@ -195,7 +196,7 @@ SEMCOR='\e[0m'
   #-bar)ccor="${COLOR[1]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar)ccor="${COLOR[1]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar2)ccor="${COLOR[1]}=====================================================" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
-  -bar3)ccor="${COLOR[3]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
+  -bar3)ccor="${COLOR[9]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -blue)ccor="${COLOR[6]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -bar4)ccor="${COLOR[5]}•••••••••••••••••••••••••••••••••••••••••••••••••" && echo -e "${SEMCOR}${ccor}${SEMCOR}";;
   -br)ccor="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${ccor}";;
