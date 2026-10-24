@@ -5012,8 +5012,192 @@ sleep 0.5s
 bash ${DEST}/ClashForAndroidGLOBAL.sh
 }
 
+gestor_temas() {
+  local theme_file="/etc/adm-lite/theme.conf"
+  
+  # 1. Crear el archivo base si no existe
+  if [[ ! -f "$theme_file" ]]; then
+    mkdir -p /etc/adm-lite
+    cat <<EOF > "$theme_file"
+c_texto="\033[1;37m"
+c_linea="\033[1;33m"
+c_corch="\033[0;35m"
+c_num="\033[0;36m"
+c_flech="\033[0;33m"
+s_flech="➮"
+c_on="\033[1;32m"
+c_off="\033[1;31m"
+c_work="\033[1;36m"
+c_beta="\033[1;33m"
+tit_bg="\033[48;5;54m"
+tit_edge_col="\033[38;5;54m"
+tit_forma_L=""
+tit_forma_R=""
+EOF
+  fi
+
+  # Función interna para mostrar paleta y capturar color
+  elegir_color() {
+    clear
+    msg -bar3
+    echo -e "               \033[1;37;48;5;54m 🎨 ELIJA UN COLOR 🎨 \033[0m"
+    msg -bar3
+    echo -e " [1] \033[1;31mRojo            (████)\033[0m"
+    echo -e " [2] \033[1;32mVerde           (████)\033[0m"
+    echo -e " [3] \033[1;33mAmarillo        (████)\033[0m"
+    echo -e " [4] \033[1;34mAzul            (████)\033[0m"
+    echo -e " [5] \033[1;35mMagenta         (████)\033[0m"
+    echo -e " [6] \033[1;36mCeleste         (████)\033[0m"
+    echo -e " [7] \033[1;37mBlanco          (████)\033[0m"
+    echo -e " [8] \033[38;5;208mNaranja Fuerte  (████)\033[0m"
+    echo -e " [9] \033[38;5;54mMorado Oscuro   (████)\033[0m"
+    msg -bar3
+    echo -e " [0] \033[1;41m[ CANCELAR ]\033[0m"
+    msg -bar3
+    read -p " ► Seleccione el tono : " opt_col
+
+    case $opt_col in
+      1) color_ansi="\033[1;31m" ;;
+      2) color_ansi="\033[1;32m" ;;
+      3) color_ansi="\033[1;33m" ;;
+      4) color_ansi="\033[1;34m" ;;
+      5) color_ansi="\033[1;35m" ;;
+      6) color_ansi="\033[1;36m" ;;
+      7) color_ansi="\033[1;37m" ;;
+      8) color_ansi="\033[38;5;208m" ;;
+      9) color_ansi="\033[38;5;54m" ;;
+      *) color_ansi="" ;;
+    esac
+  }
+
+  while true; do
+    source "$theme_file" # Recargar variables para reflejar cambios en tiempo real
+    clear
+    msg -bar3
+    echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;37m 🎨 PERSONALIZAR TEMA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Elementos Base (Líneas, Textos...)"
+    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
+    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Diseño de Títulos (Fondos y Bordes)"
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m \033[1;41m[ REGRESAR ]\033[0m"
+    msg -bar3
+    read -p " ► Opcion : " main_opt
+
+    case $main_opt in
+      0) break ;;
+      
+      1) # SUBMENÚ ELEMENTOS BASE
+        while true; do
+          clear
+          msg -bar3
+          echo -e "               \033[1;37;48;5;54m 🎨 ELEMENTOS BASE 🎨 \033[0m"
+          msg -bar3
+          echo -e " [1] Textos       [4] Números (01, 02)"
+          echo -e " [2] Líneas       [5] Flechas Color"
+          echo -e " [3] Corchetes    [6] Flechas Símbolo"
+          msg -bar3
+          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione opción : " sub_opt
+          [[ "$sub_opt" == "0" ]] && break
+
+          if [[ "$sub_opt" =~ ^[1-5]$ ]]; then
+            elegir_color
+            [[ -z "$color_ansi" ]] && continue
+            case $sub_opt in
+              1) sed -i '/c_texto=/d' $theme_file; echo "c_texto=\"$color_ansi\"" >> $theme_file ;;
+              2) sed -i '/c_linea=/d' $theme_file; echo "c_linea=\"$color_ansi\"" >> $theme_file ;;
+              3) sed -i '/c_corch=/d' $theme_file; echo "c_corch=\"$color_ansi\"" >> $theme_file ;;
+              4) sed -i '/c_num=/d' $theme_file; echo "c_num=\"$color_ansi\"" >> $theme_file ;;
+              5) sed -i '/c_flech=/d' $theme_file; echo "c_flech=\"$color_ansi\"" >> $theme_file ;;
+            esac
+          elif [[ "$sub_opt" == "6" ]]; then
+            read -p " ► Escriba o pegue el nuevo símbolo (Ej: ➜, ◆, 👉) : " nuevo_simbolo
+            [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' $theme_file; echo "s_flech=\"$nuevo_simbolo\"" >> $theme_file; }
+          fi
+        done
+      ;;
+
+      2) # SUBMENÚ ETIQUETAS
+        while true; do
+          clear
+          msg -bar3
+          echo -e "             \033[1;37;48;5;54m 🎨 ETIQUETAS DE ESTADO 🎨 \033[0m"
+          msg -bar3
+          echo -e " [1] Modificar ${c_on}[ON]\033[0m"
+          echo -e " [2] Modificar ${c_off}[OFF]\033[0m"
+          echo -e " [3] Modificar ${c_work}[WORKING]\033[0m"
+          echo -e " [4] Modificar ${c_beta}[BETA]\033[0m"
+          msg -bar3
+          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione etiqueta : " sub_etiq
+          [[ "$sub_etiq" == "0" ]] && break
+          [[ ! "$sub_etiq" =~ ^[1-4]$ ]] && continue
+
+          elegir_color
+          [[ -z "$color_ansi" ]] && continue
+
+          case $sub_etiq in
+            1) sed -i '/c_on=/d' $theme_file; echo "c_on=\"$color_ansi\"" >> $theme_file ;;
+            2) sed -i '/c_off=/d' $theme_file; echo "c_off=\"$color_ansi\"" >> $theme_file ;;
+            3) sed -i '/c_work=/d' $theme_file; echo "c_work=\"$color_ansi\"" >> $theme_file ;;
+            4) sed -i '/c_beta=/d' $theme_file; echo "c_beta=\"$color_ansi\"" >> $theme_file ;;
+          esac
+        done
+      ;;
+
+      3) # SUBMENÚ FONDOS DE TÍTULOS
+        while true; do
+          clear
+          msg -bar3
+          echo -e "             \033[1;37;48;5;54m 🎨 FONDOS DE TÍTULOS 🎨 \033[0m"
+          msg -bar3
+          echo -e " [1] Cambiar Color de Fondo"
+          echo -e " [2] Cambiar Forma de los Extremos"
+          msg -bar3
+          echo -e " [0] \033[1;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          read -p " ► Seleccione opción : " opt_tit
+          [[ "$opt_tit" == "0" ]] && break
+
+          if [[ "$opt_tit" == "1" ]]; then
+            echo -e " [1] \033[48;5;54m Morado Oscuro \033[0m"
+            echo -e " [2] \033[44m Azul Clásico \033[0m"
+            echo -e " [3] \033[41m Rojo Intenso \033[0m"
+            read -p " ► Elija color de fondo : " c_fondo
+            case $c_fondo in
+              1) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[48;5;54m\"\ntit_edge_col=\"\033[38;5;54m\"" >> $theme_file ;;
+              2) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[44m\"\ntit_edge_col=\"\033[34m\"" >> $theme_file ;;
+              3) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                 echo -e "tit_bg=\"\033[41m\"\ntit_edge_col=\"\033[31m\"" >> $theme_file ;;
+            esac
+          elif [[ "$opt_tit" == "2" ]]; then
+            echo -e " [1] Redondeados  ( TITULO )"
+            echo -e " [2] Rectos       ( █TITULO█ )"
+            echo -e " [3] Angulares    ( TITULO )"
+            echo -e " [4] Corchetes    ( 【TITULO】 )"
+            read -p " ► Elija forma : " c_forma
+            case $c_forma in
+              1) f_L="" ; f_R="" ;;
+              2) f_L=" " ; f_R=" " ;;
+              3) f_L="" ; f_R="" ;;
+              4) f_L="【" ; f_R="】" ;;
+            esac
+            [[ "$c_forma" =~ ^[1-4]$ ]] && { sed -i '/tit_forma_L=/d; /tit_forma_R=/d' $theme_file; echo -e "tit_forma_L=\"$f_L\"\ntit_forma_R=\"$f_R\"" >> $theme_file; }
+          fi
+        done
+      ;;
+    esac
+  done
+}
+
+
 iniciarsocks () {
-source <(curl -sSL -4 https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/SockPython.sh)
+source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/SockPython.sh)
 }
 
 ssrmenu() {
@@ -8004,15 +8188,16 @@ msg -bar3
 echo -e "${cor[1]} ∘${cor[5]} TOTAL: ${cor[2]}${mem_total}${cor[1]} ∘ ${cor[5]} M|LIBRE:${cor[2]} ${mem_free} ${cor[1]} ∘ ${cor[5]} EN USO:${cor[2]} ${mem_used}"
 echo -e "${cor[1]} ∘${cor[5]} U/RAM: ${cor[2]}${mem_used_percent} ${cor[1]} ∘${cor[5]} U/CPU:${cpu_used} ${cor[1]} ∘${cor[5]} BUFFER:${cor[2]} ${mem_cache}" # $CPU"%"
 msg -bar3
-echo -e "\033[0;35m [${cor[2]}01\033[0;35m]\033[0;33m ${flech}${cor[3]} CONTROL USUARIOS (SSH/SSL/VMESS) "
-#echo -e "\033[0;35m [${cor[2]}02\033[0;35m]\033[0;33m ${flech}${cor[3]} HERRAMIENTAS BASE (\033[0;34mBadVPN$_badvpn${cor[3]})"
-echo -e "\033[0;35m [${cor[2]}02\033[0;35m]\033[0;33m ${flech}\033[0;33m [!]${cor[3]} OPTIMIZAR VPS $_opti "
-echo -e "\033[0;35m [${cor[2]}03\033[0;35m]\033[0;33m ${flech}${cor[3]} CONTADOR ONLINE USERS $VERIFICAR_PID"
-#echo -e "\033[0;35m [${cor[2]}04\033[0;35m]\033[0;33m ${flech} \e[3;32mHERRAMIENTAS BETA\e[0m \033[0;33m (#EXPERIMENTAL)"
-echo -e "\033[0;35m [${cor[2]}04\033[0;35m]\033[0;33m ${flech}${cor[3]} AUTOINICIAR SCRIPT $_autorun"
-echo -e "\033[0;35m [${cor[2]}05\033[0;35m]\033[0;33m ${flech}${cor[3]} INSTALADOR DE PROTOCOLOS"
+echo -e "${c_corch} [${c_num}01${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
+#echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HERRAMIENTAS BASE (\033[0;34mBadVPN$_badvpn${c_texto})"
+echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech}\033[0m \033[0;33m[!]${c_texto} OPTIMIZAR VPS $_opti "
+echo -e "${c_corch} [${c_num}03${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CONTADOR ONLINE USERS $VERIFICAR_PID"
+#echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech}\033[0m \e[3;32mHERRAMIENTAS BETA\e[0m \033[0;33m (#EXPERIMENTAL)"
+echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}AUTOINICIAR SCRIPT $_autorun"
+echo -e "${c_corch} [${c_num}05${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}INSTALADOR DE PROTOCOLOS"
+echo -e "${c_corch} [${c_num}06${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Cambiar Tema"
 msg -bar3
-echo -ne "\033[0;35m [${cor[2]}06\033[0;35m]\033[0;33m ${flech}\033[0;33m [!] ${cor[2]}UPDATE / \033[0;31mREMOVE${cor[3]}  |" && echo -e " \033[0;35m [${cor[2]}0\033[0;35m]\033[0;33m ⇦ $(msg -bra "\e[3;33m[ SALIR ]\e[0m")"
+echo -ne "${c_corch} [${c_num}07${c_corch}] ${c_flech}${s_flech}\033[0m \033[0;33m[!] ${c_num}UPDATE / \033[0;31mREMOVE${c_texto}  |" && echo -e " ${c_corch}[${c_num}0${c_corch}] \033[0;33m⇦ $(msg -bra "\e[3;33m[ SALIR ]\e[0m")"
 msg -bar3 
 
 #------------------------------------------------
@@ -8180,6 +8365,9 @@ Call.CONTROLADOR
 #[[ -e /etc/$1/MInst ]] && source /etc/$1/MInst "alx" "${_link}"  || source <(curl -sSL ${_link}sxg6f7isbg92vfu/MInst) "alx" "${_link}"
 ;;
 06|6)
+gestor_temas
+;;
+07|7)
 export PATH=$PATH:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin:/usr/games
 #msg -bar3
 #[[ -e /root/name ]] && figlet -p -f smslant < /root/name | lolcat || echo -e "\033[7;49;35m   =====>>►► 🐲 ChumoGH 💥 Plus 🐲 ◄◄<<=====     \033[0m"
