@@ -1616,9 +1616,10 @@ ws_epro_units() {
 
 # Presentación local con la misma convención visual del menú de protocolos:
 # separador msg -bar3, título centrado y opciones [n] + flecha dorada.
+# Presentación local estandarizada con la convención visual del menú de protocolos
 ws_epro_ui_item() {
     local number="$1" label="$2"
-    printf '\033[1;35m[%s]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m\n' "$number" "$label"
+    echo -e "\033[0;35m [\033[0;36m${number}\033[0;35m]\033[0;33m ${flech} ${cor[3]}${label}"
 }
 
 ws_epro_ui_state() {
@@ -1675,14 +1676,14 @@ ws_epro_choose_unit() {
     msg -bar3
     for unit in "${units[@]}"; do
         state=$(systemctl is-active "$unit" 2>/dev/null || true)
-        printf '\033[1;35m[%d]\033[0m \033[1;33m➜\033[0m \033[1;37m%s\033[0m (' "$n" "$unit"
+        echo -ne "\033[0;35m [\033[0;36m${n}\033[0;35m]\033[0;33m ${flech} ${cor[3]}${unit} ("
         printf '%s' "$(ws_epro_ui_state "${state:-unknown}")"
         printf ')\n'
         n=$((n+1))
     done
-    ws_epro_ui_item 0 "Volver"
+    echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
     msg -bar3
-    read -r -p "$(printf '\033[1;36m➜ Opción: \033[0m')" choice
+    choice=$(selection_fun ${#units[@]})
     [[ "$choice" =~ ^[0-9]+$ ]] || return 1
     [[ "$choice" -eq 0 ]] && return 1
     [[ "$choice" -le ${#units[@]} ]] || return 1
@@ -1807,9 +1808,10 @@ ws_epro_admin() {
         ws_epro_ui_item 6 "Estado y errores"
         ws_epro_ui_item 7 "Listar servicios"
         ws_epro_ui_item 8 "Eliminar servicio"
-        ws_epro_ui_item 0 "Volver"
+        echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
         msg -bar3
-        read -r -p "$(printf '\033[1;36m➜ Opción: \033[0m')" opt
+        
+        opt=$(selection_fun 8)
         case "$opt" in
           1) colector PDirect; return ;;
           2)
@@ -1839,7 +1841,6 @@ ws_epro_admin() {
           7) ws_epro_inventory; read -r -p "Enter para continuar..." _ ;;
           8) ws_epro_delete_unit ;;
           0) return ;;
-          *) echo "Opción inválida"; sleep 1 ;;
         esac
     done
 }
