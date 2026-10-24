@@ -1858,79 +1858,90 @@ ws_epro_entry() {
 
 iiniciarsocks () {
 
-msg -bar3
-local _ps="$(ps x)"
-local _PT="$(lsof -V -i tcp -P -n|grep -v "ESTABLISHED"|grep -v "COMMAND")"
-[[ -e ${ADM_inst}/v-local.log ]] && local _v="$(less ${ADM_inst}/v-local.log)" || _v="$(less /etc/adm-lite/v-local.log)"
+    msg -bar3
+    local _ps="$(ps x)"
+    local _PT="$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" | grep -v "COMMAND")"
+    local _v=""
+    
+    if [[ -e ${ADM_inst}/v-local.log ]]; then
+        _v="$(less ${ADM_inst}/v-local.log)"
+    else
+        _v="$(less /etc/adm-lite/v-local.log)"
+    fi
 
-pidproxy=$(echo -e "$_ps"| grep -w "PPub.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy ]] && P1="\033[1;32m[ON]" || P1="\033[1;31m[OFF]"
-pidproxy2=$(echo -e "$_ps"| grep -w  "PPriv.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy2 ]] && P2="\033[1;32m[ON]" || P2="\033[1;31m[OFF]"
-pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy3 ]] && P3="\033[1;32m[ON]" || {
-[[ $(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') ]] && P3="\033[1;32m[\033[0;34mW-S\033[1;32m]" || P3="\033[1;31m[OFF]"
+    local P1="\033[1;31m[OFF]"
+    local P2="\033[1;31m[OFF]"
+    local P3="\033[1;31m[OFF]"
+    local P4="\033[1;31m[OFF]"
+    local P5="\033[1;31m[OFF]"
+    local P6="\033[1;31m[OFF]"
+
+    if echo "$_ps" | grep -w "PPub.py" | grep -q -v "grep"; then P1="\033[1;32m[ON]"; fi
+    if echo "$_ps" | grep -w "PPriv.py" | grep -q -v "grep"; then P2="\033[1;32m[ON]"; fi
+    if echo "$_ps" | grep "PDirect" | grep -q -v "grep"; then 
+        P3="\033[1;32m[ON]"
+    elif echo "$_ps" | grep "WS-Epro" | grep -q -v "grep"; then 
+        P3="\033[1;32m[\033[0;34mW-S\033[1;32m]"
+    fi
+    if echo "$_ps" | grep -w "POpen.py" | grep -q -v "grep"; then P4="\033[1;32m[ON]"; fi
+    if echo "$_ps" | grep "PGet.py" | grep -q -v "grep"; then P5="\033[1;32m[ON]"; fi
+    if echo "$_ps" | grep "scktcheck" | grep -q -v "grep"; then P6="\033[1;32m[ON]"; fi
+
+    echo -e "\e[91m\e[43m  ==== SCRIPT MOD ChumoGH|EDICION ====  \033[0m \033[0;33m[${_v}]"
+    
+    if [[ -n "$_PT" ]]; then
+        msg -bar3
+        local n=1
+        # Extracción y formateo compatible con POSIX
+        lsof -V -i tcp -P -n | awk '/LISTEN/ && (/python/ || /WS-Epro/) {print $1, $9}' | awk -F ':' '{print $1, $NF}' | sort -u | while read -r process port; do
+            if [[ -n "$port" ]]; then
+                echo -e "\033[0;35m [\033[0;36m${n}\033[0;35m]\033[0;33m ${flech} ${cor[3]}$process : \033[0;32m$port \033[0;35m [ \033[0;36mWORKING \033[0;35m]"
+                n=$((n + 1))
+            fi
+        done
+    fi
+    msg -bar3
+
+    echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SIMPLE      $P1"
+    echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SEGURO      $P2"
+    echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python DIRETO (WS) $P3"
+    echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python OPENVPN     $P4"
+    echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python GETTUNEL    $P5"
+    echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python TCP BYPASS  $P6"
+
+    # Conteo seguro: || true evita que el script colapse si grep no encuentra coincidencias
+    local var_p=$(echo -e "$_PT" | grep -c "WS-Epro" || true)
+    local var_w=$(echo -e "$_PT" | grep -c "python" || true)
+    local var_check=$(( var_p + var_w ))
+    local py=7
+
+    if [[ "$var_check" -ge 2 ]]; then
+        echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ANULAR TODOS\033[0;35m       [\033[0;36m8\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR UN PUERTO"
+        py=8
+    else
+        echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR TODOS"
+    fi
+
+    msg -bar3
+    echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
+    msg -bar3
+    
+    selection=$(selection_fun ${py})
+    case ${selection} in
+        1)colector PPub;;
+        2)colector PPriv;;
+        3)ws_epro_entry;;
+        4)colector POpen;;
+        5)colector PGet;;
+        6);;
+        7)stop_all;;
+        8)stop_port;;
+        0)return 1;;
+    esac
+    return 1
 }
-pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="\033[1;32m[ON]" || P4="\033[1;31m[OFF]"
-pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="\033[1;32m[ON]" || P5="\033[1;31m[OFF]"
-pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
-echo -e "\e[91m\e[43m  ==== SCRIPT MOD ChumoGH|EDICION ====  \033[0m \033[0;33m[${_v}]"
-[[ ${_PT} ]] && {
-msg -bar3
-    unset portas
-    declare -A portas
-    local portas_var=$(lsof -V -i tcp -P -n | awk '/LISTEN/ && (/python/ || /WS-Epro/) {print $1, $9}')
-	local n=1
-    while read -r line; do
-        local var1=$(echo "$line" | awk '{print $1}')
-        local var2=$(echo "$line" | awk '{split($2, a, ":"); print a[2]}')
-        portas["$var1 $var2"]=1
-    done <<< "$portas_var"
 
-    for key in "${!portas[@]}"; do
-        if [[ $key == python* || $key == WS-Epro* ]]; then
-            port=$(echo $key | awk '{print $2}')
-            process=$(echo $key | awk '{print $1}')
-			echo -e "\033[0;35m [\033[0;36m${n}\033[0;35m]\033[0;33m ${flech} ${cor[3]}$process : \033[0;32m$port \033[0;35m [ \033[0;36mWORKING \033[0;35m]"
-        fi
-		let n++;
-    done
-}
-msg -bar3
-
-# AQUI SE APLICA EL DISEÑO VISUAL USANDO ECHO ESTRUCTURADO (Simulando menu_item)
-echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SIMPLE      $P1"
-echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SEGURO      $P2"
-echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python DIRETO (WS) $P3"
-echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python OPENVPN     $P4"
-echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python GETTUNEL    $P5"
-echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python TCP BYPASS  $P6"
-
-var_p="$(echo -e "$_PT"|grep "WS-Epro"| wc -l) "
-var_w="$(echo -e "$_PT"|grep "python"|wc -l)"
-var_check=$(( ${var_p} + ${var_w} ))
-if [[ ${var_check} -ge "2" ]]; then
-    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ANULAR TODOS\033[0;35m       [\033[0;36m8\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR UN PUERTO"
-    py=8
-else
-    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR TODOS"
-    py=7
-fi
-
-msg -bar3
-echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
-msg -bar3
-selection=$(selection_fun ${py})
-case ${selection} in
-    1)colector PPub;;
-    2)colector PPriv;;
-    3)ws_epro_entry;;
-    4)colector POpen;;
-    5)colector PGet;;
-    6);;
-    7)stop_all;;
-    8)stop_port;;
-    0)return 1;;
-esac
-return 1
-}
+# La llamada de invocación que ejecuta el menú debe permanecer obligatoriamente al final del archivo:
 
 #selecPython
 #[[ ! -e /etc/chekKEY ]] && chekKEY &>/dev/null
