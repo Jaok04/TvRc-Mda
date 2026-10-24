@@ -1856,7 +1856,7 @@ ws_epro_entry() {
 }
 # -------- FIN ADMINISTRACION WS-Epro --------
 
-iiniciarsocks () {
+iniciarsocks () {
 
 msg -bar3
 local _ps="$(ps x)"
@@ -1931,6 +1931,7 @@ case ${selection} in
 esac
 return 1
 }
+
 
 #selecPython
 #[[ ! -e /etc/chekKEY ]] && chekKEY &>/dev/null
