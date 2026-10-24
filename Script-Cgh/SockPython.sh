@@ -1798,7 +1798,7 @@ ws_epro_admin() {
     while true; do
         clear
         msg -bar3
-        echo -e "            \033[1;36;45m  ===> Admin de WS-Epro <===  \033[0m"
+        echo -e "            \033[38;5;54m\033[48;5;54m\033[1;36m ===> Admin de WS-Epro <=== \033[0m\033[38;5;54m\033[0m"
         msg -bar3
         ws_epro_ui_item 1 "Crear servicio"
         ws_epro_ui_item 2 "Editar configuración (abrir editor)"
@@ -1872,7 +1872,7 @@ pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{pr
 pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="\033[1;32m[ON]" || P4="\033[1;31m[OFF]"
 pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="\033[1;32m[ON]" || P5="\033[1;31m[OFF]"
 pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
-echo -e "         \033[1;36;45m  ==== Proxy Python TvRc ====  \033[0m \033[0;33m[${_v}]"
+echo -e "         \033[38;5;54m\033[48;5;54m\033[1;36m ==== Proxy Python TvRc ==== \033[0m\033[38;5;54m\033[0m \033[0;33m[${_v}]"
 [[ ${_PT} ]] && {
 msg -bar3
     unset portas
