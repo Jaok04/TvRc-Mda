@@ -81,6 +81,28 @@ exit && exit
 source <(curl -sSL https://www.dropbox.com/s/i32r4rvk9doay0x/module)
 [[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg
 msg -bar3
+
+# --- GESTOR DE TEMAS DINÁMICO ---
+theme_file="/etc/adm-lite/theme.conf"
+if [[ -f "$theme_file" ]]; then
+    source "$theme_file"
+else
+    c_texto="\033[1;37m"         
+    c_linea="\033[1;33m"         
+    c_corch="\033[0;35m"         
+    c_num="\033[0;36m"           
+    c_flech="\033[0;33m"         
+    s_flech="➮"                  
+    c_on="\033[1;32m"            
+    c_off="\033[1;31m"           
+    c_work="\033[1;36m"          
+    c_beta="\033[1;33m"          
+    tit_bg="\033[48;5;54m"       
+    tit_edge_col="\033[38;5;54m" 
+    tit_forma_L=""              
+    tit_forma_R=""              
+fi
+
 ADM_inst="/etc/ADMcgh" && [[ ! -d ${ADM_inst} ]] && exit
 
 # check os
@@ -1872,7 +1894,7 @@ pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{pr
 pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="\033[1;32m[ON]" || P4="\033[1;31m[OFF]"
 pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="\033[1;32m[ON]" || P5="\033[1;31m[OFF]"
 pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
-echo -e "         \033[38;5;54m\033[48;5;54m\033[1;36m ==== Proxy Python TvRc ==== \033[0m\033[38;5;54m\033[0m \033[0;33m[${_v}]"
+echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;36m ==== Proxy Python TvRc ==== \033[0m${tit_edge_col}${tit_forma_R}\033[0m \033[0;33m[${_v}]"
 [[ ${_PT} ]] && {
 msg -bar3
     unset portas
@@ -1897,26 +1919,26 @@ msg -bar3
 msg -bar3
 
 # AQUI SE APLICA EL DISEÑO VISUAL USANDO ECHO ESTRUCTURADO (Simulando menu_item)
-echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SIMPLE      $P1"
-echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python SEGURO      $P2"
-echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python DIRETO (WS) $P3"
-echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python OPENVPN     $P4"
-echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python GETTUNEL    $P5"
-echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;33m ${flech} ${cor[3]}Socks Python TCP BYPASS  $P6"
+echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python SIMPLE      $P1"
+echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python SEGURO      $P2"
+echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python DIRETO (WS) $P3"
+echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python OPENVPN     $P4"
+echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python GETTUNEL    $P5"
+echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python TCP BYPASS  $P6"
 
 var_p="$(echo -e "$_PT"|grep "WS-Epro"| wc -l) "
 var_w="$(echo -e "$_PT"|grep "python"|wc -l)"
 var_check=$(( ${var_p} + ${var_w} ))
 if [[ ${var_check} -ge "2" ]]; then
-    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ANULAR TODOS\033[0;35m       [\033[0;36m8\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR UN PUERTO"
+    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ANULAR TODOS       ${c_corch}[${c_num}8${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ELIMINAR UN PUERTO"
     py=8
 else
-    echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;33m ${flech} ${cor[3]}ELIMINAR TODOS"
+    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ELIMINAR TODOS"
     py=7
 fi
 
 msg -bar3
-echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
+echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m $(msg -bra "\033[1;41m[ Volver ]\e[0m")"
 msg -bar3
 selection=$(selection_fun ${py})
 case ${selection} in
