@@ -1641,7 +1641,7 @@ ws_epro_units() {
 # Presentación local estandarizada con la convención visual del menú de protocolos
 ws_epro_ui_item() {
     local number="$1" label="$2"
-    echo -e "\033[0;35m [\033[0;36m${number}\033[0;35m]\033[0;33m ${flech} ${cor[3]}${label}"
+    echo -e "${c_corch} [${c_num}${number}${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}${label}"
 }
 
 ws_epro_ui_state() {
