@@ -1657,8 +1657,9 @@ ws_epro_ui_state() {
 ws_epro_inventory() {
     local unit state config ports found=0
     msg -bar3
-    print_center -azu "INVENTARIO DE SERVICIOS WS-Epro"
+    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} INVENTARIO DE SERVICIOS WS-Epro \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
     msg -bar3
+
     while IFS= read -r unit; do
         [[ -z "$unit" ]] && continue
         found=1
@@ -1687,15 +1688,17 @@ ws_epro_choose_unit() {
     while IFS= read -r unit; do [[ -n "$unit" ]] && units+=("$unit"); done < <(ws_epro_units)
     if [[ ${#units[@]} -eq 0 ]]; then
         msg -bar3
-        print_center -azu "SELECCIONE UNA INSTANCIA"
+        echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} SELECCIONE UNA INSTANCIA \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
         msg -bar3
+
         print_center -ama "No hay servicios WS-Epro registrados en systemd"
         msg -bar3
         return 1
     fi
     msg -bar3
-    print_center -azu "SELECCIONE UNA INSTANCIA"
+    echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} SELECCIONE UNA INSTANCIA \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
     msg -bar3
+
     for unit in "${units[@]}"; do
         state=$(systemctl is-active "$unit" 2>/dev/null || true)
         echo -ne "\033[0;35m [\033[0;36m${n}\033[0;35m]\033[0;33m ${flech} ${cor[3]}${unit} ("
@@ -1820,7 +1823,7 @@ ws_epro_admin() {
     while true; do
         clear
         msg -bar3
-        echo -e "            \033[38;5;54m\033[48;5;54m\033[1;36m ===> Admin de WS-Epro <=== \033[0m\033[38;5;54m\033[0m"
+        echo -e "            ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ===> Admin de WS-Epro <=== \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
         msg -bar3
         ws_epro_ui_item 1 "Crear servicio"
         ws_epro_ui_item 2 "Editar configuración (abrir editor)"
@@ -1886,15 +1889,15 @@ local _ps="$(ps x)"
 local _PT="$(lsof -V -i tcp -P -n|grep -v "ESTABLISHED"|grep -v "COMMAND")"
 [[ -e ${ADM_inst}/v-local.log ]] && local _v="$(less ${ADM_inst}/v-local.log)" || _v="$(less /etc/adm-lite/v-local.log)"
 
-pidproxy=$(echo -e "$_ps"| grep -w "PPub.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy ]] && P1="\033[1;32m[ON]" || P1="\033[1;31m[OFF]"
-pidproxy2=$(echo -e "$_ps"| grep -w  "PPriv.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy2 ]] && P2="\033[1;32m[ON]" || P2="\033[1;31m[OFF]"
-pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy3 ]] && P3="\033[1;32m[ON]" || {
-[[ $(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') ]] && P3="\033[1;32m[\033[0;34mW-S\033[1;32m]" || P3="\033[1;31m[OFF]"
+pidproxy=$(echo -e "$_ps"| grep -w "PPub.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy ]] && P1="${c_on}[ON]\033[0m" || P1="${c_off}[OFF]\033[0m"
+pidproxy2=$(echo -e "$_ps"| grep -w  "PPriv.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy2 ]] && P2="${c_on}[ON]\033[0m" || P2="${c_off}[OFF]\033[0m"
+pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy3 ]] && P3="${c_on}[ON]\033[0m" || {
+[[ $(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') ]] && P3="${c_on}[\033[0;34mW-S${c_on}]\033[0m" || P3="${c_off}[OFF]\033[0m"
 }
-pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="\033[1;32m[ON]" || P4="\033[1;31m[OFF]"
-pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="\033[1;32m[ON]" || P5="\033[1;31m[OFF]"
-pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
-echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;36m ==== Proxy Python TvRc ==== \033[0m${tit_edge_col}${tit_forma_R}\033[0m \033[0;33m[${_v}]"
+pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="${c_on}[ON]\033[0m" || P4="${c_off}[OFF]\033[0m"
+pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="${c_on}[ON]\033[0m" || P5="${c_off}[OFF]\033[0m"
+pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="${c_on}[ON]\033[0m" || P6="${c_off}[OFF]\033[0m"
+echo -e "            ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ===> Admin de WS-Epro <=== \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 [[ ${_PT} ]] && {
 msg -bar3
     unset portas
