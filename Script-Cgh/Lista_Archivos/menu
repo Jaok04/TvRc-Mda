@@ -8004,7 +8004,9 @@ EOF
     msg -bar3
     echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;41m[ CANCELAR ]\033[0m"
     msg -bar3
-    read -p " ${c_flech}${s_flech}\033[0m Seleccione el tono : " opt_col
+    echo -ne " ${c_flech}${s_flech}\033[0m Seleccione el tono : "
+    read opt_col
+
 
     case $opt_col in
       1) color_ansi="\033[1;31m" ;;
