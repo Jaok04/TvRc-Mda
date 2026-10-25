@@ -7725,30 +7725,30 @@ IFS=$'\n' read -r -d '' country region state <<< $(curl -sSL ipinfo.io | grep -E
 clear&&clear
 msg -bar3
 #tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2 && tput cuu1 >&2 && tput dl1 >&2
-echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALACION DE PROTOCOLOS ( ${country} ) ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALAR PROTOCOLOS ( ${country} ) ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 msg -bar3 #SHADOWSOCKS   $user_t
-echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OpenSSH       $pSSH  ${c_corch} [${c_num}11${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}PSIPHON SERVER $pps"
-echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DROPBEAR      $dropb ${c_corch} [${c_num}12${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TCP DNS        ${c_beta}(#BETA)"
-echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OPENVPN       $openvpn ${c_corch} [${c_num}13${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}WEBMIN         $webminn"
-echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSL/TLS       $stunel ${c_corch} [${c_num}14${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SlowDNS        $P1"
-echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SHADOWSOCKS-R $shadow ${c_corch} [${c_num}15${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSL->PYTHON    ${socksA}"
-echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SQUID         $squid ${c_corch} [${c_num}16${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SSLH Multiplex $sslh"
-echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}PROXY PYTHON  $socks ${c_corch} [${c_num}17${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}OVER WEBSOCKET ${c_beta}(#BETA)"
-echo -e "${c_corch} [${c_num}8${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}V2RAY SWITCH  $v2ray ${c_corch} [${c_num}18${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}SOCKS5         ${c_beta}(#BETA)"
-echo -e "${c_corch} [${c_num}9${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CFA ( CLASH ) $xclash  ${c_corch} [${c_num}19${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Protocolos UDP  $_pidUDP"
-echo -e "${c_corch} [${c_num}10${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TROJAN-GO    $pTROJ ${c_corch} [${c_num}20${c_corch}] ${c_flech}${s_flech}\033[0m ${c_beta}FUNCIONES EN DISEÑO!"
+echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech} ${c_texto}OpenSSH       $pSSH  ${c_corch} [${c_num}11${c_corch}] ${c_flech}${s_flech} ${c_texto}PSIPHON SERVER $pps"
+echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech} ${c_texto}DROPBEAR      $dropb ${c_corch} [${c_num}12${c_corch}] ${c_flech}${s_flech} ${c_texto}TCP DNS        ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech} ${c_texto}OPENVPN       $openvpn ${c_corch} [${c_num}13${c_corch}] ${c_flech}${s_flech} ${c_texto}WEBMIN         $webminn"
+echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech} ${c_texto}SSL/TLS       $stunel ${c_corch} [${c_num}14${c_corch}] ${c_flech}${s_flech} ${c_texto}SlowDNS        $P1"
+echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech} ${c_texto}SHADOWSOCKS-R $shadow ${c_corch} [${c_num}15${c_corch}] ${c_flech}${s_flech} ${c_texto}SSL->PYTHON    ${socksA}"
+echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech} ${c_texto}SQUID         $squid ${c_corch} [${c_num}16${c_corch}] ${c_flech}${s_flech} ${c_texto}SSLH Multiplex $sslh"
+echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech} ${c_texto}PROXY PYTHON  $socks ${c_corch} [${c_num}17${c_corch}] ${c_flech}${s_flech} ${c_texto}OVER WEBSOCKET ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}8${c_corch}] ${c_flech}${s_flech} ${c_texto}V2RAY SWITCH  $v2ray ${c_corch} [${c_num}18${c_corch}] ${c_flech}${s_flech} ${c_texto}SOCKS5         ${c_beta}(#BETA)"
+echo -e "${c_corch} [${c_num}9${c_corch}] ${c_flech}${s_flech} ${c_texto}CFA ( CLASH ) $xclash ${c_corch} [${c_num}19${c_corch}] ${c_flech}${s_flech} ${c_texto}Protocolos UDP  $_pidUDP"
+echo -e "${c_corch} [${c_num}10${c_corch}] ${c_flech}${s_flech} ${c_texto}TROJAN-GO    $pTROJ ${c_corch} [${c_num}20${c_corch}] ${c_flech}${s_flech} ${c_beta}FUNCIONES EN DISEÑO!"
 msg -bar3 
-echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALACION DE HERRAMIENTAS Y SERVICIOS ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+echo -e "  ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${h0nG} INSTALAR HERRAMIENTAS Y SERVICIOS ${h0nG} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 msg -bar3
-echo -e "${c_corch} [${c_num}21${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}BLOCK TORRENT        ${c_corch} [${c_num}22${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}BadVPN   $_badvpn"
-echo -e "${c_corch} [${c_num}23${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}TCP (BBR|Plus) $_tcpd ${c_corch} [${c_num}24${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}FAILBAN  $fail_b"
-echo -e "${c_corch} [${c_num}25${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ARCHIVO ONLINE \033[0;31m[\033[0;32m${portFTP}\033[0;31m]  ${c_corch} [${c_num}26${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}UP|DOWN SpeedTest "
-echo -e "${c_corch} [${c_num}27${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DETALLES DEL VPS     ${c_corch} [${c_num}28${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Block ADS $_ADS"
-echo -e "${c_corch} [${c_num}29${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}DNS CUSTOM (NETFLIX) ${c_corch} [${c_num}30${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HERRAMIENTAS EXTRAS"
-echo -e "${c_corch} [${c_num}31${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}REINICIAR SERVICIOS  ${c_corch} [${c_num}32${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Brook Server $_ADS"
-echo -e "${c_corch} [${c_num}33${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}FIREWALL (IPTABLES)  ${c_corch} [${c_num}34${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Enable/Change PASSWD ROOT"
-echo -e "${c_corch} [${c_num}35${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}AToken [APP's Mods]  ${c_corch} [${c_num}36${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}BHTTP [APP's Mods] $_bttp"
-echo -e "${c_corch} [${c_num}37${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HCR [HTTP Custom] $_hcr  ${c_corch} [${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
+echo -e "${c_corch} [${c_num}21${c_corch}] ${c_flech}${s_flech} ${c_texto}BLOCK TORRENT        ${c_corch} [${c_num}22${c_corch}] ${c_flech}${s_flech} ${c_texto}BadVPN   $_badvpn"
+echo -e "${c_corch} [${c_num}23${c_corch}] ${c_flech}${s_flech} ${c_texto}TCP (BBR|Plus) $_tcpd ${c_corch} [${c_num}24${c_corch}] ${c_flech}${s_flech} ${c_texto}FAILBAN  $fail_b"
+echo -e "${c_corch} [${c_num}25${c_corch}] ${c_flech}${s_flech} ${c_texto}ARCHIVO ONLINE \033[0;31m[\033[0;32m${portFTP}\033[0;31m]  ${c_corch} [${c_num}26${c_corch}] ${c_flech}${s_flech} ${c_texto}UP|DOWN SpeedTest "
+echo -e "${c_corch} [${c_num}27${c_corch}] ${c_flech}${s_flech} ${c_texto}DETALLES DEL VPS     ${c_corch} [${c_num}28${c_corch}] ${c_flech}${s_flech} ${c_texto}Block ADS $_ADS"
+echo -e "${c_corch} [${c_num}29${c_corch}] ${c_flech}${s_flech} ${c_texto}DNS CUSTOM (NETFLIX) ${c_corch} [${c_num}30${c_corch}] ${c_flech}${s_flech} ${c_texto}HERRAMIENTAS EXTRAS"
+echo -e "${c_corch} [${c_num}31${c_corch}] ${c_flech}${s_flech} ${c_texto}REINICIAR SERVICIOS  ${c_corch} [${c_num}32${c_corch}] ${c_flech}${s_flech} ${c_texto}Brook Server $_ADS"
+echo -e "${c_corch} [${c_num}33${c_corch}] ${c_flech}${s_flech} ${c_texto}FIREWALL (IPTABLES)  ${c_corch} [${c_num}34${c_corch}] ${c_flech}${s_flech} ${c_texto}Enable/Change PASSWD ROOT"
+echo -e "${c_corch} [${c_num}35${c_corch}] ${c_flech}${s_flech} ${c_texto}AToken [APP's Mods]  ${c_corch} [${c_num}36${c_corch}] ${c_flech}${s_flech} ${c_texto}BHTTP [APP's Mods] $_bttp"
+echo -e "${c_corch} [${c_num}37${c_corch}] ${c_flech}${s_flech} ${c_texto}HCR [HTTP Custom] $_hcr  ${c_corch} [${c_num}0${c_corch}] ${c_flech}${s_flech} $(msg -bra "\033[1;41m[ REGRESAR ]\e[0m")"
 msg -bar3 
 selection=$(selection_fun 37)
 case ${selection} in
@@ -7957,11 +7957,10 @@ fi
 
 }
 
-###### Gestor de temas TvRc####
+##### Gestor de temas TvRc ####
 gestor_temas() {
   local theme_file="/etc/adm-lite/theme.conf"
   
-  # 1. Crear el archivo base si no existe o si faltan variables nuevas
   if [[ ! -f "$theme_file" ]]; then
     mkdir -p /etc/adm-lite
     cat <<EOF > "$theme_file"
@@ -7982,11 +7981,9 @@ tit_forma_R=""
 tit_text="\033[1;37m"
 EOF
   else
-    # Inyectar tit_text si es un theme.conf antiguo que no la tiene
     grep -q "tit_text" "$theme_file" || echo "tit_text=\"\033[1;37m\"" >> "$theme_file"
   fi
 
-  # Función interna para mostrar paleta y capturar color
   elegir_color() {
     clear
     msg -bar3
@@ -8001,12 +7998,16 @@ EOF
     echo -e " ${c_corch}[${c_num}7${c_corch}]\033[0m \033[1;37mBlanco          (████)\033[0m"
     echo -e " ${c_corch}[${c_num}8${c_corch}]\033[0m \033[38;5;208mNaranja Fuerte  (████)\033[0m"
     echo -e " ${c_corch}[${c_num}9${c_corch}]\033[0m \033[38;5;54mMorado Oscuro   (████)\033[0m"
+    echo -e " ${c_corch}[${c_num}10${c_corch}]\033[0m \033[1;91mRojo Brillante  (████)\033[0m"
+    echo -e " ${c_corch}[${c_num}11${c_corch}]\033[0m \033[1;93mAmarillo Brillan(████)\033[0m"
+    echo -e " ${c_corch}[${c_num}12${c_corch}]\033[0m \033[1;94mAzul Brillante  (████)\033[0m"
     msg -bar3
-    echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;41m[ CANCELAR ]\033[0m"
+    echo -e " ${c_corch}[${c_num}13${c_corch}]\033[0m \033[1;37mPersonal (Paleta Completa de 256 colores)\033[0m"
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ CANCELAR ]\033[0m"
     msg -bar3
     echo -ne " ${c_flech}${s_flech}\033[0m Seleccione el tono : "
     read opt_col
-
 
     case $opt_col in
       1) color_ansi="\033[1;31m" ;;
@@ -8018,8 +8019,41 @@ EOF
       7) color_ansi="\033[1;37m" ;;
       8) color_ansi="\033[38;5;208m" ;;
       9) color_ansi="\033[38;5;54m" ;;
+      10) color_ansi="\033[1;91m" ;;
+      11) color_ansi="\033[1;93m" ;;
+      12) color_ansi="\033[1;94m" ;;
+      13) 
+          clear
+          msg -bar3
+          echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PALETA 256 COLORES 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+          msg -bar3
+          for i in {0..255}; do
+              printf " ${c_corch}[${c_num}%3s${c_corch}]\033[0m \033[38;5;%sm████\033[0m " "$i" "$i"
+              if (( (i + 1) % 4 == 0 )); then echo ""; fi
+          done
+          echo "" 
+          msg -bar3
+          echo -ne " ${c_flech}${s_flech}\033[0m Ingrese el número del color (0-255) : "
+          read personal_opt
+          if [[ "$personal_opt" =~ ^[0-9]+$ ]] && [ "$personal_opt" -ge 0 ] && [ "$personal_opt" -le 255 ]; then
+              color_ansi="\033[38;5;${personal_opt}m"
+          else
+              color_ansi=""
+          fi
+          ;;
       *) color_ansi="" ;;
     esac
+  }
+
+  mostrar_opciones_formas() {
+    echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m Redondeados  (  ) / (  )"
+    echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m Rectos       ( █ ) / ( █ )"
+    echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m Angulares    (  ) / (  )"
+    echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m Corchetes    ( 【 ) / ( 】 )"
+    echo -e " ${c_corch}[${c_num}5${c_corch}]\033[0m Degradado    ( ░▒▓ ) / ( ▓▒░ )"
+    echo -e " ${c_corch}[${c_num}6${c_corch}]\033[0m Inclinados   (  ) / (  )"
+    echo -e " ${c_corch}[${c_num}7${c_corch}]\033[0m Picos dobles ( « ) / ( » )"
+    echo -e " ${c_corch}[${c_num}8${c_corch}]\033[0m Sin borde    (   ) / (   )"
   }
 
   while true; do
@@ -8028,13 +8062,14 @@ EOF
     msg -bar3
     echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PERSONALIZAR TEMA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
     msg -bar3
-    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Elementos Base (Líneas, Textos...)"
-    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
-    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Diseño de Títulos (Fondos, Textos y Bordes)"
+    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech} ${c_texto}Elementos Base (Líneas, Textos...)"
+    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech} ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
+    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech} ${c_texto}Diseño de Títulos (Fondos, Textos y Bordes)"
     msg -bar3
-    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m \033[1;41m[ REGRESAR ]\033[0m"
+    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech} \033[1;37;41m[ REGRESAR ]\033[0m"
     msg -bar3
-    read -p " ► Opcion : " main_opt
+    echo -ne " ${c_flech}${s_flech}\033[0m Opcion : "
+    read main_opt
 
     case $main_opt in
       0) break ;;
@@ -8045,13 +8080,14 @@ EOF
           msg -bar3
           echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 ELEMENTOS BASE 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Textos       ${c_corch}[${c_num}4${c_corch}] ${c_texto}Números (01, 02)"
-          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Líneas       ${c_corch}[${c_num}5${c_corch}] ${c_texto}Flechas Color"
-          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Corchetes    ${c_corch}[${c_num}6${c_corch}] ${c_texto}Flechas Símbolo"
+          echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Textos       ${c_corch}[${c_num}4${c_corch}]\033[0m ${c_texto}Números (01, 02)"
+          echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Líneas       ${c_corch}[${c_num}5${c_corch}]\033[0m ${c_texto}Flechas Color"
+          echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Corchetes    ${c_corch}[${c_num}6${c_corch}]\033[0m ${c_texto}Flechas Símbolo"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
           msg -bar3
-          read -p " ► Seleccione opción : " sub_opt
+          echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+          read sub_opt
           [[ "$sub_opt" == "0" ]] && break
 
           if [[ "$sub_opt" =~ ^[1-5]$ ]]; then
@@ -8065,8 +8101,39 @@ EOF
               5) sed -i '/c_flech=/d' $theme_file; echo "c_flech=\"$color_ansi\"" >> $theme_file ;;
             esac
           elif [[ "$sub_opt" == "6" ]]; then
-            read -p " ► Escriba o pegue el nuevo símbolo (Ej: ➜, ◆, 👉) : " nuevo_simbolo
-            [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' $theme_file; echo "s_flech=\"$nuevo_simbolo\"" >> $theme_file; }
+            local simbolos=(
+              "➮" "➜" "➔" "➞" "➟" "➡" "➥" "➦" "➧" "➨" 
+              "➩" "➪" "➭" "➯" "➱" "➲" "➳" "🎯" "🚀" "⚡" 
+              "🔥" "💎" "🍄" "💀" "👻" "👽" "👾" "🤖" "💥" "💦" 
+              "🎈" "👑" "🏆" "💡" "💣" "📌" "📍" "👉" "👍" "✅"
+              "✔️" "✨" "🌟" "⭐" "☀️" "🔹" "🔸" "☑️" "🔰" "🌀"
+            )
+            clear
+            msg -bar3
+            echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 LISTA DE SÍMBOLOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+            msg -bar3
+            local col=0
+            for i in "${!simbolos[@]}"; do
+                printf " ${c_corch}[${c_num}%2s${c_corch}]\033[0m %-2s  " "$i" "${simbolos[$i]}"
+                ((col++))
+                if (( col % 5 == 0 )); then echo ""; fi
+            done
+            echo ""
+            msg -bar3
+            echo -e " ${c_corch}[${c_num}99${c_corch}]\033[0m \033[1;37mPegar símbolo personalizado\033[0m"
+            msg -bar3
+            echo -ne " ${c_flech}${s_flech}\033[0m Seleccione el símbolo : "
+            read opt_simb
+
+            if [[ "$opt_simb" =~ ^[0-9]+$ ]] && [ "$opt_simb" -ge 0 ] && [ "$opt_simb" -lt "${#simbolos[@]}" ]; then
+                nuevo_simbolo="${simbolos[$opt_simb]}" # Sin espacio final
+                sed -i '/s_flech=/d' "$theme_file"
+                echo "s_flech=\"$nuevo_simbolo\"" >> "$theme_file"
+            elif [[ "$opt_simb" == "99" || "$opt_simb" =~ ^[cC]$ ]]; then
+                echo -ne " ${c_flech}${s_flech}\033[0m Pegue su símbolo (Ej: ➜, ◆, 👉) : "
+                read nuevo_simbolo
+                [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' "$theme_file"; echo "s_flech=\"$nuevo_simbolo\"" >> "$theme_file"; }
+            fi
           fi
         done
       ;;
@@ -8077,14 +8144,15 @@ EOF
           msg -bar3
           echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 ETIQUETAS DE ESTADO 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Modificar ${c_on}[ON]\033[0m"
-          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Modificar ${c_off}[OFF]\033[0m"
-          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Modificar ${c_work}[WORKING]\033[0m"
-          echo -e " ${c_corch}[${c_num}4${c_corch}] ${c_texto}Modificar ${c_beta}[BETA]\033[0m"
+          echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Modificar ${c_on}[ON]\033[0m"
+          echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Modificar ${c_off}[OFF]\033[0m"
+          echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Modificar ${c_work}[WORKING]\033[0m"
+          echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m ${c_texto}Modificar ${c_beta}[BETA]\033[0m"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
           msg -bar3
-          read -p " ► Seleccione etiqueta : " sub_etiq
+          echo -ne " ${c_flech}${s_flech}\033[0m Seleccione etiqueta : "
+          read sub_etiq
           [[ "$sub_etiq" == "0" ]] && break
           [[ ! "$sub_etiq" =~ ^[1-4]$ ]] && continue
 
@@ -8106,20 +8174,23 @@ EOF
           msg -bar3
           echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 FONDOS DE TÍTULOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_texto}Cambiar Color de Fondo"
-          echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_texto}Cambiar Forma de los Extremos"
-          echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_texto}Cambiar Color del Texto"
+          echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Cambiar Color de Fondo"
+          echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Cambiar Forma de los Extremos"
+          echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Cambiar Color del Texto"
           msg -bar3
-          echo -e " ${c_corch}[${c_num}0${c_corch}] \033[1;41m[ VOLVER ]\033[0m"
+          echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
           msg -bar3
-          read -p " ► Seleccione opción : " opt_tit
+          echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+          read opt_tit
           [[ "$opt_tit" == "0" ]] && break
 
           if [[ "$opt_tit" == "1" ]]; then
-            echo -e " [1] \033[48;5;54m Morado Oscuro \033[0m"
-            echo -e " [2] \033[44m Azul Clásico \033[0m"
-            echo -e " [3] \033[41m Rojo Intenso \033[0m"
-            read -p " ► Elija color de fondo : " c_fondo
+            echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m \033[48;5;54m Morado Oscuro \033[0m"
+            echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m \033[44m Azul Clásico \033[0m"
+            echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m \033[41m Rojo Intenso \033[0m"
+            echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m \033[1;37m Personal (Paleta Completa de 256 colores)\033[0m"
+            echo -ne " ${c_flech}${s_flech}\033[0m Elija color de fondo : "
+            read c_fondo
             case $c_fondo in
               1) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
                  echo -e "tit_bg=\"\033[48;5;54m\"\ntit_edge_col=\"\033[38;5;54m\"" >> $theme_file ;;
@@ -8127,20 +8198,70 @@ EOF
                  echo -e "tit_bg=\"\033[44m\"\ntit_edge_col=\"\033[34m\"" >> $theme_file ;;
               3) sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
                  echo -e "tit_bg=\"\033[41m\"\ntit_edge_col=\"\033[31m\"" >> $theme_file ;;
+              4)
+                 clear
+                 msg -bar3
+                 echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PALETA 256 COLORES (FONDO) 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                 msg -bar3
+                 for i in {0..255}; do
+                     printf " ${c_corch}[${c_num}%3s${c_corch}]\033[0m \033[38;5;%sm████\033[0m " "$i" "$i"
+                     if (( (i + 1) % 4 == 0 )); then echo ""; fi
+                 done
+                 echo "" 
+                 msg -bar3
+                 echo -ne " ${c_flech}${s_flech}\033[0m Ingrese el número del color (0-255) : "
+                 read personal_bg
+                 if [[ "$personal_bg" =~ ^[0-9]+$ ]] && [ "$personal_bg" -ge 0 ] && [ "$personal_bg" -le 255 ]; then
+                     sed -i '/tit_bg=/d; /tit_edge_col=/d' $theme_file
+                     echo -e "tit_bg=\"\033[48;5;${personal_bg}m\"\ntit_edge_col=\"\033[38;5;${personal_bg}m\"" >> $theme_file
+                 fi
+                 ;;
             esac
+          
           elif [[ "$opt_tit" == "2" ]]; then
-            echo -e " [1] Redondeados  ( TITULO )"
-            echo -e " [2] Rectos       ( █TITULO█ )"
-            echo -e " [3] Angulares    ( TITULO )"
-            echo -e " [4] Corchetes    ( 【TITULO】 )"
-            read -p " ► Elija forma : " c_forma
-            case $c_forma in
-              1) f_L="" ; f_R="" ;;
-              2) f_L=" " ; f_R=" " ;;
-              3) f_L="" ; f_R="" ;;
-              4) f_L="【" ; f_R="】" ;;
+            clear
+            msg -bar3
+            echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 BORDE IZQUIERDO 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+            msg -bar3
+            mostrar_opciones_formas
+            msg -bar3
+            echo -ne " ${c_flech}${s_flech}\033[0m Elija forma IZQUIERDA : "
+            read c_forma_L
+            case $c_forma_L in
+              1) f_L="" ;;
+              2) f_L="█" ;;
+              3) f_L="" ;;
+              4) f_L="【" ;;
+              5) f_L="░▒▓" ;;
+              6) f_L="" ;;
+              7) f_L="«" ;;
+              8) f_L=" " ;;
+              *) f_L="" ;;
             esac
-            [[ "$c_forma" =~ ^[1-4]$ ]] && { sed -i '/tit_forma_L=/d; /tit_forma_R=/d' $theme_file; echo -e "tit_forma_L=\"$f_L\"\ntit_forma_R=\"$f_R\"" >> $theme_file; }
+
+            clear
+            msg -bar3
+            echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 BORDE DERECHO 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+            msg -bar3
+            mostrar_opciones_formas
+            msg -bar3
+            echo -ne " ${c_flech}${s_flech}\033[0m Elija forma DERECHA : "
+            read c_forma_R
+            case $c_forma_R in
+              1) f_R="" ;;
+              2) f_R="█" ;;
+              3) f_R="" ;;
+              4) f_R="】" ;;
+              5) f_R="▓▒░" ;;
+              6) f_R="" ;;
+              7) f_R="»" ;;
+              8) f_R=" " ;;
+              *) f_R="" ;;
+            esac
+
+            sed -i '/tit_forma_L=/d; /tit_forma_R=/d' $theme_file
+            echo -e "tit_forma_L=\"$f_L\"\ntit_forma_R=\"$f_R\"" >> $theme_file
+
           elif [[ "$opt_tit" == "3" ]]; then
             elegir_color
             [[ -n "$color_ansi" ]] && { sed -i '/tit_text=/d' $theme_file; echo "tit_text=\"$color_ansi\"" >> $theme_file; }
@@ -8150,7 +8271,6 @@ EOF
     esac
   done
 }
-
 
 start_menu () {
 while :
@@ -8199,16 +8319,17 @@ msg -bar3
 echo -e "${cor[1]} ∘${cor[5]} TOTAL: ${cor[2]}${mem_total}${cor[1]} ∘ ${cor[5]} M|LIBRE:${cor[2]} ${mem_free} ${cor[1]} ∘ ${cor[5]} EN USO:${cor[2]} ${mem_used}"
 echo -e "${cor[1]} ∘${cor[5]} U/RAM: ${cor[2]}${mem_used_percent} ${cor[1]} ∘${cor[5]} U/CPU:${cpu_used} ${cor[1]} ∘${cor[5]} BUFFER:${cor[2]} ${mem_cache}" # $CPU"%"
 msg -bar3
-echo -e "${c_corch} [${c_num}01${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
-#echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}HERRAMIENTAS BASE (${c_num}BadVPN$_badvpn${c_texto})"
-echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech}\033[0m ${c_beta}[!]${c_texto} OPTIMIZAR VPS $_opti "
-echo -e "${c_corch} [${c_num}03${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}CONTADOR ONLINE USERS $VERIFICAR_PID"
-#echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech}\033[0m ${c_on}HERRAMIENTAS BETA\033[0m ${c_beta} (#EXPERIMENTAL)"
-echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}AUTOINICIAR SCRIPT $_autorun"
-echo -e "${c_corch} [${c_num}05${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}INSTALADOR DE PROTOCOLOS"
-echo -e "${c_corch} [${c_num}06${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Cambiar Tema"
+#echo -e "${c_corch} [${c_num}01${c_corch}]${c_flech}${s_flech}\03tres[0m ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
+echo -e "${c_corch} [${c_num}01${c_corch}] ${c_flech}${s_flech} ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
+#echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech} ${c_texto}HERRAMIENTAS BASE (${c_num}BadVPN$_badvpn${c_texto})"
+echo -e "${c_corch} [${c_num}02${c_corch}] ${c_flech}${s_flech} ${c_beta}[!]${c_texto} OPTIMIZAR VPS $_opti "
+echo -e "${c_corch} [${c_num}03${c_corch}] ${c_flech}${s_flech} ${c_texto}CONTADOR ONLINE USERS $VERIFICAR_PID"
+#echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech} ${c_on}HERRAMIENTAS BETA\033[0m ${c_beta} (#EXPERIMENTAL)"
+echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech} ${c_texto}AUTOINICIAR SCRIPT $_autorun"
+echo -e "${c_corch} [${c_num}05${c_corch}] ${c_flech}${s_flech} ${c_texto}INSTALADOR DE PROTOCOLOS"
+echo -e "${c_corch} [${c_num}06${c_corch}] ${c_flech}${s_flech} ${c_texto}Cambiar Tema"
 msg -bar3
-echo -ne "${c_corch} [${c_num}07${c_corch}] ${c_flech}${s_flech}\033[0m ${c_beta}[!] \033[1;32mUPDATE \033[0m${c_texto}/ \033[1;31mREMOVE\033[0m  |" && echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_beta}⇦ \033[1;41m[ SALIR ]\033[0m"
+echo -ne "${c_corch} [${c_num}07${c_corch}] ${c_flech}${s_flech} ${c_beta}[!] \033[1;32mUPDATE \033[0m${c_texto}/ \033[1;31mREMOVE\033[0m  |" && echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_beta}⇦ \033[1;41m[ SALIR ]\033[0m"
 msg -bar3 
 
 #------------------------------------------------
