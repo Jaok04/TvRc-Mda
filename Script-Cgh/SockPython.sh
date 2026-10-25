@@ -1641,7 +1641,7 @@ ws_epro_units() {
 # Presentación local estandarizada con la convención visual del menú de protocolos
 ws_epro_ui_item() {
     local number="$1" label="$2"
-    echo -e "${c_corch} [${c_num}${number}${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}${label}"
+    echo -e "${c_corch} [${c_num}${number}${c_corch}] ${c_flech}${s_flech}  ${c_texto}${label}"
 }
 
 ws_epro_ui_state() {
@@ -1922,26 +1922,26 @@ msg -bar3
 msg -bar3
 
 # AQUI SE APLICA EL DISEÑO VISUAL USANDO ECHO ESTRUCTURADO (Simulando menu_item)
-echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python SIMPLE      $P1"
-echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python SEGURO      $P2"
-echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python DIRETO (WS) $P3"
-echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python OPENVPN     $P4"
-echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python GETTUNEL    $P5"
-echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}Socks Python TCP BYPASS  $P6"
+echo -e "${c_corch} [${c_num}1${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python SIMPLE      $P1"
+echo -e "${c_corch} [${c_num}2${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python SEGURO      $P2"
+echo -e "${c_corch} [${c_num}3${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python DIRETO (WS) $P3"
+echo -e "${c_corch} [${c_num}4${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python OPENVPN     $P4"
+echo -e "${c_corch} [${c_num}5${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python GETTUNEL    $P5"
+echo -e "${c_corch} [${c_num}6${c_corch}] ${c_flech}${s_flech}  ${c_texto}Socks Python TCP BYPASS  $P6"
 
 var_p="$(echo -e "$_PT"|grep "WS-Epro"| wc -l) "
 var_w="$(echo -e "$_PT"|grep "python"|wc -l)"
 var_check=$(( ${var_p} + ${var_w} ))
 if [[ ${var_check} -ge "2" ]]; then
-    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ANULAR TODOS       ${c_corch}[${c_num}8${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ELIMINAR UN PUERTO"
+    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}  ${c_texto}ANULAR TODOS       ${c_corch}[${c_num}8${c_corch}] ${c_flech}${s_flech}  ${c_texto}ELIMINAR UN PUERTO"
     py=8
 else
-    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}\033[0m ${c_texto}ELIMINAR TODOS"
+    echo -e "${c_corch} [${c_num}7${c_corch}] ${c_flech}${s_flech}  ${c_texto}ELIMINAR TODOS"
     py=7
 fi
 
 msg -bar3
-echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}\033[0m $(msg -bra "\033[1;41m[ Volver ]\e[0m")"
+echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech}  $(msg -bra "\033[1;41m[ Volver ]\e[0m")"
 msg -bar3
 selection=$(selection_fun ${py})
 case ${selection} in
