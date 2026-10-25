@@ -1897,7 +1897,7 @@ pidproxy3=$(echo -e "$_ps" | grep "PDirect" | grep -v "grep" | awk -F "pts" '{pr
 pidproxy4=$(echo -e "$_ps" | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="${c_on}[ON]\033[0m" || P4="${c_off}[OFF]\033[0m"
 pidproxy5=$(echo -e "$_ps" | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="${c_on}[ON]\033[0m" || P5="${c_off}[OFF]\033[0m"
 pidproxy6=$(echo -e "$_ps" | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="${c_on}[ON]\033[0m" || P6="${c_off}[OFF]\033[0m"
-echo -e "            ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ===> Admin de WS-Epro <=== \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+echo -e "            ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ===> Proxys Python <=== \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 [[ ${_PT} ]] && {
 msg -bar3
     unset portas
