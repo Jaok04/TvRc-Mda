@@ -1,5 +1,5 @@
 rm -f /tmp/* &>/dev/null
-
+####TvRc####
 config="/etc/xray/config.json"
 _v2=`if netstat -tunlp | grep xray 1> /dev/null 2> /dev/null; then
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;32mWORK ] "
@@ -18,7 +18,7 @@ if [[ $(cat $v2rdir/conf | grep "autBackup") = "" ]]; then
 echo "autBackup 0" >> $v2rdir/conf
 fi
 barra="\033[0;31m=====================================================\033[0m"
-[[ -e /bin/ejecutar/msg2 ]] && source /bin/ejecutar/msg2 || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T')
 fecha=$(printf '%(%D)T')
@@ -1334,7 +1334,7 @@ clear
 install_ini
 msg -bar3
 blanco "	Esta por intalar xray!"
-wget wget --no-check-certificate -t3 -T3 -O /bin/xr.sh https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xr.bin
+wget --no-check-certificate -t3 -T3 -O /bin/xr.sh https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xr.bin
 chmod +x /bin/xr.sh
 msg -bar3
 blanco " La instalacion puede tener\n alguna fallas!\n por favor observe atentamente\n el log de intalacion,\n este podria contener informacion\n sobre algunos errores!\n estos deveras ser corregidos de\n forma manual antes de continual\n usando el script"
