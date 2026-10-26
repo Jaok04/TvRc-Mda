@@ -1,7 +1,7 @@
 # Author: Jrohy
 # github: https://github.com/Jrohy/multi-v2ray
 
-ofus () {
+#ofus () {
 #unset txtofus
 #number=$(expr length $1)
 #for((i=1; i<$number+1; i++)); do
