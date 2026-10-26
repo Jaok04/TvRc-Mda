@@ -1,7 +1,7 @@
 # Author: Jrohy
 # github: https://github.com/Jrohy/multi-v2ray
 
-[[ -e /bin/ejecutar/msg2 ]] && source /bin/ejecutar/msg2 || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
 
 apt install jq -y
 BEIJING_UPDATE_TIME=3

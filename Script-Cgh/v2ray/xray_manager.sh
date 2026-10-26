@@ -20,7 +20,7 @@ else
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;33mLOADING \033[1;32m] " || echo -e "\033[1;32m[ \033[1;31mNO INST \033[1;32m] "
 fi`;
 barra="\033[0;31m=====================================================\033[0m"
-[[ -e /bin/ejecutar/msg2 ]] && source /bin/ejecutar/msg2 > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ChumoGH-Script/master/msg-bar/msg) > /dev/null
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ChumoGH-Script/master/msg-bar/msg) > /dev/null
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T') 
 fecha=$(printf '%(%D)T')
@@ -1481,10 +1481,10 @@ install(){
 	read foo
 	config='/etc/xray/config.json'
     tmp='/etc/xray/temp.json'
-	source <(curl -sL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xray.sh)
+	source <(curl -sL https://raw.githubusercontent.com/ChumoGH/ADMRufu/main/Utils/xray/xray.sh) #TvRv
 	#restart_v2r
 	echo "source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xray_manager.sh)" > /bin/v2r.sh
-	chmod +x /bin/r.sh
+	chmod +x /bin/xr.sh
 }
 
 xray_tls(){
