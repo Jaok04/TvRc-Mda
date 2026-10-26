@@ -1481,9 +1481,9 @@ install(){
 	read foo
 	config='/etc/xray/config.json'
     tmp='/etc/xray/temp.json'
-	source <(curl -sL https://raw.githubusercontent.com/ChumoGH/ADMRufu/main/Utils/xray/xray.sh)
+	source <(curl -sL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xray.sh)
 	#restart_v2r
-	echo "source <(curl -sSL https://www.dropbox.com/s/olvy10kff2wwe8f/xray_manager.sh)" > /bin/v2r.sh
+	echo "source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xray_manager.sh)" > /bin/v2r.sh
 	chmod +x /bin/r.sh
 }
 
@@ -1725,7 +1725,7 @@ settings(){
     done
 }
 enon(){
-echo "source <(curl -sSL  https://www.dropbox.com/s/olvy10kff2wwe8f/xray_manager.sh)" > /bin/xr.sh
+echo "source <(curl -sSL  https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/xray_manager.sh)" > /bin/xr.sh
 chmod +x /bin/xr.sh
 		clear
 		msg -bar3

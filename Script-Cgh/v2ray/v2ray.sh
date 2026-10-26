@@ -77,7 +77,7 @@ function chekKEY {
     # }
 
 
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
+[[ -e /bin/ejecutar/msg2 ]] && source /bin/ejecutar/msg2 || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
 
 apt install jq -y
 BEIJING_UPDATE_TIME=3
@@ -254,7 +254,7 @@ updateProject() {
         source /usr/share/bash-completion/completions/xray
     fi
     # bash <(curl -L -s https://multi.netlify.app/go.sh)
-    bash <(curl -L -s https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/V2ray/go.sh) --version v4.45.2
+    bash <(curl -L -s https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/v2ray/go.sh) --version v4.45.2
     #[[ ${INSTALL_WAY} == 0 ]] && bash <(curl -L -s https://multi.netlify.app/go.sh) "--version" "v4.45.2"
 }
 
