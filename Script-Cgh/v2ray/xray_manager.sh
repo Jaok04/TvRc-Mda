@@ -1221,28 +1221,40 @@ view_user(){
 }
 
 vmess() {
-    local tipo
-    if [[ $net = '"grpc"' ]]; then
-        tipo="none"
-    elif [[ $net = '"ws"' ]]; then
-        tipo="gun"
-    else
-        return 1
-    fi
+    local tipo json
+    local v_ps="$ps"
+    local v_net="$net"
+    local v_path="$path"
+    local v_host="$host"
+    local v_id="$id"
+    local v_tls="$tls"
 
-    local json
+    # Eliminar comillas exteriores de los valores procedentes de jq
+    v_ps="${v_ps#\"}";       v_ps="${v_ps%\"}"
+    v_net="${v_net#\"}";     v_net="${v_net%\"}"
+    v_path="${v_path#\"}";   v_path="${v_path%\"}"
+    v_host="${v_host#\"}";   v_host="${v_host%\"}"
+    v_id="${v_id#\"}";       v_id="${v_id%\"}"
+    v_tls="${v_tls#\"}";     v_tls="${v_tls%\"}"
+
+    case "$v_net" in
+        grpc) tipo="none" ;;
+        ws)   tipo="gun" ;;
+        *)    return 1 ;;
+    esac
+
     json=$(jq -cn \
         --arg v "2" \
-        --arg ps "$ps" \
+        --arg ps "$v_ps" \
         --arg add "$addip" \
         --arg port "$port" \
         --arg aid "$aid" \
         --arg type "$tipo" \
-        --arg net "${net//\"/}" \
-        --arg path "${path#\"}" \
-        --arg host "$host" \
-        --arg id "$id" \
-        --arg tls "${tls//\"/}" \
+        --arg net "$v_net" \
+        --arg path "$v_path" \
+        --arg host "$v_host" \
+        --arg id "$v_id" \
+        --arg tls "$v_tls" \
         '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls}') || return 1
 
     printf '\033[3;32mvmess://%s\033[0m\n' "$(printf '%s' "$json" | base64 -w 0)"
