@@ -1221,9 +1221,31 @@ view_user(){
 }
 
 vmess() {
-[[ $net = '"grpc"' ]] && echo -e "\033[3;32mvmess://$(echo {\"v\": \"2\", \"ps\": $ps, \"add\": $addip, \"port\": $port, \"aid\": $aid, \"type\": \"none\", \"net\": $net, \"path\": $path, \"host\": $host, \"id\": $id, \"tls\": $tls} | base64 -w 0)\033[3;32m" || {
-[[ $net = '"ws"' ]] && echo -e "\033[3;32mvmess://$(echo {\"v\": \"2\", \"ps\": $ps, \"add\": $addip, \"port\": $port, \"aid\": $aid, \"type\": \"gun\", \"net\": $net, \"path\": $path, \"host\": $host, \"id\": $id, \"tls\": $tls} | base64 -w 0)\033[3;32m"
-}
+    local tipo
+    if [[ $net = '"grpc"' ]]; then
+        tipo="none"
+    elif [[ $net = '"ws"' ]]; then
+        tipo="gun"
+    else
+        return 1
+    fi
+
+    local json
+    json=$(jq -cn \
+        --arg v "2" \
+        --arg ps "$ps" \
+        --arg add "$addip" \
+        --arg port "$port" \
+        --arg aid "$aid" \
+        --arg type "$tipo" \
+        --arg net "${net//\"/}" \
+        --arg path "${path#\"}" \
+        --arg host "$host" \
+        --arg id "$id" \
+        --arg tls "${tls//\"/}" \
+        '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls}') || return 1
+
+    printf '\033[3;32mvmess://%s\033[0m\n' "$(printf '%s' "$json" | base64 -w 0)"
 }
 
 alterid(){
