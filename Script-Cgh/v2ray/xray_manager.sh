@@ -942,7 +942,7 @@ add_user(){
 		[[ $net = '"grpc"' ]] && path=$(jq '.inbounds[].streamSettings.grpcSettings.serviceName'  $config) || path=$(jq '.inbounds[].streamSettings.wsSettings.path' $config)
 		port=$(jq '.inbounds[].port' $config)
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
-		addip=$(wget -qO- ifconfig.me)
+		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
 		msg -bar3
 		blanco " Usuario: $ps"
@@ -1193,7 +1193,7 @@ view_user(){
 		[[ $net = '"grpc"' ]] && path=$(jq '.inbounds[].streamSettings.grpcSettings.serviceName'  $config) || path=$(jq '.inbounds[].streamSettings.wsSettings.path' $config)
 		port=$(jq '.inbounds[].port' $config)
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
-		addip=$(wget -qO- ifconfig.me)
+		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
 		msg -bar3
 		blanco " Usuario: $ps"
