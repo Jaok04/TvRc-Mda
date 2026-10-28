@@ -1,5 +1,5 @@
 clear&&clear
-####TvRc04####
+####TvRc-04####
 [[ -z $1 ]] && config="/etc/v2ray/config.json" || config="$1"
 _v2=`if netstat -tunlp | grep v2ray 1> /dev/null 2> /dev/null; then
 echo -e "\033[1;32m[ ONLINE ] "

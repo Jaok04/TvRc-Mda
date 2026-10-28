@@ -1,5 +1,5 @@
 rm -f /tmp/* &>/dev/null
-####TvRc04####
+####TvRc-04####
 config="/etc/xray/config.json"
 _v2=`if netstat -tunlp | grep xray 1> /dev/null 2> /dev/null; then
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;32mWORK ] "
