@@ -1223,6 +1223,7 @@ view_user(){
 vmess() {
     local tipo json
     local v_ps="$ps"
+    local v_add="$add"
     local v_net="$net"
     local v_path="$path"
     local v_host="$host"
@@ -1231,6 +1232,9 @@ vmess() {
 
     # Eliminar comillas exteriores de los valores procedentes de jq
     v_ps="${v_ps#\"}";       v_ps="${v_ps%\"}"
+    v_add="${v_add#\"}";     v_add="${v_add%\"}"
+    # Si no hay dominio configurado, conservar la IP pública como alternativa.
+    [[ -z "$v_add" || "$v_add" == "null" ]] && v_add="$addip"
     v_net="${v_net#\"}";     v_net="${v_net%\"}"
     v_path="${v_path#\"}";   v_path="${v_path%\"}"
     v_host="${v_host#\"}";   v_host="${v_host%\"}"
@@ -1246,7 +1250,7 @@ vmess() {
     json=$(jq -cn \
         --arg v "2" \
         --arg ps "$v_ps" \
-        --arg add "$addip" \
+        --arg add "$v_add" \
         --arg port "$port" \
         --arg aid "$aid" \
         --arg type "$tipo" \
