@@ -1,5 +1,5 @@
 clear&&clear
-####TvRc####
+####TvRc####Mod#####
 [[ -z $1 ]] && config="/etc/v2ray/config.json" || config="$1"
 _v2=`if netstat -tunlp | grep v2ray 1> /dev/null 2> /dev/null; then
 echo -e "\033[1;32m[ ONLINE ] "
@@ -18,7 +18,7 @@ if [[ $(cat $v2rdir/conf | grep "autBackup") = "" ]]; then
 echo "autBackup 0" >> $v2rdir/conf
 fi
 barra="\033[0;31m=====================================================\033[0m"
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp)
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T')
 fecha=$(printf '%(%D)T')
@@ -949,8 +949,8 @@ _nameP='path'
 fi
 title "DATOS DE USUARIO: $ps"
 col2 "Remarks:" "$ps"
-col2 "Domain:" "$add"
-col2 "Address:" "$IP"
+col2 "Dominio:" "$add"
+col2 "IP:" "$IP"
 col2 "Port:" "$port"
 col2 "id:" "$id"
 col2 "alterId:" "$aid"
@@ -963,7 +963,7 @@ col2 "Head Type:" "$hType"
 [[ $net == "grpc" ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
 msg -bar3
 [[ ${protocol} = "vless" ]] && {
-local var="${id}@${IP}:${port}?encryption=${cryp}&security=${tls}&type=${net}&${_nameP}=${path}&host=${host}&mode=${hType}&host=${host}&sni=null#${ps}%3A${port}"
+local var="${id}@${IP}:${port}?encryption=${cryp}&security=${tls}&type=${net}&${_nameP}=${path}&host=${host}&mode=${hType}&sni=${host}#${ps}"
 msg -ama "${protocol}://$(echo "$var")"
 } || {
 local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$IP\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\"}"
@@ -994,7 +994,8 @@ local hType='none'
 fi
 title "DATOS DE USUARIO: $ps"
 col2 "Remarks:" "$ps"
-col2 "Address:" "$add"
+col2 "Dominio:" "$add"
+col2 "IP:" "$IP"
 col2 "Port:" "$port"
 col2 "id:" "$id"
 col2 "alterId:" "$aid"
@@ -1007,10 +1008,14 @@ col2 "Head Type:" "$hType"
 [[ $net == "grpc" ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
 msg -bar3
 [[ ${protocol} = "vless" ]] && {
-local var="${id}@${add}:${port}?encryption=${cryp}&security=${tls}&type=${net}&serviceName=${path}&mode=${hType}&sni=null#${ps}%3A${port}"
+if [[ $net == "grpc" ]]; then
+local var="${id}@${add}:${port}?encryption=${cryp}&security=${tls}&type=${net}&serviceName=${path}&mode=${hType}&sni=${host}#${ps}"
+else
+local var="${id}@${add}:${port}?encryption=${cryp}&security=${tls}&type=${net}&path=${path}&host=${host}&sni=${host}#${ps}"
+fi
 msg -ama "${protocol}://$(echo "$var")"
 } || {
-local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$IP\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\"}"
+local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$add\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\"}"
 msg -ama "${protocol}://$(echo "$var"|jq -r '.|@base64')"
 }
 }
