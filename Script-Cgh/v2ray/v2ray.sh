@@ -183,13 +183,15 @@ updateProject() {
         return 1
     }
 
-    [[ -x "${V2RAY_UTIL_BIN}" ]] || { colorEcho ${RED} "Error: no se generó el ejecutable ${V2RAY_UTIL_BIN}."; return 1; }
-    "${VENV_PYTHON}" -c 'import v2ray_util' >/dev/null 2>&1 || {
-        colorEcho ${RED} "Error: v2ray_util no supera la prueba de importación."
+    # v2ray_util 3.11.4 importa pkg_resources; setuptools 81+ ya no lo incluye.
+    "${VENV_PYTHON}" -m pip install --upgrade 'setuptools<81' || {
+        colorEcho ${RED} "Error: no se pudo instalar una versión compatible de setuptools (pkg_resources)."
         return 1
     }
-    "${V2RAY_UTIL_BIN}" --help >/dev/null 2>&1 || {
-        colorEcho ${RED} "Error: v2ray-util no supera la prueba de ejecución (--help)."
+
+    [[ -x "${V2RAY_UTIL_BIN}" ]] || { colorEcho ${RED} "Error: no se generó el ejecutable ${V2RAY_UTIL_BIN}."; return 1; }
+    "${VENV_PYTHON}" -c 'import pkg_resources; import v2ray_util' >/dev/null 2>&1 || {
+        colorEcho ${RED} "Error: v2ray_util no supera la prueba de importación de pkg_resources/v2ray_util."
         return 1
     }
 
