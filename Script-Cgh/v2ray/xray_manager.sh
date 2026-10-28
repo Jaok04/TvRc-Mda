@@ -20,7 +20,7 @@ else
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;33mLOADING \033[1;32m] " || echo -e "\033[1;32m[ \033[1;31mNO INST \033[1;32m] "
 fi`;
 barra="\033[0;31m=====================================================\033[0m"
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ChumoGH-Script/master/msg-bar/msg) > /dev/null
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp) > /dev/null
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T') 
 fecha=$(printf '%(%D)T')
@@ -947,20 +947,20 @@ add_user(){
 		msg -bar3
 		blanco " Usuario: $ps"
 		msg -bar3
-		col2 "Remarks:" "$ps"
-		col2 "Domain:" "$add" 
-		col2 "IP-Address:" "$addip"
-		col2 "Port:" "$port"
-		col2 "id:" "$id"
-		col2 "alterId:" "$aid"
-		col2 "network:" "$net"
+		col2 "Nombre:" "$ps"
+		col2 "Dominio:" "$add" 
+		col2 "IP:" "$addip"
+		col2 "Puerto:" "$port"
+		col2 "ID:" "$id"
+		col2 "ID alternativo:" "$aid"
+		col2 "Red:" "$net"
 		[[ $tls = '"tls"' ]] && col2 "TLS:" "ABIERTO" || col2 "TLS:" " CERRADO"
-		[[ $net = '"grpc"' ]] && col2 "Mode:" " GUN" || col2 "Head Type:" "none"
-		col2 "security:" "none"
+		[[ $net = '"grpc"' ]] && col2 "Modo:" " GUN" || col2 "Tipo de cabecera:" "none"
+		col2 "Seguridad:" "none"
 		[[ ! $host = '' ]] && col2 "Host/SNI:" "$host"
-		[[ $net = '"grpc"' ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
+		[[ $net = '"grpc"' ]] && col2 "Nombre del servicio:" "$path" || col2 "Ruta:" "$path"
 		msg -bar3
-		blanco "              VMESS LINK CONFIG"
+		blanco "              ENLACE VMESS DE CONFIGURACIÓN"
 		msg -bar3
 		vmess
 		msg -bar3
@@ -1198,20 +1198,20 @@ view_user(){
 		msg -bar3
 		blanco " Usuario: $ps"
 		msg -bar3
-		col2 "Remarks:" "$ps"
-		col2 "Domain:" "$add" 
-		col2 "IP-Address:" "$addip"
-		col2 "Port:" "$port"
-		col2 "id:" "$id"
-		col2 "alterId:" "$aid"
-		col2 "network:" "$net"
+		col2 "Nombre:" "$ps"
+		col2 "Dominio:" "$add" 
+		col2 "IP:" "$addip"
+		col2 "Puerto:" "$port"
+		col2 "ID:" "$id"
+		col2 "ID alternativo:" "$aid"
+		col2 "Red:" "$net"
 		[[ $tls = '"tls"' ]] && col2 "TLS:" "ABIERTO" || col2 "TLS:" " CERRADO"
-		[[ $net = '"grpc"' ]] && col2 "Mode:" " GUN" || col2 "Head Type:" "none"
-		col2 "security:" "none"
+		[[ $net = '"grpc"' ]] && col2 "Modo:" " GUN" || col2 "Tipo de cabecera:" "none"
+		col2 "Seguridad:" "none"
 		[[ ! $host = '' ]] && col2 "Host/SNI:" "$host"
-		[[ $net = '"grpc"' ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
+		[[ $net = '"grpc"' ]] && col2 "Nombre del servicio:" "$path" || col2 "Ruta:" "$path"
 		msg -bar3
-		blanco "              VMESS LINK CONFIG"
+		blanco "              ENLACE VMESS DE CONFIGURACIÓN"
 		msg -bar3
 		vmess
 		msg -bar3
@@ -1268,7 +1268,7 @@ alterid(){
 	msg -bar3
 	blanco "        configuracion alterId"
 	msg -bar3
-	col2 "	alterid:" "$aid"
+	col2 "	ID alternativo:" "$aid"
 	msg -bar3
 	col "x)" "VOLVER"
 	msg -bar3
@@ -1298,7 +1298,7 @@ port(){
 	port=$(jq '.inbounds[].port' $config)
 	clear
 	msg -bar3
-	blanco "       configuracion de puerto"
+	blanco "       configuración de puerto"
 	msg -bar3
 	col2 " Puerto:" "$port"
 	msg -bar3
@@ -1330,9 +1330,9 @@ address(){
 	add=$(jq '.inbounds[].domain' $config) && [[ $add = null ]] && add=$(wget -qO- ipv4.icanhazip.com)
 	clear
 	msg -bar3
-	blanco "       configuracion address"
+	blanco "       configuración de dirección"
 	msg -bar3
-	col2 "address:" "$add"
+	col2 "Dirección:" "$add"
 	msg -bar3
 	col "0)" "VOLVER"
 	msg -bar3
@@ -1361,7 +1361,7 @@ host(){
 	host=$(jq '.inbounds[].streamSettings.wsSettings.headers.Host' $config) && [[ $host = null ]] && host='sin host'
 	clear
 	msg -bar3
-	blanco "       configuracion Host"
+	blanco "       configuración de Host"
 	msg -bar3
 	col2 "Host:" "$host"
 	msg -bar3
@@ -1391,9 +1391,9 @@ path(){
 	path=$(jq '.inbounds[].streamSettings.wsSettings.path' $config) && [[ $path = null ]] && path=''
 	clear
 	msg -bar3
-	blanco "       configuracion Path"
+	blanco "       configuración de ruta"
 	msg -bar3
-	col2 "path:" "$path"
+	col2 "Ruta:" "$path"
 	msg -bar3
 	col "0)" "VOLVER"
 	msg -bar3
