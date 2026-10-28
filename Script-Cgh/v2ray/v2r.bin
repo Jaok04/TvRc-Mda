@@ -1,5 +1,5 @@
 clear&&clear
-####TvRc####Mod#####
+####TvRc04####
 [[ -z $1 ]] && config="/etc/v2ray/config.json" || config="$1"
 _v2=`if netstat -tunlp | grep v2ray 1> /dev/null 2> /dev/null; then
 echo -e "\033[1;32m[ ONLINE ] "
@@ -947,26 +947,26 @@ local path=$(jq -r '.inbounds[].streamSettings.wsSettings.path' $config)
 local hType='none'
 _nameP='path'
 fi
-title "DATOS DE USUARIO: $ps"
-col2 "Remarks:" "$ps"
+title "DATOS DEL USUARIO: $ps"
+col2 "Nombre:" "$ps"
 col2 "Dominio:" "$add"
 col2 "IP:" "$IP"
-col2 "Port:" "$port"
+col2 "Puerto:" "$port"
 col2 "id:" "$id"
-col2 "alterId:" "$aid"
-col2 "security:" "none"
-col2 "network:" "$net"
+col2 "ID alternativo:" "$aid"
+col2 "Seguridad:" "none"
+col2 "Red:" "$net"
 col2 "TLS:" "$tls"
-[[ ${protocol} = "vless" ]] && col2 "Encryption:" "$cryp"
+[[ ${protocol} = "vless" ]] && col2 "Cifrado:" "$cryp"
 [[ ! $host = '' ]] && col2 "Host/SNI:" "$host"
-col2 "Head Type:" "$hType"
-[[ $net == "grpc" ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
+col2 "Tipo de cabecera:" "$hType"
+[[ $net == "grpc" ]] && col2 "Nombre del servicio:" "$path" || col2 "Ruta:" "$path"
 msg -bar3
 [[ ${protocol} = "vless" ]] && {
 local var="${id}@${IP}:${port}?encryption=${cryp}&security=${tls}&type=${net}&${_nameP}=${path}&host=${host}&mode=${hType}&sni=${host}#${ps}"
 msg -ama "${protocol}://$(echo "$var")"
 } || {
-local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$IP\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\"}"
+local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$add\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\",\"sni\":\"$host\"}"
 msg -ama "${protocol}://$(echo "$var"|jq -r '.|@base64')"
 }
 }
@@ -992,20 +992,20 @@ else
 local path=$(jq -r '.inbounds[].streamSettings.wsSettings.path' $config)
 local hType='none'
 fi
-title "DATOS DE USUARIO: $ps"
-col2 "Remarks:" "$ps"
+title "DATOS DEL USUARIO: $ps"
+col2 "Nombre:" "$ps"
 col2 "Dominio:" "$add"
 col2 "IP:" "$IP"
-col2 "Port:" "$port"
+col2 "Puerto:" "$port"
 col2 "id:" "$id"
-col2 "alterId:" "$aid"
-col2 "security:" "none"
-col2 "network:" "$net"
+col2 "ID alternativo:" "$aid"
+col2 "Seguridad:" "none"
+col2 "Red:" "$net"
 col2 "TLS:" "$tls"
-[[ ${protocol} = "vless" ]] && col2 "Encryption:" "$cryp"
+[[ ${protocol} = "vless" ]] && col2 "Cifrado:" "$cryp"
 [[ ! $host = '' ]] && col2 "Host/SNI:" "$host"
-col2 "Head Type:" "$hType"
-[[ $net == "grpc" ]] && col2 "ServiceName:" "$path" || col2 "Path:" "$path"
+col2 "Tipo de cabecera:" "$hType"
+[[ $net == "grpc" ]] && col2 "Nombre del servicio:" "$path" || col2 "Ruta:" "$path"
 msg -bar3
 [[ ${protocol} = "vless" ]] && {
 if [[ $net == "grpc" ]]; then
@@ -1015,7 +1015,7 @@ local var="${id}@${add}:${port}?encryption=${cryp}&security=${tls}&type=${net}&p
 fi
 msg -ama "${protocol}://$(echo "$var")"
 } || {
-local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$add\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\"}"
+local var="{\"v\":\"2\",\"ps\":\"$ps\",\"add\":\"$add\",\"port\":$port,\"aid\":$aid,\"type\":\"$hType\",\"net\":\"$net\",\"path\":\"$path\",\"host\":\"$host\",\"id\":\"$id\",\"tls\":\"$tls\",\"sni\":\"$host\"}"
 msg -ama "${protocol}://$(echo "$var"|jq -r '.|@base64')"
 }
 }
@@ -1027,7 +1027,7 @@ clear
 msg -bar3
 blanco "        configuracion alterId"
 msg -bar3
-col2 "	alterid:" "$aid"
+col2 "	ID alternativo:" "$aid"
 msg -bar3
 col "x)" "VOLVER"
 msg -bar3
@@ -1084,7 +1084,7 @@ clear
 msg -bar3
 blanco "       configuracion address"
 msg -bar3
-col2 "address:" "$add"
+col2 "Dominio:" "$add"
 msg -bar3
 col "0)" "VOLVER"
 msg -bar3
@@ -1140,7 +1140,7 @@ clear
 msg -bar3
 blanco "       configuracion Path"
 msg -bar3
-col2 "path:" "$path"
+col2 "Ruta:" "$path"
 msg -bar3
 col "0)" "VOLVER"
 msg -bar3
@@ -1175,7 +1175,7 @@ dom=$(jq '.inbounds[].domain' $config)
 echo -e "		\033[4;49minstalado\033[0m"
 col2 "crt:" "$crt"
 col2 "key:" "$key"
-col2 "dominio:" "$dom"
+col2 "Dominio:" "$dom"
 } || {
 blanco "	certificado no instalado"
 }
