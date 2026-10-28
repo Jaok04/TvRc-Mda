@@ -1,9 +1,8 @@
 # Author: Jrohy
 # github: https://github.com/Jrohy/multi-v2ray
 
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/ChumoGH/ADMcgh/main/Plugins/system/styles.cpp)
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp)
 
-apt install jq -y
 BEIJING_UPDATE_TIME=3
 BEGIN_PATH=$(pwd)
 INSTALL_WAY=0
@@ -139,36 +138,73 @@ checkSys() {
     fi
 }
 
-#安装依赖
+# Instala dependencias del sistema sin modificar el Python administrado por la distro.
 installDependent(){
     if [[ ${PACKAGE_MANAGER} == 'dnf' || ${PACKAGE_MANAGER} == 'yum' ]];then
-        ${PACKAGE_MANAGER} install socat crontabs bash-completion which -y
+        ${PACKAGE_MANAGER} install socat crontabs bash-completion which python3 jq -y || return 1
     else
-        ${PACKAGE_MANAGER} update
-        ${PACKAGE_MANAGER} install socat cron bash-completion ntpdate gawk -y
+        ${PACKAGE_MANAGER} update || return 1
+        ${PACKAGE_MANAGER} install socat cron bash-completion ntpdate gawk python3 python3-venv jq -y || return 1
     fi
 
-    #install python3 & pip
-    source <(curl -sL https://python3.netlify.app/install.sh)
+    command -v python3 >/dev/null 2>&1 || { colorEcho ${RED} "Error: Python 3 no está disponible."; return 1; }
+    python3 -m venv --help >/dev/null 2>&1 || {
+        colorEcho ${RED} "Error: el módulo venv de Python 3 no está disponible. Instale el paquete de venv correspondiente a su distribución."
+        return 1
+    }
 }
 
+# Instala y valida v2ray-util dentro de un entorno virtual aislado.
+V2RAY_UTIL_VENV="/opt/v2ray-util-venv"
+V2RAY_UTIL_BIN="${V2RAY_UTIL_VENV}/bin/v2ray-util"
+
 updateProject() {
-	if [[ ! $(type pip 2>/dev/null) ]]; then
-		print_center -ama 'Falta en la dependencia pip\nNo se puede continuar con la instalacion'
-		enter
-		return 1
-	fi
-    pip3 install -U v2ray_util
-    if [[ -e $UTIL_PATH ]];then
-        [[ -z $(cat $UTIL_PATH|grep lang) ]] && echo "lang=en" >> $UTIL_PATH
-    else
-        mkdir -p /etc/v2ray_util
-        curl $UTIL_CFG > $UTIL_PATH
+    if [[ ! -x "${V2RAY_UTIL_VENV}/bin/python" && ! -x "${V2RAY_UTIL_VENV}/bin/python3" ]]; then
+        if [[ -e "${V2RAY_UTIL_VENV}" ]]; then
+            colorEcho ${RED} "Error: existe ${V2RAY_UTIL_VENV}, pero no parece ser un entorno virtual válido. No se eliminará automáticamente."
+            return 1
+        fi
+        python3 -m venv "${V2RAY_UTIL_VENV}" || {
+            colorEcho ${RED} "Error: no se pudo crear el entorno virtual ${V2RAY_UTIL_VENV}."
+            return 1
+        }
     fi
-    rm -f /usr/local/bin/v2ray >/dev/null 2>&1
-    ln -s $(which v2ray-util) /usr/local/bin/v2ray
-    rm -f /usr/local/bin/xray >/dev/null 2>&1
-    ln -s $(which v2ray-util) /usr/local/bin/xray
+
+    local VENV_PYTHON="${V2RAY_UTIL_VENV}/bin/python"
+    [[ -x "${VENV_PYTHON}" ]] || VENV_PYTHON="${V2RAY_UTIL_VENV}/bin/python3"
+    [[ -x "${VENV_PYTHON}" ]] || { colorEcho ${RED} "Error: no se encontró Python dentro del entorno virtual."; return 1; }
+
+    "${VENV_PYTHON}" -m pip install --upgrade pip || {
+        colorEcho ${RED} "Error: no se pudo preparar pip dentro del entorno virtual."
+        return 1
+    }
+    "${VENV_PYTHON}" -m pip install --upgrade v2ray_util || {
+        colorEcho ${RED} "Error: no se pudo instalar/actualizar v2ray_util en el entorno virtual."
+        return 1
+    }
+
+    # v2ray_util 3.11.4 importa pkg_resources; setuptools 81+ ya no lo incluye.
+    "${VENV_PYTHON}" -m pip install --upgrade 'setuptools<81' || {
+        colorEcho ${RED} "Error: no se pudo instalar una versión compatible de setuptools (pkg_resources)."
+        return 1
+    }
+
+    [[ -x "${V2RAY_UTIL_BIN}" ]] || { colorEcho ${RED} "Error: no se generó el ejecutable ${V2RAY_UTIL_BIN}."; return 1; }
+    "${VENV_PYTHON}" -c 'import pkg_resources; import v2ray_util' >/dev/null 2>&1 || {
+        colorEcho ${RED} "Error: v2ray_util no supera la prueba de importación de pkg_resources/v2ray_util."
+        return 1
+    }
+
+    if [[ -e "$UTIL_PATH" ]];then
+        [[ -z $(grep -s 'lang' "$UTIL_PATH") ]] && echo "lang=en" >> "$UTIL_PATH"
+    else
+        mkdir -p "$(dirname "$UTIL_PATH")" || return 1
+        curl -fsSL "$UTIL_CFG" -o "$UTIL_PATH" || { colorEcho ${RED} "Error: no se pudo descargar util.cfg."; return 1; }
+    fi
+
+    # Los comandos de administración apuntan al ejecutable del venv; no se toca ningún servicio.
+    ln -sfn "$V2RAY_UTIL_BIN" /usr/local/bin/v2ray || return 1
+    ln -sfn "$V2RAY_UTIL_BIN" /usr/local/bin/xray || return 1
     [[ -e /etc/bash_completion.d/v2ray.bash ]] && rm -f /etc/bash_completion.d/v2ray.bash
     [[ -e /usr/share/bash-completion/completions/v2ray.bash ]] && rm -f /usr/share/bash-completion/completions/v2ray.bash
     curl $BASH_COMPLETION_SHELL > /usr/share/bash-completion/completions/v2ray
@@ -258,13 +294,13 @@ main() {
 
     checkSys
 
-    installDependent
+    installDependent || return 1
 
     closeSELinux
 
     timeSync
 
-    updateProject
+    updateProject || return 1
 
     profileInit
 
