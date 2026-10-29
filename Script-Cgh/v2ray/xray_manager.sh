@@ -38,10 +38,18 @@ barra="\033[0;31m=====================================================\033[0m"
 # Redefiniendo las funciones de diseño para utilizar el tema dinámico
 msg() {
     if [[ "$1" == "-bar3" ]]; then
-        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+        # Línea de exactamente 53 caracteres para alinear con RAM y CPU
+        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     else
         echo -e "$1"
     fi
+}
+on_off_res(){
+if [[ $(cat $v2rdir/conf | grep "autBackup" | cut -d " " -f2) = "0" ]]; then
+echo -e "\033[0;31m[off]"
+else
+echo -e "\033[1;92m[on]"
+fi
 }
 
 blanco(){
@@ -69,11 +77,12 @@ rojo(){
 }
 
 col(){
-    # Extrae el número limpiamente eliminando los paréntesis o viñetas
+    # Agregamos 6 espacios al inicio ("      ") para recrear el centrado de la v4 original
     local _numero="${1//\)/}"
-    local nom=$(printf '%-55s' " ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
+    local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
     echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
 }
+
 
 col2(){
 	echo -e " \033[1;91m$1\033[0m \033[1;37m$2\033[0m"
@@ -1829,7 +1838,7 @@ main(){
 		msg -bar3
 		col "7" "\033[1;33mENTRAR CON \033[1;32mxr.sh $enrap"
 		msg -bar3
-		echo -e "  ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ SALIR ]\033[0m ${c_texto}|| Respaldos automaticos\033[0m $(on_off_res)"
+		echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ SALIR ]\033[0m ${c_texto}|| Respaldos automaticos\033[0m $(on_off_res)"
 		msg -bar3
 		blanco "opcion" 0
 		read opcion
