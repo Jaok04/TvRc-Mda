@@ -664,145 +664,154 @@ else
 var_number="$1"
 fi
 }
-
+### Mod TvRc####
 ports_ () {
-unset puertos texto texto_ svcs _svcs porta
-local texto
-local texto_
-local puertos
-local svcs _svcs
-local PT=$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN")
-#PT+=$(lsof -V -i UDP -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" |grep -E 'openvpn|dns-serve|udpServer|hysteria|UDP-Custo|Hysteria2|ZipVPN')
-local _ps="$(ps x)"
-x=1
-for porta in `echo -e "$PT" | cut -d: -f2 | cut -d' ' -f1 |sort -n | uniq`; do
-	[[ -z $porta ]] && continue
-	porta[$x]="$porta"
-	#echo "$porta - $(echo -e "$PT" | grep -w "$porta" | awk '{print $1}' | uniq | tail -1)"
-	svcs[$x]="$(echo -e "$PT" | grep -w "$porta" | awk '{print $1}' | uniq | tail -1)"
-	let x++;
-done
+    [[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
+    : "${srv_c_simb:=\033[1;34m}"
+    : "${srv_simb:=∘}"
+    : "${srv_c_etiq:=\033[1;37m}"
+    : "${srv_c_val:=\033[1;33m}"
 
-for((i=1; i<$x; i++)); do
-[[ ! -z ${svcs[$i]} ]] && texto="\033[1;34m ${pPIniT} \033[1;37m${svcs[$i]}: \033[1;33m${porta[$i]}" || texto=''
-[[ ${svcs[$i]} = "apache2" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mAPACHE: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "nginx" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mWEB-NGinx: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "node" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mWebSocket: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "clash" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mClash: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "psiphond" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mPSIPHON: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray-v2-u" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mXRAY/UI: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "v2-ui" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mV2-UI/WEB: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray-linu" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mXRAY/UI: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "x-ui" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mXUI/WEB: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "openvpn" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-TCP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "squid" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSQUID: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "squid3" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSQUID: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "dropbear" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mDROPBEAR: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "python3" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSOCKS/PYTHON3: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "python" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSOCKS/PYTHON: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "obfs-serv" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSR (OBFS): \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "ss-server" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSR (LIV): \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "sshd" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSH: ${porta[$i]}"
-[[ ${svcs[$i]} = "ssh" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSH: ${porta[$i]}"
-[[ ${svcs[$i]} = "systemd-r" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSystem-DNS: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "stunnel4" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSL: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "stunnel" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSL: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "v2ray" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mV2RAY: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mXRAY: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "badvpn-ud" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mBadVPN: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "trojan" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mTrojan-GO: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "sslh" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSSLH: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "nc.tradit" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mGenADM-Keys: \033[1;33m✔️"
-[[ ${svcs[$i]} = "filebrows" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mFileBrowser: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "rpcbind" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mRPCBind: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "snell-ser" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSNell: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "dns-serve" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSlowDNS: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "openvpn" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-UDP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "udpServer" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mUDPServer: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "hysteria" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mHysteriaUDP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "UDP-Custo" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mUDP-Custom: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "php" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mAToken: \033[1;33m${porta[$i]}"
-    i=$(($i+1))
-[[ ! -z ${svcs[$i]} ]] && texto_="\033[1;34m ${pPIniT} \033[1;37m${svcs[$i]}: \033[1;33m${porta[$i]}" || texto_=''
-[[ ${svcs[$i]} = "apache2" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mApache-WEB: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "nginx" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mWEB-NGinx: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "node" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mWebSocket: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "clash" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mClash: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "psiphond" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mPSIPHON: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray-v2-u" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mXRAY/UI: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "v2-ui" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mV2-UI/WEB: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray-linu" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mXRAY/UI: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "x-ui" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mXUI/WEB: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "openvpn" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-TCP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "squid" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSQUID: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "squid3" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSQUID: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "dropbear" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mDROPBEAR: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "python3" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSOCKS/PYTHON3: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "python" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSOCKS/PYTHON: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "obfs-serv" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSR (OBFS): \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "ss-server" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSR (LIV): \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "sshd" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSH: ${porta[$i]}"
-[[ ${svcs[$i]} = "ssh" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSH: ${porta[$i]}"
-[[ ${svcs[$i]} = "systemd-r" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSystem-DNS: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "stunnel4" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSL: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "stunnel" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSL: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "v2ray" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mV2RAY: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "xray" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mXRAY: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "badvpn-ud" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mBadVPN: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "trojan" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mTrojan-GO: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "sslh" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSSLH: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "nc.tradit" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mGenADM-Keys: \033[1;33m✔️"
-[[ ${svcs[$i]} = "filebrows" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mFileBrowser: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "rpcbind" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mRPCBind: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "snell-ser" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSNell: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "dns-serve" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSlowDNS: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "openvpn" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-UDP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "udpServer" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mUDPServer: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "hysteria" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mHysteriaUDP: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "UDP-Custo" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mUDP-Custom: \033[1;33m${porta[$i]}"
-[[ ${svcs[$i]} = "php" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mAToken: \033[1;33m${porta[$i]}"
-#[[ -z $texto_ ]] && {
-#[[ -z $(echo -e "${_ps}"| grep slowdns | grep -v grep) ]] || texto_="\033[1;34m ∘ \033[1;37mSlowDNS: \033[1;33m5300"
-#					}
-#[[ -z $(echo -e "${_ps}"| grep slowdns | grep -v grep) ]] || texto="\033[1;34m ∘ \033[1;37mSlowDNS: \033[1;33m5300"
-puertos+="${texto}|${texto_}\n"
-done 
-local _PT=$(lsof -V -i UDP -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND"|grep -E 'openvpn|dns-serve|udpServer|hysteria|UDP-Custo|Hysteria2|ZipVPN')
-x=1
-for porta in `echo -e "$_PT" | cut -d: -f2 | cut -d' ' -f1 |sort -n | uniq`; do
-	[[ -z $porta ]] && continue
-	_porta[$x]="$porta"
-	_svcs[$x]="$(echo -e "$_PT" | grep -w "$porta" | awk '{print $1}' | uniq | tail -1)"
-	let x++;
-done
-for((i=1; i<$x; i++)); do
-[[ ! -z ${_svcs[$i]} ]] && texto="\033[1;34m ${pPIniT} \033[1;37m${_svcs[$i]}: \033[1;33m${_porta[$i]}" || texto=''
-[[ ${_svcs[$i]} = "dns-serve" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mSlowDNS: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "openvpn" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-UDP: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "udpServer" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mUDPServer: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "hysteria" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mHysteriaUDP: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "UDP-Custo" ]] && texto="\033[1;34m ${pPIniT} \033[1;37mUDP-Custom: \033[1;33m${_porta[$i]}"
-i=$(($i+1))
-[[ ! -z ${_svcs[$i]} ]] && texto_="\033[1;34m ${pPIniT} \033[1;37m${_svcs[$i]}: \033[1;33m${_porta[$i]}" || texto_=''
-[[ ${_svcs[$i]} = "dns-serve" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mSlowDNS: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "openvpn" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mOPENVPN-UDP: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "udpServer" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mUDPServer: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "hysteria" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mHysteriaUDP: \033[1;33m${_porta[$i]}"
-[[ ${_svcs[$i]} = "UDP-Custo" ]] && texto_="\033[1;34m ${pPIniT} \033[1;37mUDP-Custom: \033[1;33m${_porta[$i]}"
-puertos+="${texto}|${texto_}\n"
-done
-[[ $(echo -e "$puertos" | grep 'SSH:') ]] && {
-export PATH=$PATH:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin:/usr/games
-[[ -z $(locale | grep "LANG=" | cut -d "=" -f2) ]] && export LANG=en_US.UTF-8
-echo -e "$puertos"|column -s "|"  -t 
-} || print_center -blu "⚠️ PUERTOS SSH TRUNCADO POR DROPBEAR ⚠️   \nCOLOCA : sudo -i \nVE AL MENU 5, OPCION 30, OPCION 7 " 
-local PIDGEN=$(echo -e "${_ps}"| grep "BotGen.sh" | grep -v grep |awk '{print $1}')
-[[ ! -z $PIDGEN ]] && {
-local botG="\033[1;34m ${pPIniT} \033[1;37m BotGen Telegram 🤖 : \033[1;31m ⚡ ACTIVO ⚡"
-msg -bar3
-echo -e "$botG"
-unset svcs porta puertos i x
-}
+    unset puertos texto texto_ svcs _svcs porta
+    local texto texto_ puertos svcs _svcs
+    local PT=$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" | grep -v "COMMAND" | grep "LISTEN")
+    local _ps="$(ps x)"
+    local x=1
+    
+    for porta in $(echo -e "$PT" | cut -d: -f2 | cut -d' ' -f1 | sort -n | uniq); do
+        [[ -z $porta ]] && continue
+        porta[$x]="$porta"
+        svcs[$x]="$(echo -e "$PT" | grep -w "$porta" | awk '{print $1}' | uniq | tail -1)"
+        let x++
+    done
+
+    for((i=1; i<$x; i++)); do
+        [[ ! -z ${svcs[$i]} ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}${svcs[$i]}: ${srv_c_val}${porta[$i]}\033[0m" || texto=''
+        [[ ${svcs[$i]} = "apache2" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}APACHE: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "nginx" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}WEB-NGinx: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "node" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}WebSocket: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "clash" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}Clash: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "psiphond" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}PSIPHON: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray-v2-u" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY/UI: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "v2-ui" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}V2-UI/WEB: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray-linu" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY/UI: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "x-ui" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XUI/WEB: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "openvpn" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-TCP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "squid" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SQUID: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "squid3" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SQUID: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "dropbear" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}DROPBEAR: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "python3" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SOCKS/PYTHON3: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "python" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SOCKS/PYTHON: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "obfs-serv" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSR (OBFS): ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "ss-server" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSR (LIV): ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "sshd" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "ssh" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "systemd-r" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}System-DNS: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "stunnel4" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSL: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "stunnel" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSL: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "v2ray" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}V2RAY: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "badvpn-ud" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}BadVPN: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "trojan" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}Trojan-GO: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "sslh" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSLH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "nc.tradit" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}GenADM-Keys: ${srv_c_val}✔️\033[0m"
+        [[ ${svcs[$i]} = "filebrows" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}FileBrowser: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "rpcbind" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}RPCBind: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "snell-ser" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SNell: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "dns-serve" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SlowDNS: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "openvpn" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-UDP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "udpServer" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDPServer: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "hysteria" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}HysteriaUDP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "UDP-Custo" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDP-Custom: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "php" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}AToken: ${srv_c_val}${porta[$i]}\033[0m"
+
+        i=$(($i+1))
+        
+        [[ ! -z ${svcs[$i]} ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}${svcs[$i]}: ${srv_c_val}${porta[$i]}\033[0m" || texto_=''
+        [[ ${svcs[$i]} = "apache2" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}Apache-WEB: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "nginx" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}WEB-NGinx: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "node" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}WebSocket: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "clash" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}Clash: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "psiphond" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}PSIPHON: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray-v2-u" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY/UI: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "v2-ui" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}V2-UI/WEB: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray-linu" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY/UI: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "x-ui" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XUI/WEB: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "openvpn" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-TCP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "squid" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SQUID: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "squid3" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SQUID: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "dropbear" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}DROPBEAR: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "python3" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SOCKS/PYTHON3: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "python" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SOCKS/PYTHON: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "obfs-serv" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSR (OBFS): ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "ss-server" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSR (LIV): ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "sshd" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "ssh" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "systemd-r" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}System-DNS: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "stunnel4" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSL: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "stunnel" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSL: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "v2ray" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}V2RAY: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "xray" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}XRAY: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "badvpn-ud" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}BadVPN: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "trojan" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}Trojan-GO: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "sslh" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SSLH: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "nc.tradit" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}GenADM-Keys: ${srv_c_val}✔️\033[0m"
+        [[ ${svcs[$i]} = "filebrows" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}FileBrowser: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "rpcbind" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}RPCBind: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "snell-ser" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SNell: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "dns-serve" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SlowDNS: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "openvpn" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-UDP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "udpServer" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDPServer: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "hysteria" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}HysteriaUDP: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "UDP-Custo" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDP-Custom: ${srv_c_val}${porta[$i]}\033[0m"
+        [[ ${svcs[$i]} = "php" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}AToken: ${srv_c_val}${porta[$i]}\033[0m"
+        
+        puertos+="${texto}|${texto_}\n"
+    done 
+
+    local _PT=$(lsof -V -i UDP -P -n | grep -v "ESTABLISHED" | grep -v "COMMAND" | grep -E 'openvpn|dns-serve|udpServer|hysteria|UDP-Custo|Hysteria2|ZipVPN')
+    local x=1
+    
+    for porta in $(echo -e "$_PT" | cut -d: -f2 | cut -d' ' -f1 | sort -n | uniq); do
+        [[ -z $porta ]] && continue
+        _porta[$x]="$porta"
+        _svcs[$x]="$(echo -e "$_PT" | grep -w "$porta" | awk '{print $1}' | uniq | tail -1)"
+        let x++
+    done
+
+    for((i=1; i<$x; i++)); do
+        [[ ! -z ${_svcs[$i]} ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}${_svcs[$i]}: ${srv_c_val}${_porta[$i]}\033[0m" || texto=''
+        [[ ${_svcs[$i]} = "dns-serve" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SlowDNS: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "openvpn" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-UDP: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "udpServer" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDPServer: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "hysteria" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}HysteriaUDP: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "UDP-Custo" ]] && texto=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDP-Custom: ${srv_c_val}${_porta[$i]}\033[0m"
+        
+        i=$(($i+1))
+        
+        [[ ! -z ${_svcs[$i]} ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}${_svcs[$i]}: ${srv_c_val}${_porta[$i]}\033[0m" || texto_=''
+        [[ ${_svcs[$i]} = "dns-serve" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}SlowDNS: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "openvpn" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}OPENVPN-UDP: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "udpServer" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDPServer: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "hysteria" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}HysteriaUDP: ${srv_c_val}${_porta[$i]}\033[0m"
+        [[ ${_svcs[$i]} = "UDP-Custo" ]] && texto_=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}UDP-Custom: ${srv_c_val}${_porta[$i]}\033[0m"
+        
+        puertos+="${texto}|${texto_}\n"
+    done
+
+    [[ $(echo -e "$puertos" | grep 'SSH:') ]] && {
+        export PATH=$PATH:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin:/usr/games
+        [[ -z $(locale | grep "LANG=" | cut -d "=" -f2) ]] && export LANG=en_US.UTF-8
+        echo -e "$puertos" | column -s "|" -t 
+    } || print_center -blu "⚠️ PUERTOS SSH TRUNCADO POR DROPBEAR ⚠️   \nCOLOCA : sudo -i \nVE AL MENU 5, OPCION 30, OPCION 7 " 
+    
+    local PIDGEN=$(echo -e "${_ps}"| grep "BotGen.sh" | grep -v grep | awk '{print $1}')
+    [[ ! -z $PIDGEN ]] && {
+        local botG=" ${srv_c_simb}${srv_simb}\033[0m ${srv_c_etiq}BotGen Telegram 🤖 : \033[1;31m ⚡ ACTIVO ⚡\033[0m"
+        msg -bar3
+        echo -e "$botG"
+        unset svcs porta puertos i x
+    }
 }
 
 [[ -z ${cor[0]} ]] && cor[0]="\033[0m"
@@ -815,10 +824,11 @@ unset svcs porta puertos i x
 
 #declare -A tnUP=' ⚠️ ChumoGH ADM ⚠️ NECESITA ACTUALIZARSE!'
 declare -A exitokey="\033[3;49;32m$(cat < /bin/ejecutar/exito)©"
-[[ $v1 = $v2 ]] && vesaoSCT="\033[1;37m Key: $exitokey 】\033[0m\033[0;33m($v2)" || vesaoSCT="\033[1;37m Key: $exitokey 】\033[0m\033[0;33m($v2) ► \033[1;32m[$v1]\033[1;31m"
+[[ $v1 = $v2 ]] && vesaoSCT="${res_c_key}Key: ${res_c_val}Verified ${res_c_carac}${res_f_L}${res_edge}${res_bg}${res_text}$(cat < /bin/ejecutar/exito)©\033[0m${res_c_carac}${res_f_R}\033[0m ${res_c_carac}(${res_c_val}$v2${res_c_carac})\033[0m" || vesaoSCT="${res_c_key}Key: ${res_c_val}Verified ${res_c_carac}${res_f_L}${res_edge}${res_bg}${res_text}$(cat < /bin/ejecutar/exito)©\033[0m${res_c_carac}${res_f_R}\033[0m ${res_c_carac}(${res_c_val}$v2${res_c_carac})\033[0m ► \033[1;32m[$v1]\033[1;31m"
+msg -bar3
 [[ -e /root/name ]] && {
 [[ -z $(less /root/name) ]] || figlet -p -f smslant < /root/name | lolcat 
-}|| echo -e " \033[1;44;44m   \033[1;33m  ${TTini} ChumoGH ${TTcent} Plus ${TTfin}     \033[0m"
+}|| echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${TTini} ChumoGH ${TTcent} Plus ${TTfin} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 meu_ip
 [[ $1 = "ports_" ]] && ports_
 export -f ports_
@@ -7957,7 +7967,7 @@ fi
 
 }
 
-##### Gestor de temas TvRc ####
+##### Gestor de temas TvRc####
 gestor_temas() {
   local theme_file="/etc/adm-lite/theme.conf"
   
@@ -7979,9 +7989,56 @@ tit_edge_col="\033[38;5;54m"
 tit_forma_L=""
 tit_forma_R=""
 tit_text="\033[1;37m"
+# -- Nuevas Variables Cabecera --
+# Info VPS
+i_vps_simb="∘"
+i_vps_c_simb="\033[1;34m"
+i_vps_c_etiq="\033[1;33m"
+i_vps_c_val="\033[1;37m"
+# Reseller
+res_c_key="\033[1;37m"
+res_c_carac="\033[1;32m"
+res_c_val="\033[1;32m"
+res_bg="\033[48;5;54m"
+res_edge="\033[38;5;54m"
+res_f_L="【 "
+res_f_R=" 】"
+res_text="\033[1;37m"
+# Servicios
+srv_simb="∘"
+srv_c_simb="\033[1;34m"
+srv_c_etiq="\033[1;37m"
+srv_c_val="\033[1;33m"
+# Recursos
+rec_simb="∘"
+rec_c_simb="\033[1;34m"
+rec_c_etiq="\033[1;33m"
+rec_c_val="\033[1;32m"
 EOF
   else
-    grep -q "tit_text" "$theme_file" || echo "tit_text=\"\033[1;37m\"" >> "$theme_file"
+    # Inyectar nuevas variables si no existen
+    grep -q "i_vps_simb" "$theme_file" || cat <<EOF >> "$theme_file"
+i_vps_simb="∘"
+i_vps_c_simb="\033[1;34m"
+i_vps_c_etiq="\033[1;33m"
+i_vps_c_val="\033[1;37m"
+res_c_key="\033[1;37m"
+res_c_carac="\033[1;32m"
+res_c_val="\033[1;32m"
+res_bg=""
+res_edge=""
+res_f_L="【 "
+res_f_R=" 】"
+res_text="\033[1;37m"
+srv_simb="∘"
+srv_c_simb="\033[1;34m"
+srv_c_etiq="\033[1;37m"
+srv_c_val="\033[1;33m"
+rec_simb="∘"
+rec_c_simb="\033[1;34m"
+rec_c_etiq="\033[1;33m"
+rec_c_val="\033[1;32m"
+EOF
   fi
 
   elegir_color() {
@@ -8006,7 +8063,7 @@ EOF
     msg -bar3
     echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ CANCELAR ]\033[0m"
     msg -bar3
-    echo -ne " ${c_flech}${s_flech}\033[0m Seleccione el tono : "
+    echo -ne " ${c_flech}${s_flech} Seleccione el tono : "
     read opt_col
 
     case $opt_col in
@@ -8033,7 +8090,7 @@ EOF
           done
           echo "" 
           msg -bar3
-          echo -ne " ${c_flech}${s_flech}\033[0m Ingrese el número del color (0-255) : "
+          echo -ne " ${c_flech}${s_flech} Ingrese el número del color (0-255) : "
           read personal_opt
           if [[ "$personal_opt" =~ ^[0-9]+$ ]] && [ "$personal_opt" -ge 0 ] && [ "$personal_opt" -le 255 ]; then
               color_ansi="\033[38;5;${personal_opt}m"
@@ -8056,17 +8113,55 @@ EOF
     echo -e " ${c_corch}[${c_num}8${c_corch}]\033[0m Sin borde    (   ) / (   )"
   }
 
+  elegir_simbolo() {
+    local target_var="$1"
+    local simbolos=(
+      "➮" "➜" "➔" "➞" "➟" "➡" "➥" "➦" "➧" "➨" 
+      "➩" "➪" "➭" "➯" "➱" "➲" "➳" "🎯" "🚀" "⚡" 
+      "🔥" "💎" "🍄" "💀" "👻" "👽" "👾" "🤖" "💥" "💦" 
+      "🎈" "👑" "🏆" "💡" "💣" "📌" "📍" "👉" "👍" "✅"
+      "✔️" "✨" "🌟" "⭐" "☀️" "🔹" "🔸" "☑️" "🔰" "🌀"
+      "∘" "●" "○" "■" "□" "▪" "▫" "►" "◄" "◈"
+    )
+    clear
+    msg -bar3
+    echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 LISTA DE SÍMBOLOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
+    local col=0
+    for i in "${!simbolos[@]}"; do
+        printf " ${c_corch}[${c_num}%2s${c_corch}]\033[0m %-2s  " "$i" "${simbolos[$i]}"
+        ((col++))
+        if (( col % 5 == 0 )); then echo ""; fi
+    done
+    echo ""
+    msg -bar3
+    echo -e " ${c_corch}[${c_num}99${c_corch}]\033[0m \033[1;37mPegar símbolo personalizado\033[0m"
+    msg -bar3
+    echo -ne " ${c_flech}${s_flech} Seleccione el símbolo : "
+    read opt_simb
+
+    if [[ "$opt_simb" =~ ^[0-9]+$ ]] && [ "$opt_simb" -ge 0 ] && [ "$opt_simb" -lt "${#simbolos[@]}" ]; then
+        sed -i "/${target_var}=/d" "$theme_file"
+        echo "${target_var}=\"${simbolos[$opt_simb]}\"" >> "$theme_file"
+    elif [[ "$opt_simb" == "99" || "$opt_simb" =~ ^[cC]$ ]]; then
+        echo -ne " ${c_flech}${s_flech} Pegue su símbolo : "
+        read nuevo_simbolo
+        [[ -n "$nuevo_simbolo" ]] && { sed -i "/${target_var}=/d" "$theme_file"; echo "${target_var}=\"$nuevo_simbolo\"" >> "$theme_file"; }
+    fi
+  }
+
   while true; do
     source "$theme_file" # Recargar variables
     clear
     msg -bar3
     echo -e "           ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PERSONALIZAR TEMA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
     msg -bar3
-    echo -e " ${c_corch}[${c_num}1${c_corch}] ${c_flech}${s_flech} ${c_texto}Elementos Base (Líneas, Textos...)"
-    echo -e " ${c_corch}[${c_num}2${c_corch}] ${c_flech}${s_flech} ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
-    echo -e " ${c_corch}[${c_num}3${c_corch}] ${c_flech}${s_flech} ${c_texto}Diseño de Títulos (Fondos, Textos y Bordes)"
+    echo -e " ${c_corch}[${c_num}1${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}Elementos Base (Líneas, Textos...)"
+    echo -e " ${c_corch}[${c_num}2${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}Etiquetas de Estado ${c_on}[ON]\033[0m ${c_off}[OFF]\033[0m"
+    echo -e " ${c_corch}[${c_num}3${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}Diseño de Títulos (Fondos, Textos y Bordes)"
+    echo -e " ${c_corch}[${c_num}4${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}Gestión de Cabecera"
     msg -bar3
-    echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_flech}${s_flech} \033[1;37;41m[ REGRESAR ]\033[0m"
+    echo -e " ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
     msg -bar3
     echo -ne " ${c_flech}${s_flech}\033[0m Opcion : "
     read main_opt
@@ -8101,39 +8196,7 @@ EOF
               5) sed -i '/c_flech=/d' $theme_file; echo "c_flech=\"$color_ansi\"" >> $theme_file ;;
             esac
           elif [[ "$sub_opt" == "6" ]]; then
-            local simbolos=(
-              "➮" "➜" "➔" "➞" "➟" "➡" "➥" "➦" "➧" "➨" 
-              "➩" "➪" "➭" "➯" "➱" "➲" "➳" "🎯" "🚀" "⚡" 
-              "🔥" "💎" "🍄" "💀" "👻" "👽" "👾" "🤖" "💥" "💦" 
-              "🎈" "👑" "🏆" "💡" "💣" "📌" "📍" "👉" "👍" "✅"
-              "✔️" "✨" "🌟" "⭐" "☀️" "🔹" "🔸" "☑️" "🔰" "🌀"
-            )
-            clear
-            msg -bar3
-            echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 LISTA DE SÍMBOLOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-            msg -bar3
-            local col=0
-            for i in "${!simbolos[@]}"; do
-                printf " ${c_corch}[${c_num}%2s${c_corch}]\033[0m %-2s  " "$i" "${simbolos[$i]}"
-                ((col++))
-                if (( col % 5 == 0 )); then echo ""; fi
-            done
-            echo ""
-            msg -bar3
-            echo -e " ${c_corch}[${c_num}99${c_corch}]\033[0m \033[1;37mPegar símbolo personalizado\033[0m"
-            msg -bar3
-            echo -ne " ${c_flech}${s_flech}\033[0m Seleccione el símbolo : "
-            read opt_simb
-
-            if [[ "$opt_simb" =~ ^[0-9]+$ ]] && [ "$opt_simb" -ge 0 ] && [ "$opt_simb" -lt "${#simbolos[@]}" ]; then
-                nuevo_simbolo="${simbolos[$opt_simb]}" # Sin espacio final
-                sed -i '/s_flech=/d' "$theme_file"
-                echo "s_flech=\"$nuevo_simbolo\"" >> "$theme_file"
-            elif [[ "$opt_simb" == "99" || "$opt_simb" =~ ^[cC]$ ]]; then
-                echo -ne " ${c_flech}${s_flech}\033[0m Pegue su símbolo (Ej: ➜, ◆, 👉) : "
-                read nuevo_simbolo
-                [[ -n "$nuevo_simbolo" ]] && { sed -i '/s_flech=/d' "$theme_file"; echo "s_flech=\"$nuevo_simbolo\"" >> "$theme_file"; }
-            fi
+            elegir_simbolo "s_flech"
           fi
         done
       ;;
@@ -8235,7 +8298,7 @@ EOF
               5) f_L="░▒▓" ;;
               6) f_L="" ;;
               7) f_L="«" ;;
-              8) f_L=" " ;;
+              8) f_L="" ;;
               *) f_L="" ;;
             esac
 
@@ -8268,6 +8331,216 @@ EOF
           fi
         done
       ;;
+      
+      4) # SUBMENÚ GESTIÓN DE CABECERA
+        while true; do
+          clear
+          msg -bar3
+          echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 GESTIÓN DE CABECERA 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Color Info Vps"
+          echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Color de Reseller"
+          echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Color de Servicios"
+          echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m ${c_texto}Color de Recursos"
+          msg -bar3
+          echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
+          msg -bar3
+          echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+          read cbz_opt
+          [[ "$cbz_opt" == "0" ]] && break
+          
+          # Submenú generico para Opciones 1, 3 y 4 (Misma Lógica)
+          if [[ "$cbz_opt" == "1" || "$cbz_opt" == "3" || "$cbz_opt" == "4" ]]; then
+             while true; do
+               clear
+               msg -bar3
+               if [[ "$cbz_opt" == "1" ]]; then
+                   echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 COLOR INFO VPS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                   var_simb="i_vps_simb"
+                   var_c_simb="i_vps_c_simb"
+                   var_c_etiq="i_vps_c_etiq"
+                   var_c_val="i_vps_c_val"
+               elif [[ "$cbz_opt" == "3" ]]; then
+                   echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 COLOR DE SERVICIOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                   var_simb="srv_simb"
+                   var_c_simb="srv_c_simb"
+                   var_c_etiq="srv_c_etiq"
+                   var_c_val="srv_c_val"
+               elif [[ "$cbz_opt" == "4" ]]; then
+                   echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 COLOR DE RECURSOS 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                   var_simb="rec_simb"
+                   var_c_simb="rec_c_simb"
+                   var_c_etiq="rec_c_etiq"
+                   var_c_val="rec_c_val"
+               fi
+               msg -bar3
+               echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Color / Forma del Símbolo"
+               echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Color de Etiquetas"
+               echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Color de Valores"
+               msg -bar3
+               echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
+               msg -bar3
+               echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+               read sub_cbz_opt
+               [[ "$sub_cbz_opt" == "0" ]] && break
+               
+               if [[ "$sub_cbz_opt" == "1" ]]; then
+                  while true; do
+                      clear
+                      msg -bar3
+                      echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 COLOR/FORMA SÍMBOLO 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                      msg -bar3
+                      echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Cambiar color de Símbolo"
+                      echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Cambiar Símbolo"
+                      msg -bar3
+                      echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
+                      msg -bar3
+                      echo -ne " ${c_flech}${s_flech}\033[0m Seleccione : "
+                      read ss_opt
+                      [[ "$ss_opt" == "0" ]] && break
+                      if [[ "$ss_opt" == "1" ]]; then
+                          elegir_color
+                          [[ -n "$color_ansi" ]] && { sed -i "/${var_c_simb}=/d" "$theme_file"; echo "${var_c_simb}=\"$color_ansi\"" >> "$theme_file"; }
+                      elif [[ "$ss_opt" == "2" ]]; then
+                          elegir_simbolo "$var_simb"
+                      fi
+                  done
+               elif [[ "$sub_cbz_opt" == "2" ]]; then
+                  elegir_color
+                  [[ -n "$color_ansi" ]] && { sed -i "/${var_c_etiq}=/d" "$theme_file"; echo "${var_c_etiq}=\"$color_ansi\"" >> "$theme_file"; }
+               elif [[ "$sub_cbz_opt" == "3" ]]; then
+                  elegir_color
+                  [[ -n "$color_ansi" ]] && { sed -i "/${var_c_val}=/d" "$theme_file"; echo "${var_c_val}=\"$color_ansi\"" >> "$theme_file"; }
+               fi
+             done
+          fi
+
+          # Submenú específico para Reseller (Opción 2)
+          if [[ "$cbz_opt" == "2" ]]; then
+             while true; do
+               clear
+               msg -bar3
+               echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 COLOR DE RESELLER 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+               msg -bar3
+               echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Color Key"
+               echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Color Caracteres"
+               echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Color de Valores"
+               echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m ${c_texto}Color Reseller (Fondo y Texto)"
+               msg -bar3
+               echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
+               msg -bar3
+               echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+               read sub_res_opt
+               [[ "$sub_res_opt" == "0" ]] && break
+               
+               if [[ "$sub_res_opt" == "1" ]]; then
+                  elegir_color
+                  [[ -n "$color_ansi" ]] && { sed -i "/res_c_key=/d" "$theme_file"; echo "res_c_key=\"$color_ansi\"" >> "$theme_file"; }
+               elif [[ "$sub_res_opt" == "2" ]]; then
+                  elegir_color
+                  [[ -n "$color_ansi" ]] && { sed -i "/res_c_carac=/d" "$theme_file"; echo "res_c_carac=\"$color_ansi\"" >> "$theme_file"; }
+               elif [[ "$sub_res_opt" == "3" ]]; then
+                  elegir_color
+                  [[ -n "$color_ansi" ]] && { sed -i "/res_c_val=/d" "$theme_file"; echo "res_c_val=\"$color_ansi\"" >> "$theme_file"; }
+               elif [[ "$sub_res_opt" == "4" ]]; then
+                  while true; do
+                     clear
+                     msg -bar3
+                     echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 DISEÑO RESELLER 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                     msg -bar3
+                     echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m ${c_texto}Cambiar Color de Fondo"
+                     echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m ${c_texto}Cambiar Forma de los Extremos"
+                     echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m ${c_texto}Cambiar Color del Texto"
+                     msg -bar3
+                     echo -e " ${c_corch}[${c_num}0${c_corch}]\033[0m \033[1;37;41m[ VOLVER ]\033[0m"
+                     msg -bar3
+                     echo -ne " ${c_flech}${s_flech}\033[0m Seleccione opción : "
+                     read res_tit_opt
+                     [[ "$res_tit_opt" == "0" ]] && break
+                     
+                     if [[ "$res_tit_opt" == "1" ]]; then
+                        echo -e " ${c_corch}[${c_num}1${c_corch}]\033[0m \033[48;5;54m Morado Oscuro \033[0m"
+                        echo -e " ${c_corch}[${c_num}2${c_corch}]\033[0m \033[44m Azul Clásico \033[0m"
+                        echo -e " ${c_corch}[${c_num}3${c_corch}]\033[0m \033[41m Rojo Intenso \033[0m"
+                        echo -e " ${c_corch}[${c_num}4${c_corch}]\033[0m \033[1;37m Sin Fondo \033[0m"
+                        echo -e " ${c_corch}[${c_num}5${c_corch}]\033[0m \033[1;37m Personal (Paleta Completa)\033[0m"
+                        echo -ne " ${c_flech}${s_flech}\033[0m Elija color de fondo : "
+                        read c_fondo_res
+                        case $c_fondo_res in
+                          1) sed -i '/res_bg=/d; /res_edge=/d' "$theme_file"; echo -e "res_bg=\"\033[48;5;54m\"\nres_edge=\"\033[38;5;54m\"" >> "$theme_file" ;;
+                          2) sed -i '/res_bg=/d; /res_edge=/d' "$theme_file"; echo -e "res_bg=\"\033[44m\"\nres_edge=\"\033[34m\"" >> "$theme_file" ;;
+                          3) sed -i '/res_bg=/d; /res_edge=/d' "$theme_file"; echo -e "res_bg=\"\033[41m\"\nres_edge=\"\033[31m\"" >> "$theme_file" ;;
+                          4) sed -i '/res_bg=/d; /res_edge=/d' "$theme_file"; echo -e "res_bg=\"\"\nres_edge=\"\"" >> "$theme_file" ;;
+                          5) 
+                             clear
+                             msg -bar3
+                             echo -e "               ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 PALETA 256 COLORES (FONDO) 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                             msg -bar3
+                             for i in {0..255}; do
+                                 printf " ${c_corch}[${c_num}%3s${c_corch}]\033[0m \033[38;5;%sm████\033[0m " "$i" "$i"
+                                 if (( (i + 1) % 4 == 0 )); then echo ""; fi
+                             done
+                             echo "" 
+                             msg -bar3
+                             echo -ne " ${c_flech}${s_flech}\033[0m Ingrese el número del color (0-255) : "
+                             read personal_bg
+                             if [[ "$personal_bg" =~ ^[0-9]+$ ]] && [ "$personal_bg" -ge 0 ] && [ "$personal_bg" -le 255 ]; then
+                                 sed -i '/res_bg=/d; /res_edge=/d' "$theme_file"
+                                 echo -e "res_bg=\"\033[48;5;${personal_bg}m\"\nres_edge=\"\033[38;5;${personal_bg}m\"" >> "$theme_file"
+                             fi
+                             ;;
+                        esac
+                     elif [[ "$res_tit_opt" == "2" ]]; then
+                        clear
+                        msg -bar3
+                        echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 BORDE IZQUIERDO RESELLER 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                        msg -bar3
+                        mostrar_opciones_formas
+                        msg -bar3
+                        echo -ne " ${c_flech}${s_flech}\033[0m Elija forma IZQUIERDA : "
+                        read c_forma_L
+                        case $c_forma_L in
+                          1) f_L="" ;;
+                          2) f_L="█" ;;
+                          3) f_L="" ;;
+                          4) f_L="【 " ;;
+                          5) f_L="░▒▓" ;;
+                          6) f_L="" ;;
+                          7) f_L="«" ;;
+                          8) f_L="" ;;
+                          *) f_L="【 " ;;
+                        esac
+                        clear
+                        msg -bar3
+                        echo -e "             ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} 🎨 BORDE DERECHO RESELLER 🎨 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+                        msg -bar3
+                        mostrar_opciones_formas
+                        msg -bar3
+                        echo -ne " ${c_flech}${s_flech}\033[0m Elija forma DERECHA : "
+                        read c_forma_R
+                        case $c_forma_R in
+                          1) f_R="" ;;
+                          2) f_R="█" ;;
+                          3) f_R="" ;;
+                          4) f_R=" 】" ;;
+                          5) f_R="▓▒░" ;;
+                          6) f_R="" ;;
+                          7) f_R="»" ;;
+                          8) f_R=" " ;;
+                          *) f_R=" 】" ;;
+                        esac
+                        sed -i '/res_f_L=/d; /res_f_R=/d' "$theme_file"
+                        echo -e "res_f_L=\"$f_L\"\nres_f_R=\"$f_R\"" >> "$theme_file"
+                     elif [[ "$res_tit_opt" == "3" ]]; then
+                        elegir_color
+                        [[ -n "$color_ansi" ]] && { sed -i '/res_text=/d' "$theme_file"; echo "res_text=\"$color_ansi\"" >> "$theme_file"; }
+                     fi
+                  done
+               fi
+             done
+          fi
+        done
+      ;;
     esac
   done
 }
@@ -8275,7 +8548,24 @@ EOF
 start_menu () {
 while :
 do
-#------------------------------------------------
+# Cargar tema y variables predeterminadas si están vacías
+[[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
+: "${i_vps_c_simb:=\033[1;34m}"
+: "${i_vps_simb:=∘}"
+: "${i_vps_c_etiq:=\033[1;33m}"
+: "${i_vps_c_val:=\033[1;37m}"
+: "${res_c_key:=\033[1;37m}"
+: "${res_c_carac:=\033[1;32m}"
+: "${res_c_val:=\033[1;32m}"
+: "${res_bg:=}"
+: "${res_edge:=}"
+: "${res_f_L:=}"
+: "${res_f_R:=}"
+: "${res_text:=\033[1;37m}"
+: "${rec_c_simb:=\033[1;34m}"
+: "${rec_simb:=∘}"
+: "${rec_c_etiq:=\033[1;33m}"
+: "${rec_c_val:=\033[1;32m}"
 
 local mem_total=$(free --mega -h | awk 'NR==2{printf $2}')
 local mem_used=$(free --mega -h | awk 'NR==2{printf $3}')
@@ -8288,7 +8578,6 @@ local swap_total=$(free --mega -h | awk 'NR==3{printf $2}')
 local swap_used=$(free  --mega -h | awk 'NR==3{printf $3}')
 local swap_free=$(free  --mega -h | awk 'NR==3{printf $4}')
 local hotCOLOR="$(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'|sed -u 's/,/./g' | bc -l)"
-#local _os="\033[1;31m$(cat /etc/issue | cut -d " " -f 1,2 | head -1| tr a-z A-Z)"
 local SYS_DECT="$(cat /etc/issue | head -1)"
 [[ $(echo "$SYS_DECT" | grep Debian) ]] && _os=$(cat /etc/issue | cut -d " " -f 1,3 | head -1| tr a-z A-Z) || _os=$(cat /etc/issue | cut -d " " -f 1,2 | head -1| tr a-z A-Z)
 local tmp_distro=($(lsb_release -d |cut -f2 | tr a-z A-Z))
@@ -8296,28 +8585,45 @@ local distro="${tmp_distro[0]} ${tmp_distro[1]}"
 local cpu_core=$(cat /proc/cpuinfo | grep processor | wc -l)
 local cpu_model=$(uname -m)
 [[ "${cpu_model}" = "aarch64" ]] && cpu_model=" ARM64 Pro" 
-#[[ ${hotCOLOR} > '80' ]] && cpu_used="\033[1;31m ${hotCOLOR}%" || cpu_used="${cor[2]} ${hotCOLOR}%"
 [[ ${hotCOLOR} > 70 ]] && cpu_used="\033[1;31m ${hotCOLOR}%" || cpu_used="${cor[2]} ${hotCOLOR}%"
-#SE CAMBIAN VARIABLES A ANTES DE LLENAR CACHE Y CPU ( MAQUILLAJE COMO OTROS MODS )
+
+# --- Lógica de Fecha Personalizada ---
+local m_n=$((10#$(date +"%m"))) # Extrae el número del mes en base 10
+local meses=("" "Ene" "Feb" "Mar" "Abr" "May" "Jun" "Jul" "Ago" "Sep" "Oct" "Nov" "Dic")
+local hora=$(date +"%I" | sed 's/^0//') # Formato 12 hrs sin cero a la izquierda
+local ampm=$(date +"%p" | tr 'A-Z' 'a-z') # Fuerza minúsculas en am/pm
+local fecha_custom="$(date +"%d")-${meses[$m_n]}-$(date +"%y") ${hora}:$(date +"%M") ${ampm}"
+# ---------------------------------------
+
 header
-#[[ -e /root/name ]] && figlet -p -f smslant < /root/name | lolcat || echo -e "\033[7;49;35m    ${TTini} ChumoGH${TTcent}VPS  ${TTfin}      "
 msg -bar3
 [[ -e /etc/adm-lite/modulos ]] && echo -e "${cor[1]} ${pPIniT} ${cor[5]}ONLINES: ${cor[2]}${_onlin}${cor[2]} ${pPIniT} \033[1;37mEXP: ${_userexp} ${cor[2]}${pPIniT}\033[1;37m KILL: $ukk ${cor[2]}${pPIniT}\033[1;37m TOTAL: ${_tuser}"
-#[[ -e /etc/adm-lite/modulos ]] && /etc/check_users
-echo -e "${cor[1]} ${pPIniT} ${cor[5]}S.O: \033[1;37m${_os} ${cor[1]} ${pPIniT} ${cor[5]}Base:\033[1;37m${cpu_model}${cor[1]} ${pPIniT} ${cor[5]}CPU's:\033[1;37m${cpu_core} "
-echo -e "${cor[1]} ${pPIniT} ${cor[5]}IP: \033[0;37m${IP} ${cor[1]} ${pPIniT} ${cor[5]}FECHA: \033[1;37m$(date +"%d/%m/%Y")-$(date +"%H:%M")" 
+    
+# 1. Info VPS
+echo -e " ${i_vps_c_simb}${i_vps_simb}\033[0m ${i_vps_c_etiq}S.O: ${i_vps_c_val}${_os} ${i_vps_c_simb}${i_vps_simb}\033[0m ${i_vps_c_etiq}Base: ${i_vps_c_val}${cpu_model} ${i_vps_c_simb}${i_vps_simb}\033[0m ${i_vps_c_etiq}CPU's: ${i_vps_c_val}${cpu_core} "
+echo -e " ${i_vps_c_simb}${i_vps_simb}\033[0m ${i_vps_c_etiq}IP: ${i_vps_c_val}${IP} ${i_vps_c_simb}${i_vps_simb}\033[0m ${i_vps_c_etiq}FECHA: ${i_vps_c_val}${fecha_custom}"
 
 msg -bar3
+    
+# 2. Reseller (Limpieza de duplicados y separación de bordes)
+local raw_name=$(cat < /bin/ejecutar/exito)
+local clean_name=$(echo "$raw_name" | sed -E 's/Verified\s*//g; s/[【\[]//g; s/[】\]]//g' | awk '{$1=$1;print}')
+    
+[[ $v1 = $v2 ]] && vesaoSCT="${res_c_key}Key: ${res_c_val}Verified ${res_c_carac}[ \033[0m${res_edge}${res_f_L}${res_bg}${res_text}${clean_name}©\033[0m${res_edge}${res_f_R}\033[0m ${res_c_carac}] (${res_c_val}$v2${res_c_carac})\033[0m" || vesaoSCT="${res_c_key}Key: ${res_c_val}Verified ${res_c_carac}[ \033[0m${res_edge}${res_f_L}${res_bg}${res_text}${clean_name}©\033[0m${res_edge}${res_f_R}\033[0m ${res_c_carac}] (${res_c_val}$v2${res_c_carac})\033[0m ► \033[1;32m[$v1]\033[1;31m"
 echo -e "${vesaoSCT} "
+    
 msg -bar3
 ports_
-##
+    
 [[ $(cat /etc/crontab | grep 'bash /bin/') ]] && _opti=" ${c_on}[ON]\033[0m" || _opti=" ${c_off}[OFF]\033[0m"
 [[ -e /etc/bash.bashrc-bakup ]] && _autorun=" ${c_on}[ON]\033[0m" || _autorun=" ${c_off}[OFF]\033[0m"
 [[ -e /etc/systemd/system/killadm.service ]] && lmt=" ${c_on}[ON]\033[0m" || lmt=" ${c_off}[OFF]\033[0m"
+    
 msg -bar3
-echo -e "${cor[1]} ∘${cor[5]} TOTAL: ${cor[2]}${mem_total}${cor[1]} ∘ ${cor[5]} M|LIBRE:${cor[2]} ${mem_free} ${cor[1]} ∘ ${cor[5]} EN USO:${cor[2]} ${mem_used}"
-echo -e "${cor[1]} ∘${cor[5]} U/RAM: ${cor[2]}${mem_used_percent} ${cor[1]} ∘${cor[5]} U/CPU:${cpu_used} ${cor[1]} ∘${cor[5]} BUFFER:${cor[2]} ${mem_cache}" # $CPU"%"
+    
+# 3. Recursos 
+echo -e " ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}TOTAL: ${rec_c_val}${mem_total} ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}M|LIBRE: ${rec_c_val}${mem_free} ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}EN USO: ${rec_c_val}${mem_used}"
+echo -e " ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}U/RAM: ${rec_c_val}${mem_used_percent} ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}U/CPU: ${rec_c_val}${cpu_used} ${rec_c_simb}${rec_simb}\033[0m ${rec_c_etiq}BUFFER: ${rec_c_val}${mem_cache}"
 msg -bar3
 #echo -e "${c_corch} [${c_num}01${c_corch}]${c_flech}${s_flech}\03tres[0m ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
 echo -e "${c_corch} [${c_num}01${c_corch}] ${c_flech}${s_flech} ${c_texto}CONTROL USUARIOS (SSH/SSL/VMESS) "
@@ -8329,7 +8635,7 @@ echo -e "${c_corch} [${c_num}04${c_corch}] ${c_flech}${s_flech} ${c_texto}AUTOIN
 echo -e "${c_corch} [${c_num}05${c_corch}] ${c_flech}${s_flech} ${c_texto}INSTALADOR DE PROTOCOLOS"
 echo -e "${c_corch} [${c_num}06${c_corch}] ${c_flech}${s_flech} ${c_texto}Cambiar Tema"
 msg -bar3
-echo -ne "${c_corch} [${c_num}07${c_corch}] ${c_flech}${s_flech} ${c_beta}[!] \033[1;32mUPDATE \033[0m${c_texto}/ \033[1;31mREMOVE\033[0m  |" && echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_beta}⇦ \033[1;41m[ SALIR ]\033[0m"
+echo -ne "${c_corch} [${c_num}07${c_corch}] ${c_flech}${s_flech}\033[0m ${c_beta}[!] \033[1;32mUPDATE \033[1;37m/ \033[38;5;196mREMOVE\033[0m  ${c_texto}|" && echo -e " ${c_corch}[${c_num}0${c_corch}] ${c_beta}☜ \033[1;37;41m[ SALIR ]\033[0m"
 msg -bar3 
 
 #------------------------------------------------
@@ -8937,9 +9243,10 @@ echo -e "\033[1;31mINSTALACION FINALIZADA - PRESIONE ENTER\033[0m"
 read -p " "
 }
 function mtraff(){
+msg -bar3
 [[ -e /root/name ]] && {
 [[ -z $(less /root/name) ]] || figlet -p -f smslant < /root/name | lolcat 
-}|| echo -e "\033[1;44;44m   ${cor[5]}=====>>►► 🐲 ChumoGH 💥 Plus 🐲 ◄◄<<=====     \033[0m"
+}|| echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${TTini} ChumoGH ${TTcent} Plus ${TTfin} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
 echo -e "\033[1;37m  【  ★ Reseller : $(cat < /bin/ejecutar/menu_credito) 2024 ★  】\033[0m"
 msg -bar3
 vnstat
