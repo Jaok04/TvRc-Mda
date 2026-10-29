@@ -20,7 +20,88 @@ else
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;33mLOADING \033[1;32m] " || echo -e "\033[1;32m[ \033[1;31mNO INST \033[1;32m] "
 fi`;
 barra="\033[0;31m=====================================================\033[0m"
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp) > /dev/null
+
+# === CARGA DE TEMA DINÁMICO ===
+[[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
+: "${tit_bg:=\033[48;5;54m}"
+: "${tit_edge_col:=\033[38;5;54m}"
+: "${tit_forma_L:=}"
+: "${tit_forma_R:=}"
+: "${tit_text:=\033[1;37m}"
+: "${c_corch:=\033[0;35m}"
+: "${c_num:=\033[0;36m}"
+: "${c_flech:=\033[0;33m}"
+: "${s_flech:=➮}"
+: "${c_texto:=\033[1;37m}"
+: "${c_linea:=\033[1;33m}"
+
+# Redefiniendo las funciones de diseño para utilizar el tema dinámico
+msg() {
+    if [[ "$1" == "-bar3" ]]; then
+        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    else
+        echo -e "$1"
+    fi
+}
+
+blanco(){
+    [[ ! $2 = 0 ]] && {
+        echo -e "${c_texto}$1\033[0m"
+    } || {
+        echo -ne " ${c_texto}$1:\033[0m "
+    }
+}
+
+verde(){
+	[[ !  $2 = 0 ]] && {
+		echo -e "\033[1;32m$1\033[0m"
+	} || {
+		echo -ne " \033[1;32m$1:\033[0m "
+	}
+}
+
+rojo(){
+	[[ !  $2 = 0 ]] && {
+		echo -e "\033[1;31m$1\033[0m"
+	} || {
+		echo -ne " \033[1;31m$1:\033[0m "
+	}
+}
+
+col(){
+    # Extrae el número limpiamente eliminando los paréntesis o viñetas
+    local _numero="${1//\)/}"
+    local nom=$(printf '%-55s' " ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
+    echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
+}
+
+col2(){
+	echo -e " \033[1;91m$1\033[0m \033[1;37m$2\033[0m"
+}
+
+title2(){
+	xrayports=`lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN" | grep xray | awk '{print substr($9,3); }' > /tmp/xray.txt && echo | cat /tmp/xray.txt | tr '\n' ' ' > /etc/adm-lite/xrayports.txt && cat /etc/adm-lite/xrayports.txt` > /dev/null 2>&1 
+	xrayports=$(echo $xrayports | awk {'print $1'})
+	_tconex=$(netstat -nap | grep "$xrayports" | grep xray | grep ESTABLISHED | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
+	v1=$(cat /etc/adm-lite/v-local.log)
+	v2=$(cat /bin/ejecutar/v-new.log)
+	msg -bar3
+	[[ $v1 = $v2 ]] && echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU XRAY LITE [$v1] POWER BY @ChumoGH \033[0m${tit_edge_col}${tit_forma_R}\033[0m" || echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU XRAY LITE POWER BY @ChumoGH [$v1] >> [$v2] \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+	[[ ! -z $xrayports ]] && echo -e "       ${tit_bg}${tit_text} PUERTO ACTIVO : \033[0m \033[3;32m$xrayports\033[0m   ${tit_bg}${tit_text} ACTIVOS : \033[0m \033[3;32m\033[1;41m $_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR XRAY : \033[0m \033[3;32m FAIL\033[0m"
+}
+
+title(){
+	msg -bar3
+	echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} $1 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+	msg -bar3
+}
+
+userDat(){
+	blanco "	N°    Usuarios 		  fech exp   dias"
+	msg -bar3
+}
+# === FIN TEMA DINÁMICO ===
+
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T') 
 fecha=$(printf '%(%D)T')
@@ -274,12 +355,12 @@ restore(){
 	blanco "	      nom  \033[0;31m| \033[1;37mfechas \033[0;31m|  \033[1;37mhora"
 	msg -bar3
 	for i in $(ls $backdir); do
-		col "$num)" "$i"
+		col "$num" "$i"
 		_res[$num]=$i
 		let num++
 	done
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco " cual desea restaurar?" 0
 	read opcion
@@ -378,96 +459,25 @@ autBackup(){
 read -p "ENTER PARA CONTINUAR"
 	rm -rf $tmp
  }
- 
-on_off_res(){
-	if [[ $(cat $v2rdir/conf | grep "autBackup" | cut -d " " -f2) = "0" ]]; then
-		echo -e "\033[0;31m[off]"
-	else
-		echo -e "\033[1;92m[on]"
-	fi
- }
-
-blanco(){
-	[[ !  $2 = 0 ]] && {
-		echo -e "\033[1;37m$1\033[0m"
-	} || {
-		echo -ne " \033[1;37m$1:\033[0m "
-	}
-}
-
-verde(){
-	[[ !  $2 = 0 ]] && {
-		echo -e "\033[1;32m$1\033[0m"
-	} || {
-		echo -ne " \033[1;32m$1:\033[0m "
-	}
-}
-
-rojo(){
-	[[ !  $2 = 0 ]] && {
-		echo -e "\033[1;31m$1\033[0m"
-	} || {
-		echo -ne " \033[1;31m$1:\033[0m "
-	}
-}
-
-col(){
-
-	nom=$(printf '%-55s' "\033[0;92m${1} \033[0;31m>> \033[1;37m${2}")
-	echo -e "	$nom\033[0;31m${3}   \033[0;92m${4}\033[0m"
-}
-
-col2(){
-
-	echo -e " \033[1;91m$1\033[0m \033[1;37m$2\033[0m"
-}
 
 vacio(){
-
 	blanco "\n no se puede ingresar campos vacios..."
 }
 
 cancelar(){
-
 	echo -e "\n \033[3;49;31minstalacion cancelada...\033[0m"
 }
 
 continuar(){
-
 	echo -e " \033[3;49;32mEnter para continuar...\033[0m"
-}
-
-title2(){
-xrayports=`lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN" | grep xray | awk '{print substr($9,3); }' > /tmp/xray.txt && echo | cat /tmp/xray.txt | tr '\n' ' ' > /etc/adm-lite/xrayports.txt && cat /etc/adm-lite/xrayports.txt` > /dev/null 2>&1 
-xrayports=$(echo $xrayports | awk {'print $1'})
-_tconex=$(netstat -nap | grep "$xrayports" | grep xray | grep ESTABLISHED | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
-	v1=$(cat /etc/adm-lite/v-local.log)
-	v2=$(cat /bin/ejecutar/v-new.log)
-	msg -bar3
-	[[ $v1 = $v2 ]] && echo -e "   \e[97m\033[1;44m MENU XRAY LITE [$v1] POWER BY @ChumoGH \033[0m" || echo -e " \e[97m\033[1;44m MENU XRAY LITE POWER BY @ChumoGH [$v1] >> \033[1;92m[$v2] \033[0m"
-[[ ! -z $xrayports ]] && echo -e "       \e[97m\033[1;41mPUERTO ACTIVO :\033[0m \033[3;32m$xrayports\033[0m   \e[97m\033[1;41m ACTIVOS:\033[0m \033[3;32m\e[97m\033[1;41m $_tconex " ||  echo -e "  \e[97m\033[1;41mERROR A INICIAR xray : \033[0m \033[3;32m FAIL\033[3;32m"
-	}
-
-title(){
-	msg -bar3
-	blanco "$1"
-	msg -bar3
-}
-
-userDat(){
-	blanco "	N°    Usuarios 		  fech exp   dias"
-	msg -bar3
 }
 
 #============================================
 domain_check() {
 	ssl_install_fun
     clear
-    msg -bar3
-    echo -e "   \033[1;49;37mgenerador de certificado ssl/tls\033[0m"
-    msg -bar3
-    echo -e " \033[1;49;37mingrese su dominio (ej: midominio.com.ar)\033[0m"
-    echo -ne ' \033[3;49;31m>>>\033[0m '
+    title " generador de certificado ssl/tls "
+    blanco " ingrese su dominio (ej: midominio.com.ar)"
     read domain
 
     echo -e "\n \033[1;49;36mOteniendo resolucion dns de su dominio...\033[0m"
@@ -648,8 +658,6 @@ acme() {
     clear
     msg -bar3
     echo -e " \033[1;49;37mcreando nuevos certificado ssl/tls\033[0m"
-	#msg -bar3
-#	read -p " Ingrese correo Para Validar el acme SSL : " corrio
 	msg -bar3
 	wget -O -  https://get.acme.sh | sh -s email=$corrio
     msg -bar3
@@ -699,7 +707,6 @@ acme() {
 
 restart_v2r(){
 	xray restart
-	#echo "reiniciando"
 }
 
 
@@ -710,7 +717,7 @@ fun_lock(){
 	do
 	clear
 	users=$(cat $config | jq .inbounds[].settings.clients[] | jq -r .email)
-	title " BLOQUEAR USUARIO Y MANDARLO AL LIMBOOOOO"
+	title " BLOQUEAR USUARIO Y MANDARLO AL LIMBOOOOO "
 	userDat
 	local n=1
 	for i in $users
@@ -722,7 +729,7 @@ fun_lock(){
 			DateExp="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f3)"
 			seg_exp=$(date +%s --date="$DateExp")
 			exp="[$(($(($seg_exp - $seg)) / 86400))]"
-			col "$n)" "$i" "$DateExp" "$exp"
+			col "$n" "$i" "$DateExp" "$exp"
 			local uid[$n]="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f2|tr -d '[[:space:]]')"
 			local user[$n]=$i
 			local p=$n
@@ -730,7 +737,7 @@ fun_lock(){
 		}
 	done
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUMERO DE USUARIO A BLOQUEAR" 0
 	read opcion
@@ -747,33 +754,27 @@ fun_lock(){
 			blanco "solo numero entre 1 y $n"
 			sleep 0.2
 		} || {
-		#echo -e " OPCION ${opcion} / USER : ${user[$opcion]}"
 		local LOCKDATA="$(cat ${user_conf}|grep -w "${user[$opcion]}"|cut -d'|' -f3)"
 		local tempo=$(date +%s --date="$LOCKDATA")
 		local dias="$(($(($tempo - $seg)) / 86400))"
 			[[ $opcion>=${p} ]] && {
 			echo "${user[$opcion]} | ${uid[$opcion]} | $(date '+%y-%m-%d' -d " +$dias days") |${dias}" >> $configLOCK
-			#echo "${user[$opcion]} | ${uid[$opcion]} | $(date '+%y-%m-%d' -d " +$dias days") |${dias}" 
 			mv $config $temp
 			echo jq \'del\(.inbounds[].settings.clients[$opcion]\)\' $temp \> $config | bash
 			chmod 777 $config
 			sed -i "/${user[$opcion]}/d" $user_conf
 			rm $temp
 			chmod 777 $configLOCK
-			#read -p "PAUSE"
 			} || {
 			echo "${user[$opcion]} | ${uid[$opcion]} | $(date '+%y-%m-%d' -d " +$dias days") |${dias}" >> $configLOCK
-			#echo "${user[$opcion]} | ${uid[$opcion]} | $(date '+%y-%m-%d' -d " +$dias days") |${dias}"
 			mv $config $temp
 			echo jq \'del\(.inbounds[].settings.clients[$opcion]\)\' $temp \> $config | bash
 			chmod 777 $config
 			rm $temp
 			sed -i "/${user[$opcion]}/d" $user_conf
 			chmod 777 $configLOCK
-			#read -p "PAUSE"
 			clear
 			msg -bar3
-			#blanco "	Usuario $(jq .inbounds[].settings.clients[$opcion].email $config) eliminado"
 			blanco " USUARIO ${user[$opcion]} NUM: ${opcion} ENVIADO AL LIMBOOOO !!"
 			msg -bar3
 			restart_v2r
@@ -785,31 +786,26 @@ done
 }
 
 fun_unlock(){
-#echo "${user[$opcion]} | ${uid[$opcion]} | $(date '+%y-%m-%d' -d " +$dias days")" >> $configLOCK
 	while :
 	do
 		unset user n
 		clear
-		title " DESBOQUEAR USUARIOS DEL LIMBOOOOO!!!"
+		title " DESBOQUEAR USUARIOS DEL LIMBOOOOO!!! "
 		userDat
 		userEpx=$(cut -d " " -f1 $configLOCK)
 		n=1
 		for i in $userEpx
 		do
 			DateExp="$(cat ${configLOCK}|grep -w "${i}"|cut -d'|' -f4)"
-			#seg_exp=$(date +%s --date="$DateExp")
-			#[[ "$seg" -gt "$seg_exp" ]] && {
-				col "$n)" "$i" "$DateExp DIAS" "\033[0;31m[LOCK]"
-				#col "$n)" "$i" "\033[0;31m[LOCK]"
-				local uid[$n]="$(cat ${configLOCK}|grep -w "${i}"|cut -d'|' -f2|tr -d '[[:space:]]')"
-				local user[$n]=$i
-				local tiempito[$n]="$(cat ${configLOCK}|grep -w "${i}"|cut -d'|' -f4|tr -d '[[:space:]]')"
-				let n++
-			#}
+			col "$n" "$i" "$DateExp DIAS" "\033[0;31m[LOCK]"
+			local uid[$n]="$(cat ${configLOCK}|grep -w "${i}"|cut -d'|' -f2|tr -d '[[:space:]]')"
+			local user[$n]=$i
+			local tiempito[$n]="$(cat ${configLOCK}|grep -w "${i}"|cut -d'|' -f4|tr -d '[[:space:]]')"
+			let n++
 		done
 		[[ -z ${user[1]} ]] && blanco "		No hay bloqueados!!!"
 		msg -bar3
-		col "0)" "VOLVER"
+		col "0" "VOLVER"
 		msg -bar3
 		blanco "NUMERO DE USUARIO A DESBLOQUEAR" 0
 		read opcion
@@ -826,7 +822,6 @@ fun_unlock(){
 				blanco "solo numero entre 1 y $n"
 				sleep 0.2
 		} || {
-			#blanco "DURACION EN DIAS" 0
 			local dias=${tiempito[$opcion]}
 			mv $config $temp
 			num=$(jq '.inbounds[].settings.clients | length' $temp)
@@ -849,13 +844,14 @@ fun_unlock(){
 
 _lo_un(){
 clear
+title " LOCK/UNLOCK USUARIOS "
+col "1" "BLOQUEAR USUARIO XRAY "
+col "2" "DESBLOQUEAR USUARIO XRAY "
 msg -bar3
-echo -e "\033[0;35m [${cor[2]}1\033[0;35m]\033[0;33m ${flech}\033[0;33m [!] BLOQUEAR USUARIO V2RAY "
-echo -e "\033[0;35m [${cor[2]}2\033[0;35m]\033[0;33m ${flech}\033[0;33m [!] DESBLOQUEAR USUARIO V2RAY "
-msg -bar3
-echo -e " \033[0;35m[${cor[2]}0\033[0;35m]\033[0;33m ${flech} $(msg -bra "\033[1;43m[ Salir ]\e[0m")"
+echo -e " ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
 msg -bar3 
-	selection=$(selection_fun 2)
+	blanco "opcion" 0
+	read selection
 	case ${selection} in
 		1)
 			fun_lock
@@ -876,7 +872,7 @@ add_user(){
 	clear
 	users="$(cat $config | jq -r .inbounds[].settings.clients[].email)"
 
-	title "		CREAR USUARIO xray"
+	title " CREAR USUARIO XRAY "
 	userDat
 
 	n=0
@@ -890,18 +886,18 @@ add_user(){
 			i="default"
 			a='*'
 			DateExp=" unlimit"
-			col "$a)" "$i" "$DateExp"
+			col "$a" "$i" "$DateExp"
 		} || {
 			DateExp="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f3)"
 			seg_exp=$(date +%s --date="$DateExp")
 			exp="[$(($(($seg_exp - $seg)) / 86400))]"
 
-			col "$n)" "$i" "$DateExp" "$exp"
+			col "$n" "$i" "$DateExp" "$exp"
 		}
 		let n++
 	done
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NOMBRE DEL NUEVO USUARIO" 0
 	read opcion
@@ -944,9 +940,7 @@ add_user(){
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
 		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
-		msg -bar3
-		blanco " Usuario: $ps"
-		msg -bar3
+		title " Usuario: $ps "
 		col2 "Nombre:" "$ps"
 		col2 "Dominio:" "$add" 
 		col2 "IP:" "$addip"
@@ -964,8 +958,6 @@ add_user(){
 		msg -bar3
 		vmess
 		msg -bar3
-		echo -e "  ESTA CONFIG SOLO SE MUESTRA UNA VEZ AQUI \n SI QUIERES VOLVER A VERLA VE A LA OPCION 4 \n  Y BALLASE A LA BERGA PERRO :V"
-		msg -bar3
 		continuar
 		read foo
 	#---------------------------------------------------------------------
@@ -977,7 +969,7 @@ renew(){
 	do
 		unset user
 		clear
-		title "		RENOVAR USUARIOS"
+		title " RENOVAR USUARIOS "
 		userDat
 		userEpx=$(cut -d " " -f1 $user_conf)
 		n=1
@@ -986,7 +978,7 @@ renew(){
 			DateExp="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f3)"
 			seg_exp=$(date +%s --date="$DateExp")
 			[[ "$seg" -gt "$seg_exp" ]] && {
-				col "$n)" "$i" "$DateExp" "\033[0;31m[Exp]"
+				col "$n" "$i" "$DateExp" "\033[0;31m[Exp]"
 				uid[$n]="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f2|tr -d '[[:space:]]')"
 				user[$n]=$i
 				let n++
@@ -994,7 +986,7 @@ renew(){
 		done
 		[[ -z ${user[1]} ]] && blanco "		No hay expirados"
 		msg -bar3
-		col "0)" "VOLVER"
+		col "0" "VOLVER"
 		msg -bar3
 		blanco "NUMERO DE USUARIO A RENOVAR" 0
 		read opcion
@@ -1068,7 +1060,7 @@ dell_user(){
 	clear
 	users=$(cat $config | jq .inbounds[].settings.clients[] | jq -r .email)
 
-	title "	ELIMINAR USUARIO xray"
+	title " ELIMINAR USUARIO XRAY "
 	userDat
 	n=0
 	for i in $users
@@ -1082,12 +1074,12 @@ dell_user(){
 			i="default"
 			a='*'
 			DateExp=" unlimit"
-			col "$a)" "$i" "$DateExp"
+			col "$a" "$i" "$DateExp"
 		} || {
 			DateExp="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f3)"
 			seg_exp=$(date +%s --date="$DateExp")
 			exp="[$(($(($seg_exp - $seg)) / 86400))]"
-			col "$n)" "$i" "$DateExp" "$exp"
+			col "$n" "$i" "$DateExp" "$exp"
 		}
 		p=$n
 		let n++
@@ -1098,13 +1090,13 @@ dell_user(){
 		DateExp="$(cat ${user_conf}|grep -w "${i}"|cut -d'|' -f3)"
 		seg_exp=$(date +%s --date="$DateExp")
 		[[ "$seg" -gt "$seg_exp" ]] && {
-			col "$n)" "$i" "$DateExp" "\033[0;31m[Exp]"
+			col "$n" "$i" "$DateExp" "\033[0;31m[Exp]"
 			expUser[$n]=$i
 		}
 		let n++
 	done
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUMERO DE USUARIO A ELIMINAR" 0
 	read opcion
@@ -1150,7 +1142,7 @@ view_user(){
 		clear
 		users=$(cat $config | jq .inbounds[].settings.clients[] | jq -r .email)
 
-		title "	VER USUARIO xray"
+		title " VER USUARIO XRAY "
 		userDat
 
 		n=1
@@ -1169,12 +1161,12 @@ view_user(){
 				exp="[$(($(($seg_exp - $seg)) / 86400))]"
 			}
 
-			col "$n)" "$i" "$DateExp" "$exp"
+			col "$n" "$i" "$DateExp" "$exp"
 			let n++
 		done
 
 		msg -bar3
-		col "0)" "VOLVER"
+		col "0" "VOLVER"
 		msg -bar3
 		blanco "VER DATOS DEL USUARIO" 0
 		read opcion
@@ -1195,9 +1187,7 @@ view_user(){
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
 		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
-		msg -bar3
-		blanco " Usuario: $ps"
-		msg -bar3
+		title " Usuario: $ps "
 		col2 "Nombre:" "$ps"
 		col2 "Dominio:" "$add" 
 		col2 "IP:" "$addip"
@@ -1230,10 +1220,8 @@ vmess() {
     local v_id="$id"
     local v_tls="$tls"
 
-    # Eliminar comillas exteriores de los valores procedentes de jq
     v_ps="${v_ps#\"}";       v_ps="${v_ps%\"}"
     v_add="${v_add#\"}";     v_add="${v_add%\"}"
-    # Si no hay dominio configurado, conservar la IP pública como alternativa.
     [[ -z "$v_add" || "$v_add" == "null" ]] && v_add="$addip"
     v_net="${v_net#\"}";     v_net="${v_net%\"}"
     v_path="${v_path#\"}";   v_path="${v_path%\"}"
@@ -1269,12 +1257,10 @@ alterid(){
 	do
 		aid=$(jq '.inbounds[].settings.clients[0].alterId' $config)
 	clear
-	msg -bar3
-	blanco "        configuracion alterId"
-	msg -bar3
+	title " configuracion alterId "
 	col2 "	ID alternativo:" "$aid"
 	msg -bar3
-	col "x)" "VOLVER"
+	col "x" "VOLVER"
 	msg -bar3
 	blanco "NUEVO VALOR" 0
 	read opcion
@@ -1301,12 +1287,10 @@ port(){
 	do
 	port=$(jq '.inbounds[].port' $config)
 	clear
-	msg -bar3
-	blanco "       configuración de puerto"
-	msg -bar3
+	title " configuración de puerto "
 	col2 " Puerto:" "$port"
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUEVO PUERTO" 0
 	read opcion
@@ -1333,12 +1317,10 @@ address(){
 	do
 	add=$(jq '.inbounds[].domain' $config) && [[ $add = null ]] && add=$(wget -qO- ipv4.icanhazip.com)
 	clear
-	msg -bar3
-	blanco "       configuración de dirección"
-	msg -bar3
+	title " configuración de dirección "
 	col2 "Dirección:" "$add"
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUEVO ADDRESS" 0
 	read opcion
@@ -1364,12 +1346,10 @@ host(){
 	do
 	host=$(jq '.inbounds[].streamSettings.wsSettings.headers.Host' $config) && [[ $host = null ]] && host='sin host'
 	clear
-	msg -bar3
-	blanco "       configuración de Host"
-	msg -bar3
+	title " configuración de Host "
 	col2 "Host:" "$host"
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUEVO HOST" 0
 	read opcion
@@ -1394,12 +1374,10 @@ path(){
 	do
 	path=$(jq '.inbounds[].streamSettings.wsSettings.path' $config) && [[ $path = null ]] && path=''
 	clear
-	msg -bar3
-	blanco "       configuración de ruta"
-	msg -bar3
+	title " configuración de ruta "
 	col2 "Ruta:" "$path"
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "NUEVO Path" 0
 	read opcion
@@ -1424,9 +1402,7 @@ crt_man(){
 	while :
 	do
 		clear
-		msg -bar3
-		blanco "configuracion de certificado manual"
-		msg -bar3
+		title " configuracion de certificado manual "
 
 		chek=$(jq '.inbounds[].streamSettings.tlsSettings' $config)
 		[[ ! $chek = {} ]] && {
@@ -1442,9 +1418,9 @@ crt_man(){
 		}
 
 		msg -bar3
-		col "1)" "ingresar nuevo crt"
+		col "1" "ingresar nuevo crt"
 		msg -bar3
-		col "0)" "VOLVER"
+		col "0" "VOLVER"
 		msg -bar3
 		blanco "opcion" 0
 		read opcion
@@ -1527,8 +1503,7 @@ install(){
 
 xray_tls(){
 	clear
-	msg -bar3
-	blanco "		certificado tls xray"
+	title " certificado tls xray "
 	echo -e "Ingrese Correo Temporal o Fijo \n  Para Validar su Cerficicado SSL " 
 	read -p " Ejemplo > email=my@example.com : " -e -i $(date | md5sum | head -c15)@gmail.com crreo
 	msg -bar3
@@ -1541,9 +1516,7 @@ xray_tls(){
 
 xray_stream(){
 	clear
-	msg -bar3
-	blanco "	instalacion de protocolos xray"
-	msg -bar3
+	title " instalacion de protocolos xray "
 	xray stream
 	msg -bar3
 	continuar
@@ -1552,9 +1525,7 @@ xray_stream(){
 
 xray_menu(){
 	clear
-	msg -bar3
-	blanco "		MENU xray"
-	msg -bar3
+	title " MENU xray "
 	xray
 }
 
@@ -1571,16 +1542,16 @@ backups(){
 
 	clear
 	title "	Config de Respaldos"
-	col "1)" "Respaldar Ahora"
-	col "2)" "\033[1;92mRestaurar Respaldo"
-	col "3)" "\033[0;31mEliminiar Respaldos"
-	col "4)" "\033[1;34mRespaldo en linea $PID"
-	col "5)" "\033[1;33mRespaldos automatico $(on_off_res)"
+	col "1" "Respaldar Ahora"
+	col "2" "\033[1;92mRestaurar Respaldo"
+	col "3" "\033[0;31mEliminiar Respaldos"
+	col "4" "\033[1;34mRespaldo en linea $PID"
+	col "5" "\033[1;33mRespaldos automatico $(on_off_res)"
 	msg -bar3
 	
-	col "6)" "\033[1;33m RESTAURAR Online PORT :81 "
+	col "6" "\033[1;33m RESTAURAR Online PORT :81 "
 	msg -bar3
-	col "0)" "VOLVER"
+	col "0" "VOLVER"
 	msg -bar3
 	blanco "opcion" 0
 	read opcion
@@ -1627,7 +1598,7 @@ wget -q -O $backdir/BakcOnline.tar $url1 && echo -e "\033[1;31m- \033[1;32mFile 
 
 restablecer_v2r(){
 	clear
-	title "   restablecer ajustes xray"
+	title " restablecer ajustes xray "
 	echo -e " \033[0;31mEsto va a restablecer los\n ajustes predeterminados de xray"
 	echo -e " Se perdera ajuste previos,\n incluido los Usuarios\033[0m"
 	msg -bar3
@@ -1685,13 +1656,13 @@ bbr(){
 	while :
 	do
 	clear
-	title "		ACELERACION BBR"
+	title " ACELERACION BBR "
 	blanco "	Esto activara la aceleracion\n	por defecto de su kernel.\n	no se modoficar nada del sistema."
 	msg -bar3
-	col "1)" "Acivar aceleracion"
-	col "2)" "quitar toda aceleracion"
+	col "1" "Acivar aceleracion"
+	col "2" "quitar toda aceleracion"
 	msg -bar3
-	col "0)" "volver"
+	col "0" "volver"
 	msg -bar3
 	blanco "opcion" 0
 	read opcion
@@ -1713,29 +1684,27 @@ settings(){
 	while :
 	do
 	clear
+	title " Ajustes e instalacion xray "
+	col "1" "address"
+	col "2" "puerto"
+	col "3" "alterId"
+	col "4" "Host"
+	col "5" "Path"
 	msg -bar3
-	blanco "	  Ajustes e instalacion xray"
+	col "6" "certif ssl/tls (script)"
+	col "7" "certif menu nativo"
+	col "8" "certif ingreso manual"
 	msg -bar3
-	col "1)" "address"
-	col "2)" "puerto"
-	col "3)" "alterId"
-	col "4)" "Host"
-	col "5)" "Path"
+	col "9" "protocolo menu nativo"
+	col "10" "conf xray menu nativo"
+	col "11" "restablecer ajustes"
 	msg -bar3
-	col "6)" "certif ssl/tls (script)"
-	col "7)" "certif menu nativo"
-	col "8)" "certif ingreso manual"
+	col "12" "BBR nativo del sistema"
+	col "13" "install/re-install xray"
 	msg -bar3
-	col "9)" "protocolo menu nativo"
-	col "10)" "conf xray menu nativo"
-	col "11)" "restablecer ajustes"
+	col "14" "Conf. Copias de Respaldos"
 	msg -bar3
-	col "12)" "BBR nativo del sistema"
-	col "13)" "install/re-install xray"
-	msg -bar3
-	col "14)" "Conf. Copias de Respaldos"
-	msg -bar3
-	col "0)" "Volver"
+	echo -e " ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
 	msg -bar3
 	blanco "opcion" 0
 	read opcion
@@ -1798,13 +1767,11 @@ enttrada () {
 	while :
 	do
 	clear
+	title " Ajustes de Entrada Rapida de Menu xray "
+	col "1" "Habilitar xr.sh, Como entrada Rapida"
+	col "2" "Eliminar xr.sh, Como entrada Rapida"
 	msg -bar3
-	blanco "	  Ajustes e Entrasda Rapida de Menu xray"
-	msg -bar3
-	col "1)" "Habilitar xr.sh, Como entrada Rapida"
-	col "2)" "Eliminar xr.sh, Como entrada Rapida"
-	msg -bar3
-	col "0)" "Volver"
+	col "0" "Volver"
 	msg -bar3
 	blanco "opcion" 0
 	read opcion
@@ -1848,19 +1815,21 @@ main(){
 		[[ -e /etc/xray/config.json.lock ]] && _v2LOCK="$(cat /etc/xray/config.json.lock|wc -l)" || _v2LOCK=0
 		clear
 		title2
-		title "   Ram: \033[1;32m$_usor  \033[0;31m<<< \033[1;37mMENU xray \033[0;31m>>>  \033[1;37mCPU: \033[1;32m$_usop"
-		col "1)" "CREAR USUARIO"
-		col "2)" "\033[0;92mRENOVAR USUARIO"
-		col "3)" "\033[0;31mREMOVER USUARIO"
-		col "4)" "VER DATOS DE USUARIOS \033[1;32m ( ${_v2Reg} )"
-		col "5)" "VER USUARIOS CONECTADOS"
-		col "b)" "LOCK/UNLOCK USUARIOS \033[1;32m ( ${_v2LOCK} ) "
 		msg -bar3
-		col "6)" "\033[1;33mAJUSTES XRAY $_v2"
+		echo -e "  ${c_texto}Ram:\033[0m \033[1;32m$_usor\033[0m   ${c_corch}<<<${c_texto} MENU XRAY ${c_corch}>>>\033[0m   ${c_texto}CPU:\033[0m \033[1;32m$_usop\033[0m"
 		msg -bar3
-		col "7)" "\033[1;33mENTRAR CON \033[1;32mxr.sh $enrap"
+		col "1" "CREAR USUARIO"
+		col "2" "\033[0;92mRENOVAR USUARIO"
+		col "3" "\033[0;31mREMOVER USUARIO"
+		col "4" "VER DATOS DE USUARIOS \033[1;32m ( ${_v2Reg} )"
+		col "5" "VER USUARIOS CONECTADOS"
+		col "b" "LOCK/UNLOCK USUARIOS \033[1;32m ( ${_v2LOCK} ) "
 		msg -bar3
-		col "8)" "SALIR \033[0;31m|| $(blanco "Respaldos automaticos") $(on_off_res)"
+		col "6" "\033[1;33mAJUSTES XRAY $_v2"
+		msg -bar3
+		col "7" "\033[1;33mENTRAR CON \033[1;32mxr.sh $enrap"
+		msg -bar3
+		echo -e "  ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ SALIR ]\033[0m ${c_texto}|| Respaldos automaticos\033[0m $(on_off_res)"
 		msg -bar3
 		blanco "opcion" 0
 		read opcion
