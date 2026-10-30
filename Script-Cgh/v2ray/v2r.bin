@@ -32,13 +32,16 @@ barra="\033[0;31m=====================================================\033[0m"
 : "${s_flech:=➮}"
 : "${c_texto:=\033[1;37m}"
 : "${c_linea:=\033[1;33m}"
+# --- Variables dinámicas de estado ---
+: "${c_on:=\033[1;92m}"   # Toma el color ON del Gestor de Temas
+: "${c_off:=\033[0;31m}"  # Toma el color OFF del Gestor de Temas
 # -----------------------------
 
 # Reemplazamos la barra estática por la línea dinámica
 msg() {
     if [[ "$1" == "-bar3" ]]; then
-        # Línea de exactamente 53 caracteres para alinear con RAM y CPU
-        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+        # Línea de exactamente 50 caracteres para alinear con RAM y CPU
+        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     else
         echo -e "$1"
     fi
@@ -384,10 +387,34 @@ echo -ne " \033[1;31m$1:\033[0m "
 }
 }
 col(){
-    # Agregamos 6 espacios al inicio ("      ") para recrear el centrado de la v4 original
     local _numero="${1//\)/}"
-    local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
-    echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
+    
+    # 1. Automatización del botón de SALIR/VOLVER/REGRESAR (Opción 0)
+    if [[ "$_numero" == "0" ]]; then
+        echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ ${2} ]\033[0m"
+        return
+    fi
+
+    # 2. Modo Tabla (Detecta si hay parámetros de fecha y días)
+    if [[ -n "$3" ]]; then
+        # Limpiamos los espacios invisibles que desalinean la tabla
+        local _user=$(echo -e "${2}" | tr -d ' ')
+        local _fecha=$(echo -e "${3}" | tr -d ' ')
+        
+        # Bloqueamos el ancho exacto para sincronizar con la cabecera
+        local _user_pad=$(printf '%-19s' "$_user")
+        local _fecha_pad=$(printf '%-13s' "$_fecha")
+        
+        local _espacio_num=" "
+        [[ ${#_numero} -gt 1 ]] && _espacio_num=""
+
+        echo -e "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${_espacio_num}${c_texto}${_user_pad}\033[0m\033[0;31m${_fecha_pad}\033[0m${c_on}${4}\033[0m"
+        
+    # 3. Modo Menú Normal
+    else
+        local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
+        echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
+    fi
 }
 
 col2(){
@@ -403,31 +430,41 @@ continuar(){
 echo -e " \033[3;49;32mEnter para continuar...\033[0m"
 }
 title2(){
-    local _STATUS="$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN")"
-    local app_name="V2RAY"
-    [[ "$(basename $0)" == *"xr"* ]] && app_name="XRAY"
-    
-    v2rayports=$(echo -e "$_STATUS" | grep -i $app_name | awk '{print substr($9,3); }' | awk {'print $1'} | head -1) > /dev/null 2>&1
-    local _tconex=$(netstat -nap | grep "$v2rayports" | grep -i $app_name | grep ESTABLISHED| grep tcp6 | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
-    local v1=$(cat /etc/adm-lite/v-local.log 2>/dev/null)
-    local v2=$(cat /bin/ejecutar/v-new.log 2>/dev/null)
-    
-    msg -bar3
-    # Título Dinámico Principal
-    [[ $v1 = $v2 ]] && echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU ${app_name} LITE [$v1] POWER BY @ChumoGH \033[0m${tit_edge_col}${tit_forma_R}\033[0m" || echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU ${app_name} LITE POWER BY @ChumoGH [$v1] >> [$v2] \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-    
-    [[ ! -z $v2rayports ]] && echo -e "       \033[1;44mPUERTO ACTIVO :\033[0m \033[3;32m$v2rayports\033[0m   \033[1;44m ACTIVOS:\033[0m \033[3;32m\033[1;41m $_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR ${app_name} : \033[0m \033[3;32m FAIL\033[0m"
+	xrayports=`lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN" | grep xray | awk '{print substr($9,3); }' > /tmp/xray.txt && echo | cat /tmp/xray.txt | tr '\n' ' ' > /etc/adm-lite/xrayports.txt && cat /etc/adm-lite/xrayports.txt` > /dev/null 2>&1 
+	xrayports=$(echo $xrayports | awk {'print $1'})
+	_tconex=$(netstat -nap | grep "$xrayports" | grep xray | grep ESTABLISHED | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
+	
+	# Condición usando directamente las variables del Gestor de Temas
+	local color_activos
+	if [[ "$_tconex" == "0" || -z "$_tconex" ]]; then
+		color_activos="${c_off}"
+	else
+		color_activos="${c_on}"
+	fi
+
+	v1=$(cat /etc/adm-lite/v-local.log 2>/dev/null)
+	v2=$(cat /bin/ejecutar/v-new.log 2>/dev/null)
+	
+	msg -bar3
+	[[ $v1 = $v2 ]] && echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU V2RAY LITE [$v1] POWER BY @ChumoGH \033[0m${tit_edge_col}${tit_forma_R}\033[0m" || echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU V2RAY LITE POWER BY @ChumoGH [$v1] >> [$v2] \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+	
+	# Aquí aplicamos c_corch a las etiquetas, y c_on/c_off dinámicos a los valores
+	[[ ! -z $xrayports ]] && echo -e "       ${c_corch}PUERTO ACTIVO : \033[0m${c_on}$xrayports\033[0m   ${c_corch}ACTIVOS : \033[0m${color_activos}$_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR XRAY : \033[0m ${c_off}FAIL\033[0m"
 }
 
-title(){
-    msg -bar3
-    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} $1 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-    msg -bar3
-}
+#title(){
+#    msg -bar3
+    # Limpia cualquier espacio adicional al inicio/final del texto usando xargs
+#    local _titulo=$(echo "$1" | xargs)
+#    # Pega el fondo dinámico directamente a la figura izquierda sin dejar resquicios
+#    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+#    msg -bar3
+#}
 
 userDat(){
-blanco "	N°    Usuarios 		  fech exp   dias"
-msg -bar3
+    # 6 espacios iniciales + N° (5) + Usuarios (19) + fech exp (13) + dias
+    echo -e "      ${c_corch} N°   Usuarios           fech exp     dias\033[0m"
+    msg -bar3
 }
 domain_check() {
 ssl_install_fun
@@ -1479,10 +1516,7 @@ done
 settings(){
 while :
 do
-clear
-msg -bar3
-blanco "	  Ajustes e instalacion v2ray"
-msg -bar3
+title "Ajustes e instalacion v2ray"
 col "1)" "address "
 col "2)" "CAMBIAR PUERTO "
 col "3)" "CAMBIAR AlterId"
@@ -1780,8 +1814,9 @@ _usop=$(printf '%-1s' "$(top -bn1 | awk '/Cpu/ { cpu = "" 100 - $8 "%" }; END { 
 # (Dentro del while : de main(), después de los ps y _usop)
 clear
 title2
-title " Ram: \033[1;32m$_usor\033[0m | MENU V2RAY | CPU: \033[1;32m$_usop\033[0m "
-    
+msg -bar3
+echo -e "  ${c_texto}Ram:\033[0m \033[1;32m$_usor\033[0m   ${c_corch}<<<${c_texto} MENU V2RAY ${c_corch}>>>\033[0m   ${c_texto}CPU:\033[0m \033[1;32m$_usop\033[0m"
+msg -bar3    
 col "1" "CREAR USUARIO"
 col "2" "\033[0;92mRENOVAR USUARIO"
 col "3" "\033[0;31mREMOVER USUARIO"

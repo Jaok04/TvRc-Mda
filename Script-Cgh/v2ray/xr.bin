@@ -81,10 +81,34 @@ rojo(){
 }
 
 col(){
-    # Agregamos 6 espacios al inicio ("      ") para recrear el centrado de la v4 original
     local _numero="${1//\)/}"
-    local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
-    echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
+    
+    # 1. Automatización del botón de SALIR/VOLVER/REGRESAR (Opción 0)
+    if [[ "$_numero" == "0" ]]; then
+        echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ ${2} ]\033[0m"
+        return
+    fi
+
+    # 2. Modo Tabla (Detecta si hay parámetros de fecha y días)
+    if [[ -n "$3" ]]; then
+        # Limpiamos los espacios invisibles que desalinean la tabla
+        local _user=$(echo -e "${2}" | tr -d ' ')
+        local _fecha=$(echo -e "${3}" | tr -d ' ')
+        
+        # Bloqueamos el ancho exacto para sincronizar con la cabecera
+        local _user_pad=$(printf '%-19s' "$_user")
+        local _fecha_pad=$(printf '%-13s' "$_fecha")
+        
+        local _espacio_num=" "
+        [[ ${#_numero} -gt 1 ]] && _espacio_num=""
+
+        echo -e "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${_espacio_num}${c_texto}${_user_pad}\033[0m\033[0;31m${_fecha_pad}\033[0m${c_on}${4}\033[0m"
+        
+    # 3. Modo Menú Normal
+    else
+        local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
+        echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
+    fi
 }
 
 
@@ -116,14 +140,18 @@ title2(){
 }
 
 title(){
-	msg -bar3
-	echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} $1 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-	msg -bar3
+    msg -bar3
+    # Limpia cualquier espacio adicional al inicio/final del texto usando xargs
+    local _titulo=$(echo "$1" | xargs)
+    # Pega el fondo dinámico directamente a la figura izquierda sin dejar resquicios
+    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
 }
 
 userDat(){
-	blanco "	N°    Usuarios 		  fech exp   dias"
-	msg -bar3
+    # 6 espacios iniciales + N° (5) + Usuarios (19) + fech exp (13) + dias
+    echo -e "      ${c_corch} N°   Usuarios           fech exp     dias\033[0m"
+    msg -bar3
 }
 # === FIN TEMA DINÁMICO ===
 
@@ -1709,7 +1737,7 @@ settings(){
 	while :
 	do
 	clear
-	title " Ajustes e instalacion xray "
+	title "Ajustes e instalacion Xray"
 	col "1" "address"
 	col "2" "puerto"
 	col "3" "alterId"
