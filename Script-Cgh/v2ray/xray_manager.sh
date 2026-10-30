@@ -40,14 +40,14 @@ barra="\033[0;31m=====================================================\033[0m"
 : "${c_off:=\033[0;31m}"  # Toma el color OFF del Gestor de Temas
 
 # Redefiniendo las funciones de diseño para utilizar el tema dinámico
-msg() {
-    if [[ "$1" == "-bar3" ]]; then
+#msg() {
+#    if [[ "$1" == "-bar3" ]]; then
         # Línea de exactamente 53 caracteres para alinear con RAM y CPU
-        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-    else
-        echo -e "$1"
-    fi
-}
+#        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+#    else
+#        echo -e "$1"
+#    fi
+#}
 on_off_res(){
 if [[ $(cat $v2rdir/conf | grep "autBackup" | cut -d " " -f2) = "0" ]]; then
 echo -e "\033[0;31m[off]"
