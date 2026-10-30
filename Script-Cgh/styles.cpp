@@ -156,6 +156,29 @@ title(){
     msg -bar3
 }
 
+# titulos secundarios (sin clear)
+sub_title(){
+    # Eliminamos el clear, solo dejamos la barra superior
+    msg -bar3
+    
+    local _titulo
+    if [[ -z "$2" ]]; then
+        _titulo=$(echo "$1" | xargs)
+    else
+        _titulo=$(echo "$2" | xargs)
+    fi
+    
+    local ancho_total=50
+    local len_titulo=${#_titulo}
+    local len_bloque=$((len_titulo + 4))
+    local padding_left=$(( (ancho_total - len_bloque) / 2 ))
+    [[ $padding_left -lt 0 ]] && padding_left=0
+    local espacios=$(printf '%*s' "$padding_left" "")
+    
+    echo -e "${espacios}${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
+}
+
 # finalizacion de tareas
  enter(){
   msg -bar3
