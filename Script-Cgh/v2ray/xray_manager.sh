@@ -1300,9 +1300,10 @@ vmess() {
         --arg host "$v_host" \
         --arg id "$v_id" \
         --arg tls "$v_tls" \
-        '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls}') || return 1
+        --arg sni "$v_host" \
+        '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls,sni:$sni}') || return 1
 
-    printf '\033[3;32mvmess://%s\033[0m\n' "$(printf '%s' "$json" | base64 -w 0)"
+    msg -ama "vmess://$(echo "$json" | jq -r '.|@base64')"
 }
 
 alterid(){
