@@ -1504,7 +1504,7 @@ col "14)" "Conf. COPIAS DE SEGURIDAD"
 msg -bar3
 col "15)" "HABILITAR MODULO XRAY ( V2ray )"
 msg -bar3
-col "0)" "REGRESAR"
+echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
 msg -bar3
 blanco "opcion" 0
 read opcion
