@@ -80,10 +80,22 @@ echo $selection
 
 
 tittle () {
-[[ -z $1 ]] && rt='adm-lite' || rt='ADMcgh'
+    [[ -z $1 ]] && rt='adm-lite' || rt='ADMcgh'
+    local ver=$(cat /etc/${rt}/v-local.log 2>/dev/null)
     clear&&clear
     msg -bar3
-    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}\033[1;37m =====>>►► 🐲 ChumoGH 💥 Plus 🐲 ◄◄<<===== \033[0m${tit_edge_col}${tit_forma_R}\033[0m \033[0;33m[$(less /etc/${rt}/v-local.log)]"
+    
+    # Título principal simplificado
+    local _titulo="🐲 ChumoGH 💥 Plus 🐲"
+    
+    local ancho_total=50
+    local len_titulo=${#_titulo}
+    local len_bloque=$((len_titulo + 4))
+    local padding_left=$(( (ancho_total - len_bloque) / 2 ))
+    [[ $padding_left -lt 0 ]] && padding_left=0
+    local espacios=$(printf '%*s' "$padding_left" "")
+    
+    echo -e "${espacios}${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m \033[0;33m[${ver}]"
     msg -bar3
 }
 in_opcion(){
@@ -107,7 +119,9 @@ print_center(){
 
   while read line; do
     unset space
-    x=$(( ( 54 - ${#line}) / 2))
+    # Ajustado de 54 a 50 caracteres
+    x=$(( ( 50 - ${#line}) / 2))
+    [[ $x -lt 0 ]] && x=0
     for (( i = 0; i < $x; i++ )); do
       space+=' '
     done
@@ -123,13 +137,47 @@ print_center(){
 title(){
     clear
     msg -bar3
-    if [[ -z $2 ]]; then
-      print_center -azu "$1"
+    
+    local _titulo
+    if [[ -z "$2" ]]; then
+        _titulo=$(echo "$1" | xargs)
     else
-      print_center "$1" "$2"
+        _titulo=$(echo "$2" | xargs)
     fi
+    
+    local ancho_total=50
+    local len_titulo=${#_titulo}
+    local len_bloque=$((len_titulo + 4))
+    local padding_left=$(( (ancho_total - len_bloque) / 2 ))
+    [[ $padding_left -lt 0 ]] && padding_left=0
+    local espacios=$(printf '%*s' "$padding_left" "")
+    
+    echo -e "${espacios}${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
     msg -bar3
- }
+}
+
+# titulos secundarios (sin clear)
+sub_title(){
+    # Eliminamos el clear, solo dejamos la barra superior
+    msg -bar3
+    
+    local _titulo
+    if [[ -z "$2" ]]; then
+        _titulo=$(echo "$1" | xargs)
+    else
+        _titulo=$(echo "$2" | xargs)
+    fi
+    
+    local ancho_total=50
+    local len_titulo=${#_titulo}
+    local len_bloque=$((len_titulo + 4))
+    local padding_left=$(( (ancho_total - len_bloque) / 2 ))
+    [[ $padding_left -lt 0 ]] && padding_left=0
+    local espacios=$(printf '%*s' "$padding_left" "")
+    
+    echo -e "${espacios}${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
+}
 
 # finalizacion de tareas
  enter(){
