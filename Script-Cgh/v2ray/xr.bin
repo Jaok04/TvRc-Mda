@@ -21,7 +21,7 @@ else
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;33mLOADING \033[1;32m] " || echo -e "\033[1;32m[ \033[1;31mNO INST \033[1;32m] "
 fi`;
 barra="\033[0;31m=====================================================\033[0m"
-
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp)
 # === CARGA DE TEMA DINÁMICO ===
 [[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
 : "${tit_bg:=\033[48;5;54m}"
@@ -40,14 +40,14 @@ barra="\033[0;31m=====================================================\033[0m"
 : "${c_off:=\033[0;31m}"  # Toma el color OFF del Gestor de Temas
 
 # Redefiniendo las funciones de diseño para utilizar el tema dinámico
-msg() {
-    if [[ "$1" == "-bar3" ]]; then
+#msg() {
+#    if [[ "$1" == "-bar3" ]]; then
         # Línea de exactamente 53 caracteres para alinear con RAM y CPU
-        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-    else
-        echo -e "$1"
-    fi
-}
+#        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+#    else
+#        echo -e "$1"
+#    fi
+#}
 on_off_res(){
 if [[ $(cat $v2rdir/conf | grep "autBackup" | cut -d " " -f2) = "0" ]]; then
 echo -e "\033[0;31m[off]"
@@ -1195,7 +1195,7 @@ view_user(){
 		clear
 		users=$(cat $config | jq .inbounds[].settings.clients[] | jq -r .email)
 
-		title " VER USUARIO XRAY "
+		title "VER USUARIO XRAY"
 		userDat
 
 		n=1
@@ -1240,7 +1240,7 @@ view_user(){
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
 		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
-		title "Usuario: $ps "
+		title "Usuario: $ps"
 		col2 "Nombre:" "$ps"
 		col2 "Dominio:" "$add" 
 		col2 "IP:" "$addip"
@@ -1300,9 +1300,10 @@ vmess() {
         --arg host "$v_host" \
         --arg id "$v_id" \
         --arg tls "$v_tls" \
-        '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls}') || return 1
+        --arg sni "$v_host" \
+        '{v:$v,ps:$ps,add:$add,port:($port|tonumber),aid:($aid|tonumber),type:$type,net:$net,path:$path,host:$host,id:$id,tls:$tls,sni:$sni}') || return 1
 
-    printf '\033[3;32mvmess://%s\033[0m\n' "$(printf '%s' "$json" | base64 -w 0)"
+    msg -ama "vmess://$(echo "$json" | jq -r '.|@base64')"
 }
 
 alterid(){
