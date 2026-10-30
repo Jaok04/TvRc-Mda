@@ -21,7 +21,7 @@ else
 [[ -e ${config} ]] && echo -e "\033[1;32m[ INST \033[1;31m+ \033[1;33mLOADING \033[1;32m] " || echo -e "\033[1;32m[ \033[1;31mNO INST \033[1;32m] "
 fi`;
 barra="\033[0;31m=====================================================\033[0m"
-
+[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp)
 # === CARGA DE TEMA DINÁMICO ===
 [[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
 : "${tit_bg:=\033[48;5;54m}"
