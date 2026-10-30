@@ -139,14 +139,14 @@ title2(){
 	[[ ! -z $xrayports ]] && echo -e "       ${c_corch}PUERTO ACTIVO : \033[0m${c_on}$xrayports\033[0m   ${c_corch}ACTIVOS : \033[0m${color_activos}$_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR XRAY : \033[0m ${c_off}FAIL\033[0m"
 }
 
-title(){
-    msg -bar3
+#title(){
+#    msg -bar3
     # Limpia cualquier espacio adicional al inicio/final del texto usando xargs
-    local _titulo=$(echo "$1" | xargs)
+#    local _titulo=$(echo "$1" | xargs)
     # Pega el fondo dinámico directamente a la figura izquierda sin dejar resquicios
-    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-    msg -bar3
-}
+#    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} ${_titulo} \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+#    msg -bar3
+#}
 
 userDat(){
     # 6 espacios iniciales + N° (5) + Usuarios (19) + fech exp (13) + dias
@@ -993,7 +993,7 @@ add_user(){
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
 		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
-		title " Usuario: $ps "
+		title "Usuario: $ps "
 		col2 "Nombre:" "$ps"
 		col2 "Dominio:" "$add" 
 		col2 "IP:" "$addip"
@@ -1240,7 +1240,7 @@ view_user(){
 		tls=$(jq '.inbounds[].streamSettings.security' $config)
 		addip=$(wget -qO- --timeout=10 ipv4.icanhazip.com)
 		clear
-		title " Usuario: $ps "
+		title "Usuario: $ps "
 		col2 "Nombre:" "$ps"
 		col2 "Dominio:" "$add" 
 		col2 "IP:" "$addip"
