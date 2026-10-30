@@ -19,6 +19,31 @@ echo "autBackup 0" >> $v2rdir/conf
 fi
 barra="\033[0;31m=====================================================\033[0m"
 [[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg || source <(curl -sSL https://raw.githubusercontent.com/Jaok04/TvRc-Mda/refs/heads/main/Script-Cgh/styles.cpp)
+# --- CARGAR TEMA DINAMICO ---
+[[ -f /etc/adm-lite/theme.conf ]] && source /etc/adm-lite/theme.conf
+: "${tit_bg:=\033[48;5;54m}"
+: "${tit_edge_col:=\033[38;5;54m}"
+: "${tit_forma_L:=}"
+: "${tit_forma_R:=}"
+: "${tit_text:=\033[1;37m}"
+: "${c_corch:=\033[0;35m}"
+: "${c_num:=\033[0;36m}"
+: "${c_flech:=\033[0;33m}"
+: "${s_flech:=➮}"
+: "${c_texto:=\033[1;37m}"
+: "${c_linea:=\033[1;33m}"
+# -----------------------------
+
+# Reemplazamos la barra estática por la línea dinámica
+msg() {
+    if [[ "$1" == "-bar3" ]]; then
+        # Línea de exactamente 53 caracteres para alinear con RAM y CPU
+        echo -e "${c_linea}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    else
+        echo -e "$1"
+    fi
+}
+
 numero='^[0-9]+$'
 hora=$(printf '%(%H:%M:%S)T')
 fecha=$(printf '%(%D)T')
@@ -359,9 +384,12 @@ echo -ne " \033[1;31m$1:\033[0m "
 }
 }
 col(){
-nom=$(printf '%-55s' "\033[0;92m${1} \033[0;31m>> \033[1;37m${2}")
-echo -e "	$nom\033[0;31m${3}   \033[0;92m${4}\033[0m"
+    # Agregamos 6 espacios al inicio ("      ") para recrear el centrado de la v4 original
+    local _numero="${1//\)/}"
+    local nom=$(printf '%-55s' "      ${c_corch}[${c_num}${_numero}${c_corch}]${c_flech}${s_flech}\033[0m ${c_texto}${2}")
+    echo -e "${nom} \033[0;31m${3} \033[0;92m${4}\033[0m"
 }
+
 col2(){
 echo -e " \033[1;91m$1\033[0m \033[1;37m$2\033[0m"
 }
@@ -375,25 +403,28 @@ continuar(){
 echo -e " \033[3;49;32mEnter para continuar...\033[0m"
 }
 title2(){
-local _STATUS="$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN")"
-_SFTP="$(echo -e "$_STATUS" | grep apache2)"
-[[ -z ${_SFTP} ]] && _SFTP="$(echo -e "$_STATUS" | grep nginx)"
-portFTP=$(echo -e "$_SFTP" |cut -d: -f2 | cut -d' ' -f1 | uniq)
-portFTP=$(echo ${portFTP} | sed 's/\s\+/,/g' | cut -d , -f1)
-v2rayports=`echo -e "$_STATUS" | grep v2ray | awk '{print substr($9,3); }'` > /dev/null 2>&1
-v2rayports=$(echo $v2rayports | awk {'print $1'})
-local _tconex=$(netstat -nap | grep "$v2rayports" | grep v2ray | grep ESTABLISHED| grep tcp6 | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
-local v1=$(cat /etc/adm-lite/v-local.log)
-local v2=$(cat /bin/ejecutar/v-new.log)
-msg -bar3
-[[ $v1 = $v2 ]] && echo -e "   \e[97m\033[1;44m MENU V2RAY LITE [$v1] POWER BY @ChumoGH \033[0m" || echo -e " \e[97m\033[1;44m MENU V2RAY LITE POWER BY @ChumoGH [$v1] >> \033[1;92m[$v2] \033[0m"
-[[ ! -z $v2rayports ]] && echo -e "       \e[97m\033[1;44mPUERTO ACTIVO :\033[0m \033[3;32m$v2rayports\033[0m   \e[97m\033[1;44m ACTIVOS:\033[0m \033[3;32m\e[97m\033[1;41m $_tconex " ||  echo -e "  \e[97m\033[1;41mERROR A INICIAR V2RAY : \033[0m \033[3;32m FAIL\033[3;32m"
+    local _STATUS="$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN")"
+    local app_name="V2RAY"
+    [[ "$(basename $0)" == *"xr"* ]] && app_name="XRAY"
+    
+    v2rayports=$(echo -e "$_STATUS" | grep -i $app_name | awk '{print substr($9,3); }' | awk {'print $1'} | head -1) > /dev/null 2>&1
+    local _tconex=$(netstat -nap | grep "$v2rayports" | grep -i $app_name | grep ESTABLISHED| grep tcp6 | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
+    local v1=$(cat /etc/adm-lite/v-local.log 2>/dev/null)
+    local v2=$(cat /bin/ejecutar/v-new.log 2>/dev/null)
+    
+    msg -bar3
+    # Título Dinámico Principal
+    [[ $v1 = $v2 ]] && echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU ${app_name} LITE [$v1] POWER BY @ChumoGH \033[0m${tit_edge_col}${tit_forma_R}\033[0m" || echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU ${app_name} LITE POWER BY @ChumoGH [$v1] >> [$v2] \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    
+    [[ ! -z $v2rayports ]] && echo -e "       \033[1;44mPUERTO ACTIVO :\033[0m \033[3;32m$v2rayports\033[0m   \033[1;44m ACTIVOS:\033[0m \033[3;32m\033[1;41m $_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR ${app_name} : \033[0m \033[3;32m FAIL\033[0m"
 }
+
 title(){
-msg -bar3
-blanco "$1"
-msg -bar3
+    msg -bar3
+    echo -e "         ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} $1 \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
+    msg -bar3
 }
+
 userDat(){
 blanco "	N°    Usuarios 		  fech exp   dias"
 msg -bar3
@@ -1706,8 +1737,8 @@ clear
 msg -bar3
 blanco "	  Ajustes e Entrasda Rapida de Menu v2ray"
 msg -bar3
-col "1)" "Habilitar v2ru, Como entrada Rapida"
-col "2)" "Eliminar v2ru, Como entrada Rapida"
+col "1)" "Habilitar v2r, Como entrada Rapida"
+col "2)" "Eliminar v2r, Como entrada Rapida"
 msg -bar3
 col "0)" "Volver"
 msg -bar3
@@ -1746,26 +1777,29 @@ _usop=$(printf '%-1s' "$(top -bn1 | awk '/Cpu/ { cpu = "" 100 - $8 "%" }; END { 
 [[ -e /bin/v2r.sh ]] && enrap="\033[1;92m[ON]" || enrap="\033[0;31m[OFF]"
 [[ -e /etc/v2ray/config.json ]] && _v2Reg="$(cat /etc/v2ray/config.json | jq .inbounds[].settings.clients[].email|wc -l)" || _v2Reg=0
 [[ -e /etc/v2ray/config.json.lock ]] && _v2LOCK="$(cat /etc/v2ray/config.json.lock|wc -l)" || _v2LOCK=0
+# (Dentro del while : de main(), después de los ps y _usop)
 clear
 title2
-title "   Ram: \033[1;32m$_usor  \033[0;31m<<< \033[1;37mMENU V2RAY \033[0;31m>>>  \033[1;37mCPU: \033[1;32m$_usop"
-col "1)" "CREAR USUARIO"
-col "2)" "\033[0;92mRENOVAR USUARIO"
-col "3)" "\033[0;31mREMOVER USUARIO"
-col "4)" "VER DATOS DE USUARIOS \033[1;32m ( ${_v2Reg} )"
-col "5)" "VER USUARIOS CONECTADOS"
+title " Ram: \033[1;32m$_usor\033[0m | MENU V2RAY | CPU: \033[1;32m$_usop\033[0m "
+    
+col "1" "CREAR USUARIO"
+col "2" "\033[0;92mRENOVAR USUARIO"
+col "3" "\033[0;31mREMOVER USUARIO"
+col "4" "VER DATOS DE USUARIOS \033[1;32m ( ${_v2Reg} )"
+col "5" "VER USUARIOS CONECTADOS"
 msg -bar3
-col "6)" "\033[1;33mCONFIGURAR V2RAY $_v2"
+col "6" "\033[1;33m CONFIGURAR V2RAY $_v2"
 msg -bar3
-col "7)" "\033[1;33mEntrada Rapida $enrap"
+col "7" "\033[1;33m ENTRADA RAPIDA $enrap"
 msg -bar3
-col "8)" "\033[1;33mFIXEAR V2RAY ( SOLO USUARIOS )"
+col "8" "\033[1;33m FIXEAR V2RAY ( SOLO USUARIOS )"
 msg -bar3
-col "9)" "LOCK/UNLOCK USUARIO \033[1;32m ( ${_v2LOCK} )"
+col "9" " LOCK/UNLOCK USUARIO \033[1;32m ( ${_v2LOCK} )"
 msg -bar3
-col "0)" "SALIR \033[0;31m|| $(blanco "Respaldos a utomaticos") $(on_off_res)"
+echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ SALIR ]\033[0m ${c_texto}|| Respaldos automaticos\033[0m $(on_off_res)"
 msg -bar3
-blanco "opcion" 0
+blanco "Opcion" 0
+
 read opcion
 case $opcion in
 1)add_user;;
