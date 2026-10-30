@@ -1,6 +1,7 @@
 #!/bin/bash
 #Autor: Henry Chumo 
 #Alias : ChumoGH
+             ####TvRc####
 clear
 config="/etc/xray/config.json"
 configLOCK="/etc/xray/config.json.lock"
@@ -1713,7 +1714,7 @@ settings(){
 	msg -bar3
 	col "14" "Conf. Copias de Respaldos"
 	msg -bar3
-	echo -e " ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
+	echo -e "      ${c_corch}[${c_num}0${c_corch}]${c_flech}${s_flech}\033[0m \033[1;37;41m[ REGRESAR ]\033[0m"
 	msg -bar3
 	blanco "opcion" 0
 	read opcion
