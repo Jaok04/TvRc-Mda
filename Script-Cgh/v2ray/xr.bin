@@ -35,6 +35,9 @@ barra="\033[0;31m=====================================================\033[0m"
 : "${s_flech:=➮}"
 : "${c_texto:=\033[1;37m}"
 : "${c_linea:=\033[1;33m}"
+# --- Variables dinámicas de estado ---
+: "${c_on:=\033[1;92m}"   # Toma el color ON del Gestor de Temas
+: "${c_off:=\033[0;31m}"  # Toma el color OFF del Gestor de Temas
 
 # Redefiniendo las funciones de diseño para utilizar el tema dinámico
 msg() {
@@ -93,11 +96,23 @@ title2(){
 	xrayports=`lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN" | grep xray | awk '{print substr($9,3); }' > /tmp/xray.txt && echo | cat /tmp/xray.txt | tr '\n' ' ' > /etc/adm-lite/xrayports.txt && cat /etc/adm-lite/xrayports.txt` > /dev/null 2>&1 
 	xrayports=$(echo $xrayports | awk {'print $1'})
 	_tconex=$(netstat -nap | grep "$xrayports" | grep xray | grep ESTABLISHED | awk {'print $5'} | awk -F ":" '{print $1}' | sort | uniq | wc -l)
-	v1=$(cat /etc/adm-lite/v-local.log)
-	v2=$(cat /bin/ejecutar/v-new.log)
+	
+	# Condición usando directamente las variables del Gestor de Temas
+	local color_activos
+	if [[ "$_tconex" == "0" || -z "$_tconex" ]]; then
+		color_activos="${c_off}"
+	else
+		color_activos="${c_on}"
+	fi
+
+	v1=$(cat /etc/adm-lite/v-local.log 2>/dev/null)
+	v2=$(cat /bin/ejecutar/v-new.log 2>/dev/null)
+	
 	msg -bar3
 	[[ $v1 = $v2 ]] && echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU XRAY LITE [$v1] POWER BY @ChumoGH \033[0m${tit_edge_col}${tit_forma_R}\033[0m" || echo -e "   ${tit_edge_col}${tit_forma_L}${tit_bg}${tit_text} MENU XRAY LITE POWER BY @ChumoGH [$v1] >> [$v2] \033[0m${tit_edge_col}${tit_forma_R}\033[0m"
-	[[ ! -z $xrayports ]] && echo -e "       ${tit_bg}${tit_text} PUERTO ACTIVO : \033[0m \033[3;32m$xrayports\033[0m   ${tit_bg}${tit_text} ACTIVOS : \033[0m \033[3;32m\033[1;41m $_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR XRAY : \033[0m \033[3;32m FAIL\033[0m"
+	
+	# Aquí aplicamos c_corch a las etiquetas, y c_on/c_off dinámicos a los valores
+	[[ ! -z $xrayports ]] && echo -e "       ${c_corch}PUERTO ACTIVO : \033[0m${c_on}$xrayports\033[0m   ${c_corch}ACTIVOS : \033[0m${color_activos}$_tconex \033[0m" ||  echo -e "  \033[1;41mERROR AL INICIAR XRAY : \033[0m ${c_off}FAIL\033[0m"
 }
 
 title(){
